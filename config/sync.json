@@ -3,36 +3,54 @@
   "output": "feed.json",
   "logDir": "logs",
   "stateDir": "state",
-  "sources": {
-    "ryp0": {
+  "sources": [
+    {
+      "name": "ryp0",
       "url": "https://raw.githubusercontent.com/Sami-Wali/ryP0-repository/main/repo.json",
       "schema": "ryp0",
       "required": true
     },
-    "altgallery": {
+    {
+      "name": "altgallery",
       "url": "https://raw.githubusercontent.com/bebound/AltGallery/refs/heads/master/all-apps.json",
       "schema": "altstore",
       "required": false
+    },
+    {
+      "name": "one",
+      "url": "https://raw.githubusercontent.com/ios151/One-releases/main/altsource.json",
+      "schema": "altstore",
+      "required": false
+    },
+    {
+      "name": "insav",
+      "url": "https://raw.githubusercontent.com/ios151/Insav-releases/main/altsource.json",
+      "schema": "altstore",
+      "required": false
     }
-  },
+  ],
   "network": {
     "timeout": 30,
     "retries": 4,
     "backoffBase": 2.0,
     "backoffMax": 30,
-    "userAgent": "appsource-sync/1.0 (+github actions)"
+    "userAgent": "appsource-sync/1.1 (+github actions)"
   },
   "merge": {
-    "primary": "ryp0",
     "title": "ryP0 × AltGallery",
-    "subtitle": "ryP0 源与 AltGallery 源的合并镜像",
-    "description": "由 GitHub Actions 自动合并 ryP0 与 AltGallery 两个 AltStore 源，字段结构遵循 ryP0 规范。",
+    "subtitle": "ryP0 与 AltGallery 等源合并后的镜像",
+    "description": "由 GitHub Actions 自动合并 ryP0、AltGallery、One、INSAV 等 AltStore 源，字段结构遵循 ryP0 规范。",
     "identifier": "com.ry0x.source.merged",
     "sourceUrl": "__auto__",
     "iconUrl": "https://raw.githubusercontent.com/Sami-Wali/ryP0-repository/main/icons/ry0_.jpg",
     "tintColor": "#0A84FF",
     "website": "https://github.com/Sami-Wali/ryP0",
     "defaultCategory": "Tools",
+    "categoryAliases": {
+      "entertainment": "Movies",
+      "video": "Movies",
+      "utility": "Tools"
+    },
     "importedUpdatePolicy": "static",
     "importedAppType": "Static",
     "importedReleaseChannel": "release",

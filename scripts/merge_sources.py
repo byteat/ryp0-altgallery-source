@@ -302,7 +302,7 @@ def version_identity(v: dict) -> tuple[str, str]:
 
 
 def convert_secondary_app(
-    raw: dict, cfg: dict, log: Log, origin: str
+    raw: dict, cfg: dict, log: Log, origin: str, source_nsfw: bool = False
 ) -> dict | None:
     """把 AltGallery 结构的 app 转成 ryP0 结构。"""
     bid = clean_str(raw.get("bundleIdentifier"))
@@ -343,24 +343,35 @@ def convert_secondary_app(
         "appType": cfg.get("importedAppType", "Static"),
     }
 
-    # 分类：配置覆盖 > 关键词推断 > 默认值；推断结果一律记日志以便人工修正
+    # 分类优先级：配置覆盖 > 源自带分类（经 categoryAliases 归一）> 关键词推断 > 默认值
     overrides = cfg.get("categoryOverrides") or {}
+    aliases = {str(k).lower(): v for k, v in (cfg.get("categoryAliases") or {}).items()}
     cat = clean_str(overrides.get(bid)) or clean_str(overrides.get(bid.lower()))
     if cat:
         app["category"] = cat
     else:
-        haystack = " ".join(
-            [name, app["subtitle"], app["localizedDescription"]]
-        ).lower()
-        for candidate, pattern in CATEGORY_HINTS:
-            if re.search(pattern, haystack):
-                app["category"] = candidate
-                log.info("根据关键词推断分类，建议在 config 中用 categoryOverrides 固化",
-                         app=name, category=candidate)
-                break
+        src_cat = clean_str(raw.get("category"))
+        if src_cat:
+            mapped = aliases.get(src_cat.lower())
+            app["category"] = mapped or src_cat
+            if mapped:
+                log.info("按 categoryAliases 归一上游分类", app=name,
+                         **{"from": src_cat, "to": mapped, "source": origin})
+            else:
+                log.info("沿用上游自带分类", app=name, category=src_cat, source=origin)
         else:
-            app["category"] = cfg.get("defaultCategory", "Tools")
-            log.info("未能推断分类，使用默认分类", app=name, category=app["category"])
+            haystack = " ".join(
+                [name, app["subtitle"], app["localizedDescription"]]
+            ).lower()
+            for candidate, pattern in CATEGORY_HINTS:
+                if re.search(pattern, haystack):
+                    app["category"] = candidate
+                    log.info("根据关键词推断分类，建议在 config 中用 categoryOverrides 固化",
+                             app=name, category=candidate)
+                    break
+            else:
+                app["category"] = cfg.get("defaultCategory", "Tools")
+                log.info("未能推断分类，使用默认分类", app=name, category=app["category"])
 
     tint = clean_str(raw.get("tintColor"))
     if re.match(r"^#[0-9A-Fa-f]{6}$", tint):
@@ -375,6 +386,19 @@ def convert_secondary_app(
             break
     if repo_url:
         app["githubURL"] = repo_url
+
+    # 权限声明：上游给了就原样带上（ryP0 也用同一结构）
+    perms = raw.get("appPermissions")
+    if isinstance(perms, dict) and (perms.get("entitlements") or perms.get("privacy")):
+        app["appPermissions"] = {
+            "entitlements": [e for e in (perms.get("entitlements") or []) if isinstance(e, str)],
+            "privacy": perms.get("privacy") or {},
+        }
+
+    # 内容分级：源级或应用级标了 nsfw 就透传给应用，避免把成人内容标成安全
+    if raw.get("nsfw") is True or source_nsfw:
+        app["nsfw"] = True
+        log.info("应用标记为 nsfw", app=name, source=origin)
 
     # AltGallery 的 screenshots 是纯 URL 数组，与 AltStore 的 {imageURL,size} 结构不同，
     # 默认不合并进输出，避免客户端解析异常；需要时可在配置里打开。
@@ -392,7 +416,8 @@ def convert_secondary_app(
 # 合并
 # --------------------------------------------------------------------------
 def merge_versions(
-    primary_app: dict, secondary_app: dict, log: Log, app_name: str
+    primary_app: dict, secondary_app: dict, log: Log, app_name: str,
+    primary_name: str = "ryp0", secondary_name: str = "altgallery",
 ) -> tuple[list[dict], list[dict], int, int]:
     """以主源版本为基准合并副源版本。
 
@@ -420,15 +445,17 @@ def merge_versions(
                     "version": ident[0],
                     "buildVersion": ident[1],
                     "field": "downloadURL/size",
-                    "kept": {"source": "ryp0", "downloadURL": existing.get("downloadURL"), "size": existing.get("size")},
-                    "dropped": {"source": "altgallery", "downloadURL": v.get("downloadURL"), "size": v.get("size")},
+                    "kept": {"source": primary_name, "downloadURL": existing.get("downloadURL"), "size": existing.get("size")},
+                    "dropped": {"source": secondary_name, "downloadURL": v.get("downloadURL"), "size": v.get("size")},
                     "resolution": "primary-wins",
                 })
-                log.warn("版本冲突：保留 ryP0 记录", app=app_name, version=ident[0],
-                         ryp0_url=existing.get("downloadURL"), alt_url=v.get("downloadURL"))
+                log.warn("版本冲突：保留主源记录", app=app_name, version=ident[0],
+                         kept=existing.get("downloadURL"), dropped=v.get("downloadURL"),
+                         secondary=secondary_name)
             else:
                 duplicate += 1
-                log.info("副源版本与主源一致，已去重", app=app_name, version=ident[0])
+                log.info("副源版本与主源一致，已去重", app=app_name, version=ident[0],
+                         source=secondary_name)
             continue
         merged.append(v)
         index[ident] = v
@@ -438,7 +465,8 @@ def merge_versions(
 
 
 def merge_metadata(
-    primary_app: dict, secondary_app: dict, log: Log
+    primary_app: dict, secondary_app: dict, log: Log,
+    primary_name: str = "ryp0", secondary_name: str = "altgallery",
 ) -> list[dict]:
     """补全主源缺失的描述性字段；两边都有且不同则记录冲突、保留主源。"""
     conflicts: list[dict] = []
@@ -448,21 +476,23 @@ def merge_metadata(
         s = clean_str(secondary_app.get(field))
         if not p and s:
             primary_app[field] = s
-            log.info("用副源补全缺失字段", app=primary_app.get("name"), field=field)
+            log.info("用副源补全缺失字段", app=primary_app.get("name"), field=field,
+                     source=secondary_name)
         elif p and s and p != s:
             conflicts.append({
                 "app": primary_app.get("name"),
                 "bundleIdentifier": primary_app.get("bundleIdentifier"),
                 "field": field,
-                "kept": {"source": "ryp0", "value": p[:200]},
-                "dropped": {"source": "altgallery", "value": s[:200]},
+                "kept": {"source": primary_name, "value": p[:200]},
+                "dropped": {"source": secondary_name, "value": s[:200]},
                 "resolution": "primary-wins",
             })
     return conflicts
 
 
-def build_feed(primary: dict, secondary: dict | None, cfg: dict, guards: dict,
-               report: dict, log: Log) -> dict:
+def build_feed(primary: dict, secondaries: list[tuple[str, dict]], cfg: dict,
+               guards: dict, report: dict, log: Log,
+               primary_name: str = "ryp0") -> dict:
     primary_apps = primary.get("apps")
     if not isinstance(primary_apps, list) or not primary_apps:
         raise SchemaError("主源 apps 字段缺失、非数组或为空")
@@ -512,62 +542,77 @@ def build_feed(primary: dict, secondary: dict | None, cfg: dict, guards: dict,
     imported = 0
     matched = 0
     added_versions = 0
-    imported_keys: set[str] = set()
+    imported_keys: dict[str, str] = {}
 
-    # 2) 合并副源
-    if secondary is not None:
-        sec_apps = secondary.get("apps")
+    # 2) 按配置顺序依次合并其余源：先出现者优先，后来者只补空缺
+    secondary_apps_total = 0
+    for src_name, src_feed in secondaries:
+        sec_apps = src_feed.get("apps")
         if not isinstance(sec_apps, list):
-            log.error("副源 apps 字段不是数组，跳过副源合并", source="altgallery")
-            report["sources"]["altgallery"]["status"] = "invalid-schema"
-        else:
-            for raw in sec_apps:
-                if not isinstance(raw, dict):
-                    log.warn("副源存在非对象 app 条目，已跳过")
-                    continue
-                bid = clean_str(raw.get("bundleIdentifier"))
-                key = norm_bid(bid)
-                if not key:
-                    log.warn("副源 app 缺少 bundleIdentifier，已跳过", name=clean_str(raw.get("name")))
+            log.error("源 apps 字段不是数组，跳过该源", source=src_name)
+            report["sources"].setdefault(src_name, {})["status"] = "invalid-schema"
+            continue
+        secondary_apps_total += len(sec_apps)
+        src_nsfw = src_feed.get("nsfw") is True
+        src_stats = {"matched": 0, "imported": 0}
+
+        for raw in sec_apps:
+            if not isinstance(raw, dict):
+                log.warn("源存在非对象 app 条目，已跳过", source=src_name)
+                continue
+            bid = clean_str(raw.get("bundleIdentifier"))
+            key = norm_bid(bid)
+            if not key:
+                log.warn("app 缺少 bundleIdentifier，已跳过", source=src_name,
+                         name=clean_str(raw.get("name")))
+                report["dropped"]["invalidSecondaryApps"] += 1
+                continue
+            if key in exclude:
+                report["dropped"]["excluded"] += 1
+                continue
+
+            target_key = key if key in by_bid else alias.get(key)
+            if target_key:
+                target = by_bid[target_key]
+                matched += 1
+                src_stats["matched"] += 1
+                defaults = {"channel": cfg.get("importedReleaseChannel", "release")}
+                sec_versions = [
+                    nv for nv in (
+                        norm_version(v, target.get("bundleIdentifier", bid), log,
+                                     target.get("name", ""), defaults, src_name)
+                        for v in (raw.get("versions") or [])
+                    ) if nv
+                ]
+                merged_versions, vconf, added, _dup = merge_versions(
+                    target, {"versions": sec_versions}, log, target.get("name", bid),
+                    primary_name, src_name,
+                )
+                added_versions += added
+                target["versions"] = merged_versions
+                conflicts_meta.extend(
+                    merge_metadata(target, raw, log, primary_name, src_name)
+                )
+                conflicts_ver.extend(vconf)
+                if key != target_key:
+                    log.info("通过 bundleIdentifiers 别名匹配到已有应用",
+                             incoming=bid, matched_to=target.get("bundleIdentifier"),
+                             source=src_name)
+            else:
+                app = convert_secondary_app(raw, cfg, log, src_name, src_nsfw)
+                if app is None:
                     report["dropped"]["invalidSecondaryApps"] += 1
                     continue
-                if key in exclude:
-                    report["dropped"]["excluded"] += 1
-                    continue
+                apps.append(app)
+                by_bid[key] = app
+                imported += 1
+                src_stats["imported"] += 1
+                imported_keys[key] = src_name
 
-                target_key = key if key in by_bid else alias.get(key)
-                if target_key:
-                    target = by_bid[target_key]
-                    matched += 1
-                    conv = {}
-                    defaults = {"channel": cfg.get("importedReleaseChannel", "release")}
-                    sec_versions = [
-                        nv for nv in (
-                            norm_version(v, target.get("bundleIdentifier", bid), log,
-                                         target.get("name", ""), defaults, "altgallery")
-                            for v in (raw.get("versions") or [])
-                        ) if nv
-                    ]
-                    conv["versions"] = sec_versions
-                    merged_versions, vconf, added, _dup = merge_versions(
-                        target, conv, log, target.get("name", bid)
-                    )
-                    added_versions += added
-                    target["versions"] = merged_versions
-                    conflicts_meta.extend(merge_metadata(target, raw, log))
-                    conflicts_ver.extend(vconf)
-                    if key != target_key:
-                        log.info("通过 bundleIdentifiers 别名匹配到主源应用",
-                                 altgallery=bid, matched_to=target.get("bundleIdentifier"))
-                else:
-                    app = convert_secondary_app(raw, cfg, log, "altgallery")
-                    if app is None:
-                        report["dropped"]["invalidSecondaryApps"] += 1
-                        continue
-                    apps.append(app)
-                    by_bid[key] = app
-                    imported += 1
-                    imported_keys.add(key)
+        report["sources"].setdefault(src_name, {}).update(src_stats)
+        log.info("源合并完成", source=src_name,
+                 apps=len(sec_apps), matched=src_stats["matched"],
+                 imported=src_stats["imported"])
 
     # 3) 逐应用规范化（含主源）、去重、排序、截断
     max_versions = int(cfg.get("maxVersionsPerApp") or 0)
@@ -577,10 +622,10 @@ def build_feed(primary: dict, secondary: dict | None, cfg: dict, guards: dict,
     for app in apps:
         bid = clean_str(app.get("bundleIdentifier"))
         name = clean_str(app.get("name"))
-        origin = "altgallery" if norm_bid(bid) in imported_keys else "ryp0"
+        origin = imported_keys.get(norm_bid(bid), primary_name)
         defaults = (
             {"channel": cfg.get("importedReleaseChannel", "release")}
-            if origin == "altgallery"
+            if origin != primary_name
             else {"channel": ""}
         )
 
@@ -644,25 +689,21 @@ def build_feed(primary: dict, secondary: dict | None, cfg: dict, guards: dict,
             log.info("新增分类到 categories 列表", category=cat)
 
     # 6) news：仅携带配置指定来源，默认只保留主源
-    carry = cfg.get("carryNewsFrom") or ["ryp0"]
+    carry = cfg.get("carryNewsFrom") or [primary_name]
     news: list[dict] = []
-    for src_name, src_data in (("ryp0", primary), ("altgallery", secondary or {})):
-        if src_name not in carry:
-            continue
-        items = src_data.get("news")
-        if isinstance(items, list):
-            for item in items:
-                if isinstance(item, dict) and clean_str(item.get("title")):
-                    news.append(item)
-                elif isinstance(item, dict):
-                    news.append(item)
     dropped_news = 0
-    if secondary:
-        sec_news = secondary.get("news")
-        if isinstance(sec_news, list) and "altgallery" not in carry:
-            dropped_news = len(sec_news)
-            if dropped_news:
-                log.info("按 carryNewsFrom 未携带副源 news", source="altgallery", count=dropped_news)
+    for src_name, src_data in [(primary_name, primary)] + list(secondaries):
+        items = src_data.get("news")
+        if not isinstance(items, list):
+            continue
+        if src_name not in carry:
+            dropped_news += len(items)
+            if items:
+                log.info("按 carryNewsFrom 未携带该源 news", source=src_name, count=len(items))
+            continue
+        for item in items:
+            if isinstance(item, dict):
+                news.append(item)
     report["dropped"]["secondaryNews"] = dropped_news
 
     # 7) 阈值校验
@@ -701,7 +742,7 @@ def build_feed(primary: dict, secondary: dict | None, cfg: dict, guards: dict,
 
     report["counts"] = {
         "primaryApps": primary_count,
-        "secondaryApps": len(secondary.get("apps") or []) if secondary else 0,
+        "secondaryApps": secondary_apps_total,
         "matchedApps": matched,
         "importedApps": imported,
         "totalApps": len(apps),
@@ -740,14 +781,17 @@ def derive_source_url(cfg: dict) -> str:
 # 主流程
 # --------------------------------------------------------------------------
 def main(argv: list[str]) -> int:
-    parser = argparse.ArgumentParser(description="合并 ryP0 与 AltGallery 源")
+    parser = argparse.ArgumentParser(description="把多个 AltStore 源合并成一份 ryP0 结构源")
     parser.add_argument("--config", default="config/sync.json")
     parser.add_argument("--output", help="覆盖输出路径")
     parser.add_argument("--log-dir", default=None)
-    parser.add_argument("--ryp0-url", default=None)
-    parser.add_argument("--altgallery-url", default=None)
+    parser.add_argument("--ryp0-url", default=None, help="等价于 --set ryp0=URL")
+    parser.add_argument("--altgallery-url", default=None, help="等价于 --set altgallery=URL")
+    parser.add_argument("--set", action="append", default=[], metavar="NAME=URL",
+                        help="覆盖指定名称源的 URL，可重复")
     parser.add_argument("--source-url", default=None, help="写进 sourceURL 的最终地址")
-    parser.add_argument("--skip-secondary", action="store_true", help="只同步主源")
+    parser.add_argument("--only-primary", "--skip-secondary", dest="only_primary",
+                        action="store_true", help="只同步主源，忽略其余源")
     args = parser.parse_args(argv)
 
     root = Path(args.config).resolve().parent.parent
@@ -761,14 +805,36 @@ def main(argv: list[str]) -> int:
     if args.source_url:
         merge_cfg["sourceUrl"] = args.source_url
     guards = cfg_all.get("guards", {})
-    sources = cfg_all.get("sources", {})
 
-    ryp0_url = args.ryp0_url or sources.get("ryp0", {}).get("url")
-    alt_url = args.altgallery_url or sources.get("altgallery", {}).get("url")
+    # 源列表：支持旧的字典写法与新的列表写法，列表顺序即优先级
+    raw_sources = cfg_all.get("sources", {})
+    if isinstance(raw_sources, dict):
+        source_list = [{"name": k, **v} for k, v in raw_sources.items()]
+    else:
+        source_list = [dict(s) for s in raw_sources]
+    if not source_list:
+        raise SystemExit("配置里没有任何源")
+
+    overrides: dict[str, str] = {}
+    for pair in args.set:
+        if "=" not in pair:
+            raise SystemExit(f"--set 参数格式应为 NAME=URL，收到: {pair}")
+        name, url = pair.split("=", 1)
+        overrides[name.strip()] = url.strip()
+    if args.ryp0_url:
+        overrides["ryp0"] = args.ryp0_url
+    if args.altgallery_url:
+        overrides["altgallery"] = args.altgallery_url
+    for src in source_list:
+        if src.get("name") in overrides:
+            src["url"] = overrides[src["name"]]
+
+    primary_name = source_list[0].get("name", "primary")
 
     log = Log()
     started = utcnow()
-    log.info("开始同步", version="1.0.0", startedAt=started, output=str(output))
+    log.info("开始同步", version="1.1.0", startedAt=started, output=str(output),
+             sources=[s.get("name") for s in source_list])
 
     report: dict = {
         "startedAt": started,
@@ -799,33 +865,54 @@ def main(argv: list[str]) -> int:
         log.info("同步结束", status=status, code=code)
         return code
 
-    # ---- 拉取 ----
-    primary = fetch_json(ryp0_url, net, log, cache_dir, "ryp0") if ryp0_url else None
-    if primary is None:
-        report["sources"]["ryp0"] = {"url": ryp0_url, "status": "failed"}
-        log.error("主源不可用，保留上一版 feed，不做任何写入")
-        return finish(EXIT_PRIMARY_FETCH, "failed-primary")
-    report["sources"]["ryp0"] = {"url": ryp0_url, "status": "ok",
-                                 "apps": len(primary.get("apps") or [])}
+    # ---- 拉取：按优先级逐个拉；主源失败即中止，其余源失败则降级 ----
+    primary: dict | None = None
+    secondaries: list[tuple[str, dict]] = []
+    any_secondary_failed = False
 
-    secondary = None
-    if not args.skip_secondary and alt_url:
-        secondary = fetch_json(alt_url, net, log, cache_dir, "altgallery")
-        if secondary is None:
-            report["sources"]["altgallery"] = {"url": alt_url, "status": "failed"}
-            report["warnings"].append("副源拉取失败，本次只输出主源")
+    for idx, src in enumerate(source_list):
+        name = src.get("name") or f"source{idx}"
+        url = src.get("url")
+        required = bool(src.get("required")) or idx == 0
+
+        if args.only_primary and idx > 0:
+            log.info("已指定 --only-primary，跳过该源", source=name)
+            continue
+        if not url:
+            log.error("源缺少 url，已跳过", source=name)
+            report["sources"][name] = {"url": None, "status": "no-url"}
+            any_secondary_failed = any_secondary_failed or required
+            continue
+
+        fetched = fetch_json(url, net, log, cache_dir, name)
+        if fetched is None:
+            report["sources"][name] = {"url": url, "status": "failed"}
+            if idx == 0 or required:
+                log.error("必要源不可用，保留上一版 feed，不做任何写入", source=name)
+                return finish(EXIT_PRIMARY_FETCH if idx == 0 else EXIT_SCHEMA,
+                              "failed-primary" if idx == 0 else "failed-required-source")
+            any_secondary_failed = True
+            report["warnings"].append(f"源 {name} 拉取失败，本次跳过")
             if guards.get("failOnSecondaryFailure"):
-                log.error("副源失败且 failOnSecondaryFailure=true，中止")
+                log.error("副源失败且 failOnSecondaryFailure=true，中止", source=name)
                 return finish(EXIT_SCHEMA, "failed-secondary")
-            log.warn("副源拉取失败，降级为仅主源合并")
+            log.warn("该源拉取失败，降级为其余源合并", source=name)
+            continue
+
+        entry = {"url": url, "status": "ok", "apps": len(fetched.get("apps") or [])}
+        report["sources"][name] = entry
+        if idx == 0:
+            primary = fetched
         else:
-            report["sources"]["altgallery"] = {
-                "url": alt_url, "status": "ok", "apps": len(secondary.get("apps") or [])
-            }
+            secondaries.append((name, fetched))
+
+    if primary is None:
+        log.error("主源为空，无法合并")
+        return finish(EXIT_PRIMARY_FETCH, "failed-primary")
 
     # ---- 合并 ----
     try:
-        feed = build_feed(primary, secondary, merge_cfg, guards, report, log)
+        feed = build_feed(primary, secondaries, merge_cfg, guards, report, log, primary_name)
     except SchemaError as exc:
         log.error("源格式不符合预期", error=str(exc))
         return finish(EXIT_SCHEMA, "failed-schema")
@@ -847,9 +934,10 @@ def main(argv: list[str]) -> int:
         return finish(EXIT_WRITE, "failed-write")
 
     # ---- 状态与历史（供 commit 与排查使用）----
-    status = "ok"
-    if report["sources"].get("altgallery", {}).get("status") != "ok":
-        status = "degraded"
+    status = "degraded" if any_secondary_failed else "ok"
+    for src_name, info in report["sources"].items():
+        if info.get("status") not in ("ok", None):
+            status = "degraded"
     report["counts"]["sha256"] = hashlib.sha256(output.read_bytes()).hexdigest()
     snapshot = {
         "startedAt": report["startedAt"],

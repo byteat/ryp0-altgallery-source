@@ -72,10 +72,16 @@ def ver(v: str = "1.0", date: str = "2026-01-01T00:00:00Z", url: str | None = No
     return base
 
 
-def run(prim: dict, sec: dict | None, log: ms.Log | None = None) -> tuple[dict, dict, ms.Log]:
+def run(prim: dict, sec: dict | None, log: ms.Log | None = None,
+        extra: list[tuple[str, dict]] | None = None) -> tuple[dict, dict, ms.Log]:
     log = log or ms.Log()
     report = new_report()
-    feed = ms.build_feed(prim, sec, MERGE_CFG, GUARDS, report, log)
+    secondaries: list[tuple[str, dict]] = []
+    if sec is not None:
+        secondaries.append(("altgallery", sec))
+    if extra:
+        secondaries.extend(extra)
+    feed = ms.build_feed(prim, secondaries, MERGE_CFG, GUARDS, report, log)
     return feed, report, log
 
 
@@ -174,7 +180,7 @@ for bad in ({"apps": "nope"}, {"apps": []}, {}):
 
 print("8) 阈值守卫：应用数骤降 → GuardError")
 try:
-    ms.build_feed(primary([app("com.p.one")]), None,
+    ms.build_feed(primary([app("com.p.one")]), [],
                   MERGE_CFG, {"minTotalAppRatio": 5}, new_report(), ms.Log())
     check(False, "未触发 GuardError")
 except ms.GuardError:
@@ -231,6 +237,54 @@ c = vf.validate(bad_feed, 1)
 check(len(c.errors) >= 4, f"校验器报出 {len(c.errors)} 处错误")
 ok_feed, _, _ = run(primary([app("com.p.one")]), None)
 check(len(vf.validate(ok_feed, 1).errors) == 0, "合法输出零错误")
+
+
+print("14) 多源合并：第三个源的应用独立导入，分类经 aliases 归一")
+feed, rep, _ = run(
+    primary([app("com.p.one", "Primary One")]),
+    {"name": "AG", "apps": [{
+        "name": "Alt App", "bundleIdentifier": "com.s.two", "developerName": "d",
+        "category": "utility", "versions": [ver("2.0")],
+    }]},
+    extra=[("one", {"name": "One", "apps": [{
+        "name": "One", "bundleIdentifier": "com.ios151.one", "developerName": "ios151",
+        "category": "entertainment", "nsfw": False,
+        "appPermissions": {"entitlements": ["get-task-allow"]},
+        "versions": [ver("1.7.1", "2026-11-04T16:15:28Z")],
+    }]})],
+)
+check(len(feed["apps"]) == 3, "三个源共 3 个应用")
+one = by_bid(feed, "com.ios151.one")
+check(one is not None, "第三个源的应用被导入")
+check(one and one["category"] == "Movies", "entertainment 经 categoryAliases 归一为 Movies")
+check(one and one["appPermissions"]["entitlements"] == ["get-task-allow"], "appPermissions 透传")
+check(rep["counts"]["importedApps"] == 2, "两个副源各导入 1 个应用")
+check(rep["sources"].get("one", {}).get("imported") == 1, "报告记录每个源的导入数")
+
+print("15) 源级 nsfw 透传到应用")
+feed, rep, _ = run(
+    primary([app("com.p.one")]),
+    None,
+    extra=[("insav", {"name": "INSAV", "nsfw": True, "apps": [{
+        "name": "INSAV", "bundleIdentifier": "com.ios151.insav", "developerName": "ios151",
+        "versions": [ver("1.3.0")],
+    }]})],
+)
+insav = by_bid(feed, "com.ios151.insav")
+check(insav is not None and insav.get("nsfw") is True, "源级 nsfw=true 标记到应用")
+
+print("16) 多源冲突：优先级高的源优先，同 ID 不重复")
+feed, rep, _ = run(
+    primary([app("com.p.one", versions=[ver("1.0")])]),
+    {"name": "AG", "apps": [{"name": "A", "bundleIdentifier": "com.p.one",
+                             "developerName": "d", "versions": [ver("2.0")]}]},
+    extra=[("one", {"name": "One", "apps": [{"name": "A2", "bundleIdentifier": "com.p.one",
+                                             "developerName": "d2", "versions": [ver("3.0")]}]})],
+)
+a = by_bid(feed, "com.p.one")
+check(len(feed["apps"]) == 1, "同 ID 应用只出现一次")
+check(a and len(a["versions"]) == 3, "三个源的版本合并到同一个应用")
+check(rep["counts"]["matchedApps"] == 2, "两个副源各匹配 1 次")
 
 print()
 if failures:

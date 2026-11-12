@@ -1,13 +1,29 @@
 # appsource-sync
 
-把 **ryP0** 与 **AltGallery** 两个 AltStore 源定期合并成一份统一源，输出严格遵循 ryP0 的字段结构与元数据规范，由 GitHub Actions 定时执行并自动提交。
+把多个 AltStore 源定期合并成一份统一源，输出严格遵循 ryP0 的字段结构与元数据规范，由 GitHub Actions 定时执行并自动提交。
 
 ## 上游源
 
-| 角色 | 地址 | 实测快照（2026-11-12） |
-| --- | --- | --- |
-| 主源（格式基准） | `https://raw.githubusercontent.com/Sami-Wali/ryP0-repository/main/repo.json` | 182 个应用 / 2376 个版本 |
-| 副源（增量补充） | `https://raw.githubusercontent.com/bebound/AltGallery/refs/heads/master/all-apps.json` | 66 个应用 / 67 个版本 |
+按 `config/sync.json` 中 `sources` 数组的顺序合并，**数组第一个是主源（格式基准与冲突优先方）**，后面依次为补充源：
+
+| 顺序 | 名称 | 地址 | 实测快照（2026-11-12） |
+| --- | --- | --- | --- |
+| 1（主源） | `ryp0` | `https://raw.githubusercontent.com/Sami-Wali/ryP0-repository/main/repo.json` | 182 个应用 / 2376 个版本 |
+| 2 | `altgallery` | `https://raw.githubusercontent.com/bebound/AltGallery/refs/heads/master/all-apps.json` | 66 个应用 / 67 个版本 |
+| 3 | `one` | `https://raw.githubusercontent.com/ios151/One-releases/main/altsource.json` | 1 个应用 / 18 个版本 |
+| 4 | `insav` | `https://raw.githubusercontent.com/ios151/Insav-releases/main/altsource.json` | 1 个应用 / 5 个版本 |
+
+### 怎么再加一个源
+
+编辑 `config/sync.json` 的 `sources` 数组追加一项即可，不需要改代码：
+
+```json
+{ "name": "mySource", "url": "https://example.com/apps.json", "schema": "altstore", "required": false }
+```
+
+`name` 会用作日志标识、错误信息里的来源标记和缓存文件名，**不要重名**。`required: true` 表示该源拉取失败时整次同步中止；否则只降级跳过并标记 `degraded`。
+
+**前置条件**：这个地址必须直接返回 AltStore 源 JSON（顶层有 `apps` 数组）。如果对方只发布 GitHub Releases 里的 `.ipa`、没有源文件，不能直接加——需要先有个工具把 releases 转成源 JSON，这一步本项目没有实现。
 
 ## 两个源的真实结构差异
 
@@ -31,16 +47,19 @@
 
 | 场景 | 处理方式 |
 | --- | --- |
-| 应用 ID 相同 | 以 ryP0 应用为骨架；副源只补全 ryP0 的空字段（`developerName`/`subtitle`/`localizedDescription`/`iconURL`/`tintColor`） |
-| 同字段两边都有值且不同 | **保留 ryP0**，差异写入 `logs/*.json` 的 `conflicts.metadata` |
-| 同版本号但 `downloadURL`/`size` 不同 | **保留 ryP0**，写入 `conflicts.versions`，附双方地址 |
-| 版本互补（副源有 ryP0 没有的版本） | 合并进主源应用，按 `date` 倒序排列 |
-| 副源独有应用 | 转成 ryP0 结构：生成 `catalogID`、`updatePolicy=static`、`appType=Static`，分类按 `config/sync.json` 覆盖表 → 关键词推断 → 默认 `Tools`（每次推断都记日志） |
+| 应用 ID 相同 | 以**配置顺序最靠前**的源为骨架；后续源只补全已有应用的**空字段**（`developerName`/`subtitle`/`localizedDescription`/`iconURL`/`tintColor`） |
+| 同字段两边都有值且不同 | **保留排在前面的源的值**，差异写入 `logs/*.json` 的 `conflicts.metadata` |
+| 同版本号但 `downloadURL`/`size` 不同 | **保留排在前面的源**，写入 `conflicts.versions`，附双方地址与来源名 |
+| 版本互补（后续源有前面没有的版本） | 合并进同一应用，按 `date` 倒序排列 |
+| 后续源独有应用 | 转成 ryP0 结构：生成 `catalogID`、`updatePolicy=static`、`appType=Static` |
+| 分类判定（导入应用） | 顺序为：`categoryOverrides`（按 bundleId 精确指定）→ 上游自带 `category` 经 `categoryAliases` 归一（如 `entertainment` → `Movies`）→ 关键词推断 → 默认 `Tools`。每一步都写日志 |
+| 上游 `nsfw: true` | 透传到应用级 `nsfw` 字段，避免把成人内容标成安全（实测 `insav` 源为 true） |
+| 上游 `appPermissions` | 原样透传 `entitlements` / `privacy` |
 | 应用内重复版本 | 去重（AltStore 会拒绝重复版本；ryP0 上游实测有 136 条重复） |
 | 版本数组为空 | 移除该应用（ryP0 上游实测有 13 个，AltStore 无法安装无版本应用） |
 | `date` 非 ISO 8601 | 归一为 `YYYY-MM-DDTHH:MM:SSZ`；无法归一则该版本不进入输出 |
 | 副源 `screenshots` | 默认丢弃（纯 URL 数组与 AltStore 的 `{imageURL,size}` 结构不同，兼容性未经验证），可用 `keepScreenshots` 打开 |
-| 副源 `news` | 默认不带入（67 条逐应用公告会挤满客户端首页），可用 `carryNewsFrom` 调整 |
+| 后续源 `news` | 默认不带入（AltGallery 有 67 条逐应用公告会挤满客户端首页），可用 `carryNewsFrom` 指定要携带的源 |
 | 主源内部 ID 重复 | 合并版本并告警（实测 5 个 ID，如 `com.kdt.livecontainer`） |
 
 ## 目录结构
@@ -51,7 +70,7 @@ appsource-sync/
 ├── config/sync.json                     # 上游地址、合并开关、阈值
 ├── scripts/merge_sources.py             # 拉取 + 规范化 + 合并 + 落盘
 ├── scripts/validate_feed.py             # 独立的输出校验器
-├── tests/test_merge.py                  # 13 组离线回归测试
+├── tests/test_merge.py                  # 16 组离线回归测试
 ├── feed.json                            # 产物（提交进仓库）
 ├── logs/                                # 每次运行的 .log 与 .json（artifact）
 └── state/                               # last_run.json / history.jsonl / cache/
@@ -62,7 +81,7 @@ appsource-sync/
 | 方式 | 说明 |
 | --- | --- |
 | 定时 | `cron: "17 */6 * * *"`，**UTC**，每 6 小时一次：UTC 00:17 / 06:17 / 12:17 / 18:17，即北京时间 08:17 / 14:17 / 20:17 / 次日 02:17 |
-| 手动 | Actions 页面 → `Sync app sources` → `Run workflow`，可覆盖：`dry_run`（只跑不提交）、`strict_validate`（警告也失败）、`ryp0_url`、`altgallery_url`、`skip_secondary` |
+| 手动 | Actions 页面 → `Sync app sources` → `Run workflow`，可覆盖：`dry_run`（只跑不提交）、`strict_validate`（警告也失败）、`ryp0_url`、`altgallery_url`、`set_sources`（通用覆盖，格式 `name=url`，多个逗号分隔）、`skip_secondary`（只用主源） |
 
 工作流带 `concurrency: sync-app-sources`，同一时刻只跑一个实例，避免两次提交互相覆盖。
 
@@ -104,6 +123,8 @@ appsource-sync/
 python3 tests/test_merge.py                                  # 13 组回归测试，无需网络
 python3 scripts/merge_sources.py --config config/sync.json \
     --source-url https://raw.githubusercontent.com/OWNER/REPO/main/feed.json
+# 临时替换某个源（不改进 config）：
+python3 scripts/merge_sources.py --config config/sync.json --set one=https://example.com/apps.json
 python3 scripts/validate_feed.py --feed feed.json
 ```
 
@@ -126,6 +147,7 @@ python3 scripts/validate_feed.py --feed feed.json
 - **`screenshots` 兼容性未验证**：默认丢弃是为了避免结构不一致导致客户端解析失败，本项目没有在真机 AltStore/SideStore 上验证过保留后的表现。
 - **导入应用的分类是推断值**：关键词命中不了就落到 `Tools`，建议在 `config/sync.json` 的 `categoryOverrides` 里固化。
 - **导入应用不带 `status`/`backup`/`automation`**：这些字段依赖 ryP0 自己的自动化流水线，本仓库无法诚实生成，故留空而非伪造。
+- **部分源没有 `sha256`**：One 与 INSAV 的源不提供校验值，合并后这两个应用的所有版本都缺 `sha256`，校验器会给出警告但不阻断发布。
 - **未对 IPA 下载地址做存活性探测**：每次 HEAD 数百个链接会显著拖慢任务，目前依赖上游 `status` 字段。
 
 ## 参考

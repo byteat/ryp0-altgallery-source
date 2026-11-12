@@ -1,17 +1,17 @@
 {
-  "startedAt": "2026-11-12T14:25:43Z",
+  "startedAt": "2026-11-12T15:52:50Z",
   "finishedAt": null,
   "status": "ok",
   "counts": {
     "primaryApps": 178,
-    "secondaryApps": 66,
+    "secondaryApps": 68,
     "matchedApps": 35,
-    "importedApps": 31,
-    "totalApps": 196,
+    "importedApps": 33,
+    "totalApps": 198,
     "addedVersions": 32,
-    "totalVersions": 2266,
+    "totalVersions": 2344,
     "conflicts": 76,
-    "sha256": "d82ad1920e553289b287576153791528179299d6212b0314d1169050dd16d7bb"
+    "sha256": "33c13ad8c2945beb6fb6df27df5f6bbb31b50b2a0cc31c969af4b6ef7fcc6824"
   },
   "sources": {
     "ryp0": {
@@ -22,8 +22,24 @@
     "altgallery": {
       "url": "https://raw.githubusercontent.com/bebound/AltGallery/refs/heads/master/all-apps.json",
       "status": "ok",
-      "apps": 66
+      "apps": 66,
+      "matched": 35,
+      "imported": 31
+    },
+    "one": {
+      "url": "https://raw.githubusercontent.com/ios151/One-releases/main/altsource.json",
+      "status": "ok",
+      "apps": 1,
+      "matched": 0,
+      "imported": 1
+    },
+    "insav": {
+      "url": "https://raw.githubusercontent.com/ios151/Insav-releases/main/altsource.json",
+      "status": "ok",
+      "apps": 1,
+      "matched": 0,
+      "imported": 1
     }
   },
-  "feedSha256": "d82ad1920e553289b287576153791528179299d6212b0314d1169050dd16d7bb"
+  "feedSha256": "33c13ad8c2945beb6fb6df27df5f6bbb31b50b2a0cc31c969af4b6ef7fcc6824"
 }

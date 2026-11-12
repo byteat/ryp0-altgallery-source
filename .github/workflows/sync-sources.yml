@@ -22,8 +22,12 @@ on:
         description: "覆盖 AltGallery 源地址（留空用 config/sync.json）"
         type: string
         required: false
+      set_sources:
+        description: "临时覆盖任意源，格式 name=url，多个用逗号分隔，例如 one=https://... ,insav=https://..."
+        type: string
+        required: false
       skip_secondary:
-        description: "只用主源合并（副源故障时应急）"
+        description: "只用主源（其余源故障时应急）"
         type: boolean
         default: false
 
@@ -73,13 +77,22 @@ jobs:
         env:
           RYP0_URL: ${{ inputs.ryp0_url }}
           ALT_URL: ${{ inputs.altgallery_url }}
+          SET_SOURCES: ${{ inputs.set_sources }}
           SKIP_SECONDARY: ${{ inputs.skip_secondary }}
         run: |
           set -euo pipefail
           args=(--config config/sync.json --log-dir logs)
           if [[ -n "${RYP0_URL:-}" ]]; then args+=(--ryp0-url "$RYP0_URL"); fi
           if [[ -n "${ALT_URL:-}" ]]; then args+=(--altgallery-url "$ALT_URL"); fi
-          if [[ "${SKIP_SECONDARY:-false}" == "true" ]]; then args+=(--skip-secondary); fi
+          if [[ -n "${SET_SOURCES:-}" ]]; then
+            IFS=',' read -ra pairs <<< "$SET_SOURCES"
+            for p in "${pairs[@]}"; do
+              p="${p//[[:space:]]/}"
+              [[ -z "$p" ]] && continue
+              args+=(--set "$p")
+            done
+          fi
+          if [[ "${SKIP_SECONDARY:-false}" == "true" ]]; then args+=(--only-primary); fi
           set +e
           python3 scripts/merge_sources.py "${args[@]}"
           code=$?
