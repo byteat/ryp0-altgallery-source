@@ -6,7 +6,7 @@
   "tintColor": "#0A84FF",
   "website": "https://github.com/Sami-Wali/ryP0",
   "identifier": "com.ry0x.source.merged",
-  "sourceURL": "https://raw.githubusercontent.com/OWNER/REPO/main/feed.json",
+  "sourceURL": "https://raw.githubusercontent.com/byteat/ryp0-altgallery-source/HEAD/feed.json",
   "categories": [
     "Sideloading",
     "EMU",
@@ -18,6 +18,110 @@
     "Tools"
   ],
   "apps": [
+    {
+      "name": "Muffin-EMU",
+      "catalogID": "project-d4cdf928f12756d365350e205a558b9a",
+      "bundleIdentifier": "com.void.muffinemu",
+      "developerName": "MuffinEMU",
+      "localizedDescription": "",
+      "subtitle": "",
+      "category": "EMU",
+      "versions": [
+        {
+          "version": "11.2",
+          "date": "2026-11-02T16:11:56Z",
+          "downloadURL": "https://github.com/MuffinEMU/Muffin-EMU/releases/download/nightly/MuffinEMU-fakesigned.ipa",
+          "size": 154432351,
+          "buildVersion": "717",
+          "releaseChannel": "nightly",
+          "sha256": "499285e1d2ba67fc63cb692d30b454e244928ccc5f21589d45594bca9871a871",
+          "sourceAppName": "MuffinEMU 11.2",
+          "sourceAssetName": "MuffinEMU-fakesigned.ipa",
+          "ipaBundleIdentifier": "com.void.muffinemu",
+          "upstreamAssetURL": "https://github.com/MuffinEMU/Muffin-EMU/releases/download/nightly/MuffinEMU-fakesigned.ipa"
+        },
+        {
+          "version": "nightly",
+          "date": "2026-11-02T16:11:55Z",
+          "downloadURL": "https://github.com/MuffinEMU/Muffin-EMU/releases/download/nightly/MuffinEMU.ipa",
+          "size": 154431845,
+          "buildVersion": "717",
+          "releaseChannel": "nightly",
+          "sha256": "76d7f670b67f053bc021781255cdde8d388feebc94de9d61362743bf8ad945bf",
+          "sourceAppName": "MuffinEMU 11.2",
+          "sourceAssetName": "MuffinEMU.ipa",
+          "ipaBundleIdentifier": "com.void.muffinemu",
+          "upstreamAssetURL": "https://github.com/MuffinEMU/Muffin-EMU/releases/download/nightly/MuffinEMU.ipa"
+        },
+        {
+          "version": "v11.2",
+          "date": "2026-11-02T16:10:54Z",
+          "downloadURL": "https://github.com/MuffinEMU/Muffin-EMU/releases/download/v11.2/MuffinEMU.ipa",
+          "size": 154431845,
+          "buildVersion": "717",
+          "releaseChannel": "release",
+          "sha256": "76d7f670b67f053bc021781255cdde8d388feebc94de9d61362743bf8ad945bf",
+          "sourceAppName": "MuffinEMU 11.2",
+          "sourceAssetName": "MuffinEMU.ipa",
+          "ipaBundleIdentifier": "com.void.muffinemu",
+          "upstreamAssetURL": "https://github.com/MuffinEMU/Muffin-EMU/releases/download/v11.2/MuffinEMU.ipa"
+        },
+        {
+          "version": "v11.1",
+          "date": "2026-11-01T23:12:55Z",
+          "downloadURL": "https://github.com/MuffinEMU/Muffin-EMU/releases/download/v11.1/MuffinEMU.ipa",
+          "size": 154419650,
+          "buildVersion": "711",
+          "releaseChannel": "release",
+          "sha256": "2a7aa28550fd68b3af1e8cee660bec4f234620ea80658a3a3a91a01f6ac7b7f9",
+          "sourceAppName": "MuffinEMU 11.1",
+          "sourceAssetName": "MuffinEMU.ipa",
+          "ipaBundleIdentifier": "com.void.muffinemu",
+          "upstreamAssetURL": "https://github.com/MuffinEMU/Muffin-EMU/releases/download/v11.1/MuffinEMU.ipa"
+        },
+        {
+          "version": "v11.0",
+          "date": "2026-11-01T22:41:51Z",
+          "downloadURL": "https://github.com/MuffinEMU/Muffin-EMU/releases/download/v11.0/MuffinEMU-fakesigned.ipa",
+          "size": 154382017,
+          "buildVersion": "709",
+          "releaseChannel": "release",
+          "sha256": "3fcbaf7c867b01868ccce45264bbf33dfa60a6f15e05566ace05946fb946416e",
+          "sourceAppName": "MuffinEMU 11.0",
+          "sourceAssetName": "MuffinEMU-fakesigned.ipa",
+          "ipaBundleIdentifier": "com.void.muffinemu",
+          "upstreamAssetURL": "https://github.com/MuffinEMU/Muffin-EMU/releases/download/v11.0/MuffinEMU-fakesigned.ipa"
+        }
+      ],
+      "iconURL": "https://raw.githubusercontent.com/Sami-Wali/ryP0-repository/main/icons/com.void.muffinemu-499285e1d2ba.png",
+      "updatePolicy": "daily",
+      "appType": "Daily Update",
+      "status": {
+        "state": "healthy",
+        "checkedDownloadURL": "https://github.com/MuffinEMU/Muffin-EMU/releases/download/nightly/MuffinEMU-fakesigned.ipa",
+        "checkedAt": "2026-11-12T14:23:24Z",
+        "message": "Updated by private automation"
+      },
+      "githubURL": "https://github.com/MuffinEMU/Muffin-EMU",
+      "bundleIdentifiers": [
+        "com.void.muffinemu"
+      ],
+      "importSource": {
+        "method": "github",
+        "historyLimit": 0,
+        "deliveryMode": "direct-source",
+        "originURL": "https://github.com/MuffinEMU/Muffin-EMU/releases/download/nightly/MuffinEMU-fakesigned.ipa",
+        "sourceURL": "https://github.com/MuffinEMU/Muffin-EMU"
+      },
+      "automation": {
+        "historySyncPending": true,
+        "repository": "Sami-Wali/ryP0-automation",
+        "configId": "project-d4cdf928f12756d365350e205a558b9a",
+        "sourceURL": "https://github.com/MuffinEMU/Muffin-EMU/releases/tag/v11.0",
+        "workflowPath": ".github/workflows/update-app-project-d4cdf928f12756d365350e205a558b9a.yml"
+      },
+      "githubProjectCard": true
+    },
     {
       "name": "Erosion",
       "catalogID": "project-c69c6c05bdcd217b8386c79515b480f9",
