@@ -61,7 +61,7 @@ appsource-sync/
 
 | 方式 | 说明 |
 | --- | --- |
-| 定时 | `cron: "17 */6 * * *"`，UTC，每 6 小时一次（对应北京时间 01:17 / 07:17 / 13:17 / 19:17） |
+| 定时 | `cron: "17 */6 * * *"`，**UTC**，每 6 小时一次：UTC 00:17 / 06:17 / 12:17 / 18:17，即北京时间 08:17 / 14:17 / 20:17 / 次日 02:17 |
 | 手动 | Actions 页面 → `Sync app sources` → `Run workflow`，可覆盖：`dry_run`（只跑不提交）、`strict_validate`（警告也失败）、`ryp0_url`、`altgallery_url`、`skip_secondary` |
 
 工作流带 `concurrency: sync-app-sources`，同一时刻只跑一个实例，避免两次提交互相覆盖。
@@ -121,7 +121,8 @@ python3 scripts/validate_feed.py --feed feed.json
 
 ## 已知限制
 
-- **GitHub 定时任务不精确**：高负载时可能延迟数十分钟；公开仓库连续 60 天无提交活动会被自动停用定时任务。
+- **GitHub 定时任务不精确**：`schedule` 按 UTC 计算，高负载时可能延迟数十分钟甚至跳过某次。另外公开仓库连续 60 天无提交活动会被自动停用定时任务；由于本项目只在 `feed.json` 变化时才提交，若上游恰好长期无更新，也可能触发这条限制，届时在 Actions 页面手动 Run 一次即可恢复。
+- **定时任务只在默认分支上生效**：`main` 上的工作流文件才会被调度，其他分支的改动不影响触发。
 - **`screenshots` 兼容性未验证**：默认丢弃是为了避免结构不一致导致客户端解析失败，本项目没有在真机 AltStore/SideStore 上验证过保留后的表现。
 - **导入应用的分类是推断值**：关键词命中不了就落到 `Tools`，建议在 `config/sync.json` 的 `categoryOverrides` 里固化。
 - **导入应用不带 `status`/`backup`/`automation`**：这些字段依赖 ryP0 自己的自动化流水线，本仓库无法诚实生成，故留空而非伪造。
