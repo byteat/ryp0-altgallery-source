@@ -730,7 +730,9 @@ def derive_source_url(cfg: dict) -> str:
         return raw
     repo = os.environ.get("GITHUB_REPOSITORY")
     if repo:
-        return f"https://raw.githubusercontent.com/{repo}/HEAD/{cfg.get('output', 'feed.json')}"
+        # 用实际分支名而非 HEAD，保证声明的地址与 README、订阅地址一致
+        branch = os.environ.get("GITHUB_REF_NAME") or "main"
+        return f"https://raw.githubusercontent.com/{repo}/{branch}/{cfg.get('output', 'feed.json')}"
     return ""
 
 
