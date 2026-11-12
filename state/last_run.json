@@ -1,0 +1,29 @@
+{
+  "startedAt": "2026-11-12T14:07:12Z",
+  "finishedAt": null,
+  "status": "ok",
+  "counts": {
+    "primaryApps": 177,
+    "secondaryApps": 66,
+    "matchedApps": 35,
+    "importedApps": 31,
+    "totalApps": 195,
+    "addedVersions": 32,
+    "totalVersions": 2261,
+    "conflicts": 76,
+    "sha256": "627070d0c11acbd3d7d89fc5e8839df8fbfcad25be85913d7be0823403fb9538"
+  },
+  "sources": {
+    "ryp0": {
+      "url": "https://raw.githubusercontent.com/Sami-Wali/ryP0-repository/main/repo.json",
+      "status": "ok",
+      "apps": 182
+    },
+    "altgallery": {
+      "url": "https://raw.githubusercontent.com/bebound/AltGallery/refs/heads/master/all-apps.json",
+      "status": "ok",
+      "apps": 66
+    }
+  },
+  "feedSha256": "627070d0c11acbd3d7d89fc5e8839df8fbfcad25be85913d7be0823403fb9538"
+}

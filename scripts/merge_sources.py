@@ -1,0 +1,880 @@
+#!/usr/bin/env python3
+"""把 ryP0 源与 AltGallery 源合并成一份符合 ryP0 字段规范的 AltStore 源。
+
+用法:
+    python3 scripts/merge_sources.py --config config/sync.json
+
+退出码:
+    0  成功（含"次要源降级"的成功）
+    2  主源（ryP0）拉取失败
+    3  源格式不符合预期 / 合并后为空
+    4  安全阈值触发（合并结果异常缩水）
+    5  写盘失败
+
+设计约束:
+    * 仅使用 Python 标准库，CI 无需 pip install。
+    * 输出确定性（键顺序固定、稳定排序），便于 git diff 审计。
+    * 任何"丢弃/改写/冲突"都会写入日志与报告，不做静默处理。
+"""
+
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+import os
+import re
+import sys
+import time
+import urllib.error
+import urllib.request
+from datetime import datetime, timedelta, timezone
+from pathlib import Path
+
+EXIT_OK = 0
+EXIT_PRIMARY_FETCH = 2
+EXIT_SCHEMA = 3
+EXIT_GUARD = 4
+EXIT_WRITE = 5
+
+# ryP0 观测到的字段顺序，用于稳定输出（未列出的字段追加在末尾）
+APP_KEY_ORDER = [
+    "name", "catalogID", "bundleIdentifier", "developerName",
+    "localizedDescription", "subtitle", "category", "versions",
+    "iconURL", "updatePolicy", "appType", "status", "githubURL",
+    "bundleIdentifiers", "importSource", "automation", "backup",
+    "githubProjectCard", "tintColor", "portDistribution", "appPermissions",
+]
+VERSION_KEY_ORDER = [
+    "version", "date", "downloadURL", "size", "buildVersion",
+    "releaseChannel", "minOSVersion", "localizedDescription", "sha256",
+    "sourceAppName", "sourceAssetName", "ipaBundleIdentifier",
+    "upstreamAssetURL", "sourceArchiveEntry",
+]
+
+# 用于从描述性文本猜测分类，仅在来源未提供 category 时兜底，且一定记日志
+CATEGORY_HINTS = [
+    ("EMU", r"emulat|\bemu\b|retroarch|dolphin|ppsspp|melocafe"),
+    ("Games", r"\bgame\b|gameplay|gba|nintendo|minecraft|stardew"),
+    ("Ports", r"\bport\b|porting|vitagl|wii ?u|bottled|translat"),
+    ("Movies", r"\bmovie\b|video player|streaming|plex|jellyfin|infuse"),
+    ("Social", r"social|mastodon|bluesky|discord|reddit|chat|messag"),
+    ("Sideloading", r"sideload|signer|esign|altstore|sidestore|livecontainer|ipa install"),
+]
+
+DATE_RE = re.compile(
+    r"^(\d{4})-(\d{2})-(\d{2})(?:[T ](\d{2}):(\d{2})(?::(\d{2}))?(?:\.\d+)?(Z|[+-]\d{2}:?\d{2})?)?$"
+)
+BID_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]*$")
+GITHUB_RELEASE_RE = re.compile(
+    r"^https://github\.com/([^/]+)/([^/]+)/releases/"
+)
+
+
+# --------------------------------------------------------------------------
+# 日志
+# --------------------------------------------------------------------------
+class Log:
+    def __init__(self) -> None:
+        self.lines: list[str] = []
+
+    def __call__(self, level: str, msg: str, **fields: object) -> None:
+        ts = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+        suffix = ""
+        if fields:
+            suffix = " " + json.dumps(fields, ensure_ascii=False, sort_keys=True)
+        line = f"{ts} {level:<5} {msg}{suffix}"
+        self.lines.append(line)
+        print(line, file=sys.stdout if level != "ERROR" else sys.stderr, flush=True)
+
+    def info(self, msg: str, **f: object) -> None:
+        self("INFO", msg, **f)
+
+    def warn(self, msg: str, **f: object) -> None:
+        self("WARN", msg, **f)
+
+    def error(self, msg: str, **f: object) -> None:
+        self("ERROR", msg, **f)
+
+    def text(self) -> str:
+        return "\n".join(self.lines) + "\n"
+
+
+# --------------------------------------------------------------------------
+# 工具
+# --------------------------------------------------------------------------
+def utcnow() -> str:
+    return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+
+def norm_bid(value: object) -> str:
+    return str(value).strip().lower() if isinstance(value, str) else ""
+
+
+def natural_key(value: str) -> tuple:
+    parts = re.split(r"(\d+)", str(value))
+    out: list[object] = []
+    for i, part in enumerate(parts):
+        if i % 2:
+            out.append((1, int(part)))
+        else:
+            out.append((0, part.lower()))
+    return tuple(out)
+
+
+def norm_date(value: object, log: Log, ctx: str) -> tuple[str, bool]:
+    """统一成 ryP0 主流写法 YYYY-MM-DDTHH:MM:SSZ。
+
+    返回 (规范化后的字符串, 是否发生了改写)。无法解析时原样返回并告警。
+    """
+    if not isinstance(value, str):
+        log.warn("date 字段缺失或非字符串，已丢弃该值", ctx=ctx, value=repr(value)[:60])
+        return "", False
+    raw = value.strip()
+    m = DATE_RE.match(raw)
+    if not m:
+        log.warn("date 无法解析为 ISO 8601，保留原值", ctx=ctx, value=raw)
+        return raw, False
+    y, mo, d, hh, mm, ss, tz = m.groups()
+    if hh is None:
+        dt = datetime(int(y), int(mo), int(d), tzinfo=timezone.utc)
+    else:
+        offset = timezone.utc
+        if tz and tz != "Z":
+            sign = 1 if tz[0] == "+" else -1
+            body = tz[1:].replace(":", "")
+            offset = timezone(
+                sign * timedelta(hours=int(body[:2]), minutes=int(body[2:]))
+            )
+        dt = datetime(int(y), int(mo), int(d), int(hh), int(mm), int(ss or 0), tzinfo=offset)
+    iso = dt.astimezone(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    return iso, iso != raw
+
+
+def ordered(d: dict, order: list[str]) -> dict:
+    out = {k: d[k] for k in order if k in d}
+    for k, v in d.items():
+        if k not in out:
+            out[k] = v
+    return out
+
+
+def stable_id(bid: str) -> str:
+    return "project-" + hashlib.md5(bid.encode("utf-8")).hexdigest()
+
+
+def clean_str(value: object) -> str:
+    return value.strip() if isinstance(value, str) else ""
+
+
+def is_http_url(value: object) -> bool:
+    return isinstance(value, str) and (
+        value.startswith("https://") or value.startswith("http://")
+    )
+
+
+# --------------------------------------------------------------------------
+# 拉取
+# --------------------------------------------------------------------------
+def fetch_json(url: str, net: dict, log: Log, cache_dir: Path, label: str) -> dict | None:
+    """带指数退避的 GET。失败时尝试读取本地缓存（cache_dir 由 CI 缓存持久化）。"""
+    retries = int(net.get("retries", 4))
+    backoff = float(net.get("backoffBase", 2.0))
+    backoff_max = float(net.get("backoffMax", 30))
+    timeout = float(net.get("timeout", 30))
+    ua = str(net.get("userAgent", "appsource-sync/1.0"))
+
+    last_err = ""
+    for attempt in range(1, retries + 1):
+        try:
+            log.info("正在拉取源", source=label, attempt=attempt, url=url)
+            req = urllib.request.Request(
+                url, headers={"User-Agent": ua, "Accept": "application/json"}
+            )
+            with urllib.request.urlopen(req, timeout=timeout) as resp:
+                status = getattr(resp, "status", None) or 200
+                body = resp.read()
+            if status != 200:
+                raise urllib.error.HTTPError(url, status, "unexpected status", None, None)
+            if not body.strip():
+                raise ValueError("响应体为空")
+            data = json.loads(body.decode("utf-8"))
+            if not isinstance(data, dict):
+                raise ValueError(f"顶层应为对象，实际为 {type(data).__name__}")
+            cache_dir.mkdir(parents=True, exist_ok=True)
+            (cache_dir / f"{label}.json").write_bytes(body)
+            log.info("拉取成功", source=label, bytes=len(body))
+            return data
+        except (urllib.error.URLError, urllib.error.HTTPError, ValueError, json.JSONDecodeError, TimeoutError) as exc:
+            code = getattr(exc, "code", None)
+            last_err = f"{type(exc).__name__}: {getattr(exc, 'reason', exc)}" + (
+                f" (HTTP {code})" if code else ""
+            )
+            retryable = code is None or code in (408, 425, 429) or (isinstance(code, int) and code >= 500)
+            log.warn("拉取失败", source=label, attempt=attempt, retryable=retryable, error=last_err)
+            if not retryable or attempt == retries:
+                break
+            sleep = min(backoff * (2 ** (attempt - 1)), backoff_max)
+            time.sleep(sleep)
+        except Exception as exc:  # noqa: BLE001 - 兜底，避免 CI 静默失败
+            last_err = f"{type(exc).__name__}: {exc}"
+            log.error("拉取出现未预期异常", source=label, error=last_err)
+            break
+
+    cached = cache_dir / f"{label}.json"
+    if cached.exists():
+        try:
+            data = json.loads(cached.read_text("utf-8"))
+            log.warn("改用本地缓存的上一份源文件", source=label, path=str(cached))
+            return data
+        except (OSError, json.JSONDecodeError) as exc:
+            log.error("本地缓存不可用", source=label, error=str(exc))
+    log.error("拉取彻底失败且无可用缓存", source=label, error=last_err)
+    return None
+
+
+# --------------------------------------------------------------------------
+# 规范化：把任意源的 app 转成 ryP0 app 结构
+# --------------------------------------------------------------------------
+def norm_version(
+    raw: dict, app_bid: str, log: Log, app_name: str, defaults: dict, origin: str
+) -> dict | None:
+    if not isinstance(raw, dict):
+        log.warn("版本条目不是对象，已跳过", app=app_name, origin=origin)
+        return None
+    version = clean_str(raw.get("version"))
+    download = clean_str(raw.get("downloadURL"))
+    if not version or not is_http_url(download):
+        log.warn(
+            "版本缺少 version 或合法 downloadURL，已跳过",
+            app=app_name, origin=origin, version=version or None, downloadURL=download or None,
+        )
+        return None
+
+    out: dict = {"version": version}
+
+    date, changed = norm_date(raw.get("date"), log, f"{app_name}@{version}")
+    if not date or not re.match(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$", date):
+        log.warn("版本 date 无法归一为 ryP0 格式，已跳过该版本",
+                 app=app_name, origin=origin, version=version, date=repr(raw.get("date"))[:40])
+        return None
+    out["date"] = date
+    if changed:
+        log.info("已规范化 date", app=app_name, version=version, to=date)
+
+    out["downloadURL"] = download
+
+    size = raw.get("size")
+    if isinstance(size, bool) or not isinstance(size, (int, float)) or size <= 0:
+        log.warn("版本 size 缺失或非法（保留字段以兼容客户端）", app=app_name, version=version, value=repr(size)[:40])
+    else:
+        out["size"] = int(size)
+
+    build = clean_str(raw.get("buildVersion"))
+    if build:
+        out["buildVersion"] = build
+
+    channel = clean_str(raw.get("releaseChannel")) or defaults.get("channel")
+    if channel:
+        out["releaseChannel"] = channel
+
+    min_os = clean_str(raw.get("minOSVersion"))
+    if min_os:
+        out["minOSVersion"] = min_os
+
+    desc = clean_str(raw.get("localizedDescription"))
+    if desc:
+        out["localizedDescription"] = desc
+
+    for key in ("sha256", "sourceAppName", "sourceAssetName", "ipaBundleIdentifier",
+                "upstreamAssetURL", "sourceArchiveEntry"):
+        val = raw.get(key)
+        if isinstance(val, str) and val.strip():
+            out[key] = val.strip()
+
+    # ryP0 的版本会带 ipaBundleIdentifier，缺失时用 app 的 bundleIdentifier 补齐
+    out.setdefault("ipaBundleIdentifier", app_bid)
+    return out
+
+
+def version_identity(v: dict) -> tuple[str, str]:
+    return (str(v.get("version", "")).strip(), str(v.get("buildVersion", "")).strip())
+
+
+def convert_secondary_app(
+    raw: dict, cfg: dict, log: Log, origin: str
+) -> dict | None:
+    """把 AltGallery 结构的 app 转成 ryP0 结构。"""
+    bid = clean_str(raw.get("bundleIdentifier"))
+    name = clean_str(raw.get("name"))
+    if not bid or not BID_RE.match(bid):
+        log.warn("app 缺少合法 bundleIdentifier，已丢弃", origin=origin, name=name or None)
+        return None
+    if not name:
+        log.warn("app 缺少 name，已丢弃", origin=origin, bundleIdentifier=bid)
+        return None
+
+    versions_raw = raw.get("versions")
+    if not isinstance(versions_raw, list) or not versions_raw:
+        log.warn("app 没有任何可用版本，已丢弃", origin=origin, name=name)
+        return None
+
+    defaults = {"channel": cfg.get("importedReleaseChannel", "release")}
+    versions: list[dict] = []
+    for raw_v in versions_raw:
+        nv = norm_version(raw_v, bid, log, name, defaults, origin)
+        if nv:
+            versions.append(nv)
+    if not versions:
+        log.warn("app 的所有版本都不合法，已丢弃", origin=origin, name=name)
+        return None
+
+    app: dict = {
+        "name": name,
+        "catalogID": stable_id(bid),
+        "bundleIdentifier": bid,
+        "developerName": clean_str(raw.get("developerName")) or "Unknown",
+        "localizedDescription": clean_str(raw.get("localizedDescription")),
+        "subtitle": clean_str(raw.get("subtitle")),
+        "category": "",
+        "versions": versions,
+        "iconURL": clean_str(raw.get("iconURL")),
+        "updatePolicy": cfg.get("importedUpdatePolicy", "static"),
+        "appType": cfg.get("importedAppType", "Static"),
+    }
+
+    # 分类：配置覆盖 > 关键词推断 > 默认值；推断结果一律记日志以便人工修正
+    overrides = cfg.get("categoryOverrides") or {}
+    cat = clean_str(overrides.get(bid)) or clean_str(overrides.get(bid.lower()))
+    if cat:
+        app["category"] = cat
+    else:
+        haystack = " ".join(
+            [name, app["subtitle"], app["localizedDescription"]]
+        ).lower()
+        for candidate, pattern in CATEGORY_HINTS:
+            if re.search(pattern, haystack):
+                app["category"] = candidate
+                log.info("根据关键词推断分类，建议在 config 中用 categoryOverrides 固化",
+                         app=name, category=candidate)
+                break
+        else:
+            app["category"] = cfg.get("defaultCategory", "Tools")
+            log.info("未能推断分类，使用默认分类", app=name, category=app["category"])
+
+    tint = clean_str(raw.get("tintColor"))
+    if re.match(r"^#[0-9A-Fa-f]{6}$", tint):
+        app["tintColor"] = tint
+
+    # 从 GitHub Release 链接反推仓库地址，跑不通就不写，绝不猜测
+    repo_url = None
+    for v in versions:
+        m = GITHUB_RELEASE_RE.match(str(v.get("downloadURL", "")))
+        if m:
+            repo_url = f"https://github.com/{m.group(1)}/{m.group(2)}"
+            break
+    if repo_url:
+        app["githubURL"] = repo_url
+
+    # AltGallery 的 screenshots 是纯 URL 数组，与 AltStore 的 {imageURL,size} 结构不同，
+    # 默认不合并进输出，避免客户端解析异常；需要时可在配置里打开。
+    if cfg.get("keepScreenshots") and isinstance(raw.get("screenshots"), list):
+        shots = [s for s in raw["screenshots"] if is_http_url(s)]
+        if shots:
+            app["screenshots"] = shots
+            log.warn("已按配置保留 screenshots（该字段非 ryP0 规范字段，客户端兼容性未经验证）",
+                     app=name, count=len(shots))
+
+    return ordered(app, APP_KEY_ORDER)
+
+
+# --------------------------------------------------------------------------
+# 合并
+# --------------------------------------------------------------------------
+def merge_versions(
+    primary_app: dict, secondary_app: dict, log: Log, app_name: str
+) -> tuple[list[dict], list[dict], int, int]:
+    """以主源版本为基准合并副源版本。
+
+    返回 (合并后版本列表, 冲突列表, 新增版本数, 副源被丢弃的重复版本数)。
+    """
+    merged = list(primary_app.get("versions") or [])
+    index: dict[tuple[str, str], dict] = {}
+    for v in merged:
+        index.setdefault(version_identity(v), v)
+
+    conflicts: list[dict] = []
+    added = 0
+    duplicate = 0
+
+    for v in secondary_app.get("versions") or []:
+        ident = version_identity(v)
+        if ident in index:
+            existing = index[ident]
+            same_url = existing.get("downloadURL") == v.get("downloadURL")
+            same_size = existing.get("size") == v.get("size")
+            if not (same_url and same_size):
+                conflicts.append({
+                    "app": app_name,
+                    "bundleIdentifier": primary_app.get("bundleIdentifier"),
+                    "version": ident[0],
+                    "buildVersion": ident[1],
+                    "field": "downloadURL/size",
+                    "kept": {"source": "ryp0", "downloadURL": existing.get("downloadURL"), "size": existing.get("size")},
+                    "dropped": {"source": "altgallery", "downloadURL": v.get("downloadURL"), "size": v.get("size")},
+                    "resolution": "primary-wins",
+                })
+                log.warn("版本冲突：保留 ryP0 记录", app=app_name, version=ident[0],
+                         ryp0_url=existing.get("downloadURL"), alt_url=v.get("downloadURL"))
+            else:
+                duplicate += 1
+                log.info("副源版本与主源一致，已去重", app=app_name, version=ident[0])
+            continue
+        merged.append(v)
+        index[ident] = v
+        added += 1
+
+    return merged, conflicts, added, duplicate
+
+
+def merge_metadata(
+    primary_app: dict, secondary_app: dict, log: Log
+) -> list[dict]:
+    """补全主源缺失的描述性字段；两边都有且不同则记录冲突、保留主源。"""
+    conflicts: list[dict] = []
+    fillable = ["developerName", "subtitle", "localizedDescription", "iconURL", "tintColor"]
+    for field in fillable:
+        p = clean_str(primary_app.get(field))
+        s = clean_str(secondary_app.get(field))
+        if not p and s:
+            primary_app[field] = s
+            log.info("用副源补全缺失字段", app=primary_app.get("name"), field=field)
+        elif p and s and p != s:
+            conflicts.append({
+                "app": primary_app.get("name"),
+                "bundleIdentifier": primary_app.get("bundleIdentifier"),
+                "field": field,
+                "kept": {"source": "ryp0", "value": p[:200]},
+                "dropped": {"source": "altgallery", "value": s[:200]},
+                "resolution": "primary-wins",
+            })
+    return conflicts
+
+
+def build_feed(primary: dict, secondary: dict | None, cfg: dict, guards: dict,
+               report: dict, log: Log) -> dict:
+    primary_apps = primary.get("apps")
+    if not isinstance(primary_apps, list) or not primary_apps:
+        raise SchemaError("主源 apps 字段缺失、非数组或为空")
+
+    exclude = {norm_bid(x) for x in (cfg.get("excludeBundleIds") or []) if norm_bid(x)}
+
+    # 1) 主源自身去重（上游偶发重复 bundleIdentifier）
+    apps: list[dict] = []
+    by_bid: dict[str, dict] = {}
+    alias: dict[str, str] = {}
+    for raw in primary_apps:
+        if not isinstance(raw, dict):
+            log.warn("主源存在非对象 app 条目，已跳过")
+            continue
+        bid = clean_str(raw.get("bundleIdentifier"))
+        if not bid or not BID_RE.match(bid):
+            log.warn("主源 app 缺少合法 bundleIdentifier，已跳过", name=clean_str(raw.get("name")))
+            report["dropped"]["invalidPrimaryApps"] += 1
+            continue
+        key = norm_bid(bid)
+        if key in exclude:
+            log.info("按 excludeBundleIds 排除", bundleIdentifier=bid)
+            report["dropped"]["excluded"] += 1
+            continue
+        if key in by_bid:
+            log.warn("主源内部 bundleIdentifier 重复，合并版本", bundleIdentifier=bid)
+            report["warnings"].append(f"主源重复 bundleIdentifier: {bid}")
+            existing = by_bid[key]
+            seen = {version_identity(v) for v in existing.get("versions", [])}
+            for v in raw.get("versions") or []:
+                if isinstance(v, dict) and version_identity(v) not in seen:
+                    existing.setdefault("versions", []).append(v)
+            continue
+        app = dict(raw)
+        app["versions"] = [v for v in (app.get("versions") or []) if isinstance(v, dict)]
+        apps.append(app)
+        by_bid[key] = app
+        for extra in app.get("bundleIdentifiers") or []:
+            if isinstance(extra, str) and norm_bid(extra):
+                alias.setdefault(norm_bid(extra), key)
+
+    primary_count = len(apps)
+    log.info("主源应用数", count=primary_count)
+
+    conflicts_meta: list[dict] = []
+    conflicts_ver: list[dict] = []
+    imported = 0
+    matched = 0
+    added_versions = 0
+    imported_keys: set[str] = set()
+
+    # 2) 合并副源
+    if secondary is not None:
+        sec_apps = secondary.get("apps")
+        if not isinstance(sec_apps, list):
+            log.error("副源 apps 字段不是数组，跳过副源合并", source="altgallery")
+            report["sources"]["altgallery"]["status"] = "invalid-schema"
+        else:
+            for raw in sec_apps:
+                if not isinstance(raw, dict):
+                    log.warn("副源存在非对象 app 条目，已跳过")
+                    continue
+                bid = clean_str(raw.get("bundleIdentifier"))
+                key = norm_bid(bid)
+                if not key:
+                    log.warn("副源 app 缺少 bundleIdentifier，已跳过", name=clean_str(raw.get("name")))
+                    report["dropped"]["invalidSecondaryApps"] += 1
+                    continue
+                if key in exclude:
+                    report["dropped"]["excluded"] += 1
+                    continue
+
+                target_key = key if key in by_bid else alias.get(key)
+                if target_key:
+                    target = by_bid[target_key]
+                    matched += 1
+                    conv = {}
+                    defaults = {"channel": cfg.get("importedReleaseChannel", "release")}
+                    sec_versions = [
+                        nv for nv in (
+                            norm_version(v, target.get("bundleIdentifier", bid), log,
+                                         target.get("name", ""), defaults, "altgallery")
+                            for v in (raw.get("versions") or [])
+                        ) if nv
+                    ]
+                    conv["versions"] = sec_versions
+                    merged_versions, vconf, added, _dup = merge_versions(
+                        target, conv, log, target.get("name", bid)
+                    )
+                    added_versions += added
+                    target["versions"] = merged_versions
+                    conflicts_meta.extend(merge_metadata(target, raw, log))
+                    conflicts_ver.extend(vconf)
+                    if key != target_key:
+                        log.info("通过 bundleIdentifiers 别名匹配到主源应用",
+                                 altgallery=bid, matched_to=target.get("bundleIdentifier"))
+                else:
+                    app = convert_secondary_app(raw, cfg, log, "altgallery")
+                    if app is None:
+                        report["dropped"]["invalidSecondaryApps"] += 1
+                        continue
+                    apps.append(app)
+                    by_bid[key] = app
+                    imported += 1
+                    imported_keys.add(key)
+
+    # 3) 逐应用规范化（含主源）、去重、排序、截断
+    max_versions = int(cfg.get("maxVersionsPerApp") or 0)
+    drop_empty = bool(cfg.get("dropEmptyVersionApps", True))
+    final_apps: list[dict] = []
+    dup_removed = 0
+    for app in apps:
+        bid = clean_str(app.get("bundleIdentifier"))
+        name = clean_str(app.get("name"))
+        origin = "altgallery" if norm_bid(bid) in imported_keys else "ryp0"
+        defaults = (
+            {"channel": cfg.get("importedReleaseChannel", "release")}
+            if origin == "altgallery"
+            else {"channel": ""}
+        )
+
+        versions: list[dict] = []
+        seen: set[tuple[str, str]] = set()
+        for raw_v in app.get("versions") or []:
+            nv = norm_version(raw_v, bid, log, name, defaults, origin)
+            if nv is None:
+                report["dropped"]["invalidVersions"] += 1
+                continue
+            ident = version_identity(nv)
+            if ident in seen:
+                dup_removed += 1
+                log.info("去除应用内重复版本（AltStore 会拒绝重复版本）",
+                         app=name, version=ident[0], buildVersion=ident[1])
+                continue
+            seen.add(ident)
+            versions.append(nv)
+
+        versions.sort(key=lambda v: (str(v.get("date", "")), natural_key(v.get("version", ""))),
+                      reverse=True)
+        if max_versions > 0 and len(versions) > max_versions:
+            log.info("按 maxVersionsPerApp 截断版本", app=name,
+                     kept=max_versions, dropped=len(versions) - max_versions)
+            versions = versions[:max_versions]
+        app["versions"] = [ordered(v, VERSION_KEY_ORDER) for v in versions]
+
+        if not versions:
+            if drop_empty:
+                report["dropped"]["emptyVersionApps"].append(name or bid)
+                log.warn("应用没有任何合法版本，已从输出中移除", app=name, bundleIdentifier=bid)
+                by_bid.pop(norm_bid(bid), None)
+                continue
+            log.warn("应用无可用版本，按配置仍在输出中保留（客户端可能忽略）", app=name)
+        final_apps.append(ordered(app, APP_KEY_ORDER))
+    apps = final_apps
+    report["dropped"]["duplicateVersions"] = dup_removed
+    log.info("应用内重复版本去重完成", removed=dup_removed)
+
+    # 4) 排序：主源顺序优先，导入应用按名称追加
+    if not cfg.get("preservePrimaryOrder", True):
+        apps.sort(key=lambda a: natural_key(a.get("name", "")))
+
+    # 5) 分类集合：先按大小写不敏感对齐上游分类，再补入新分类
+    categories = [c for c in (primary.get("categories") or []) if isinstance(c, str) and c]
+    canonical: dict[str, str] = {}
+    for cat in categories:
+        canonical.setdefault(cat.lower(), cat)
+    for app in apps:
+        cat = clean_str(app.get("category"))
+        if not cat:
+            continue
+        low = cat.lower()
+        if low in canonical:
+            if canonical[low] != cat:
+                log.info("统一分类大小写", app=app.get("name"), **{"from": cat, "to": canonical[low]})
+                app["category"] = canonical[low]
+        else:
+            canonical[low] = cat
+            categories.append(cat)
+            log.info("新增分类到 categories 列表", category=cat)
+
+    # 6) news：仅携带配置指定来源，默认只保留主源
+    carry = cfg.get("carryNewsFrom") or ["ryp0"]
+    news: list[dict] = []
+    for src_name, src_data in (("ryp0", primary), ("altgallery", secondary or {})):
+        if src_name not in carry:
+            continue
+        items = src_data.get("news")
+        if isinstance(items, list):
+            for item in items:
+                if isinstance(item, dict) and clean_str(item.get("title")):
+                    news.append(item)
+                elif isinstance(item, dict):
+                    news.append(item)
+    dropped_news = 0
+    if secondary:
+        sec_news = secondary.get("news")
+        if isinstance(sec_news, list) and "altgallery" not in carry:
+            dropped_news = len(sec_news)
+            if dropped_news:
+                log.info("按 carryNewsFrom 未携带副源 news", source="altgallery", count=dropped_news)
+    report["dropped"]["secondaryNews"] = dropped_news
+
+    # 7) 阈值校验
+    ratio_primary = primary_count / max(len(primary_apps), 1)
+    if primary_count < int(guards.get("minAppsAbsolute", 1)):
+        raise GuardError(f"主源合并后应用数 {primary_count} 低于 minAppsAbsolute")
+    if ratio_primary < float(guards.get("minPrimaryAppRatio", 0)):
+        raise GuardError(
+            f"主源有效应用占比 {ratio_primary:.2%} 低于 minPrimaryAppRatio"
+        )
+    total_ratio = len(apps) / max(primary_count, 1)
+    if total_ratio < float(guards.get("minTotalAppRatio", 0)):
+        raise GuardError(
+            f"合并后应用数 {len(apps)} 仅为 {primary_count} 的 {total_ratio:.2%}，疑似异常缩水"
+        )
+
+    merged_source_url = derive_source_url(cfg)
+    if not merged_source_url:
+        raise SchemaError(
+            "无法确定 sourceURL：请设置 merge.sourceUrl、--source-url 或 GITHUB_REPOSITORY 环境变量"
+        )
+    feed = {
+        "name": cfg.get("title", "ryP0 × AltGallery"),
+        "subtitle": cfg.get("subtitle", ""),
+        "description": cfg.get("description", ""),
+        "iconURL": cfg.get("iconUrl", primary.get("iconURL", "")),
+        "tintColor": cfg.get("tintColor", "#0A84FF"),
+        "website": cfg.get("website", ""),
+        "identifier": cfg.get("identifier", "com.ry0x.source.merged"),
+        "sourceURL": merged_source_url,
+        "categories": categories,
+        "apps": apps,
+        "news": news,
+    }
+    feed = {k: v for k, v in feed.items() if v not in ("", None) or k in ("subtitle", "description")}
+
+    report["counts"] = {
+        "primaryApps": primary_count,
+        "secondaryApps": len(secondary.get("apps") or []) if secondary else 0,
+        "matchedApps": matched,
+        "importedApps": imported,
+        "totalApps": len(apps),
+        "addedVersions": added_versions,
+        "totalVersions": sum(len(a.get("versions") or []) for a in apps),
+        "conflicts": len(conflicts_meta) + len(conflicts_ver),
+    }
+    report["conflicts"] = {
+        "metadata": conflicts_meta,
+        "versions": conflicts_ver,
+    }
+    return feed
+
+
+class SchemaError(Exception):
+    pass
+
+
+class GuardError(Exception):
+    pass
+
+
+def derive_source_url(cfg: dict) -> str:
+    raw = str(cfg.get("sourceUrl", "__auto__"))
+    if raw and raw != "__auto__":
+        return raw
+    repo = os.environ.get("GITHUB_REPOSITORY")
+    if repo:
+        return f"https://raw.githubusercontent.com/{repo}/HEAD/{cfg.get('output', 'feed.json')}"
+    return ""
+
+
+# --------------------------------------------------------------------------
+# 主流程
+# --------------------------------------------------------------------------
+def main(argv: list[str]) -> int:
+    parser = argparse.ArgumentParser(description="合并 ryP0 与 AltGallery 源")
+    parser.add_argument("--config", default="config/sync.json")
+    parser.add_argument("--output", help="覆盖输出路径")
+    parser.add_argument("--log-dir", default=None)
+    parser.add_argument("--ryp0-url", default=None)
+    parser.add_argument("--altgallery-url", default=None)
+    parser.add_argument("--source-url", default=None, help="写进 sourceURL 的最终地址")
+    parser.add_argument("--skip-secondary", action="store_true", help="只同步主源")
+    args = parser.parse_args(argv)
+
+    root = Path(args.config).resolve().parent.parent
+    cfg_all = json.loads(Path(args.config).read_text("utf-8"))
+    output = Path(args.output) if args.output else root / cfg_all.get("output", "feed.json")
+    log_dir = Path(args.log_dir) if args.log_dir else root / cfg_all.get("logDir", "logs")
+    state_dir = root / cfg_all.get("stateDir", "state")
+    cache_dir = state_dir / "cache"
+    net = cfg_all.get("network", {})
+    merge_cfg = dict(cfg_all.get("merge", {}))
+    if args.source_url:
+        merge_cfg["sourceUrl"] = args.source_url
+    guards = cfg_all.get("guards", {})
+    sources = cfg_all.get("sources", {})
+
+    ryp0_url = args.ryp0_url or sources.get("ryp0", {}).get("url")
+    alt_url = args.altgallery_url or sources.get("altgallery", {}).get("url")
+
+    log = Log()
+    started = utcnow()
+    log.info("开始同步", version="1.0.0", startedAt=started, output=str(output))
+
+    report: dict = {
+        "startedAt": started,
+        "finishedAt": None,
+        "status": "unknown",
+        "sources": {},
+        "counts": {},
+        "conflicts": {"metadata": [], "versions": []},
+        "dropped": {"invalidPrimaryApps": 0, "invalidSecondaryApps": 0,
+                    "invalidVersions": 0, "duplicateVersions": 0,
+                    "emptyVersionApps": [], "excluded": 0, "secondaryNews": 0},
+        "warnings": [],
+        "output": str(output),
+    }
+
+    def finish(code: int, status: str) -> int:
+        report["status"] = status
+        report["finishedAt"] = utcnow()
+        log_dir.mkdir(parents=True, exist_ok=True)
+        stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+        (log_dir / f"sync-{stamp}.log").write_text(log.text(), "utf-8")
+        (log_dir / f"sync-{stamp}.json").write_text(
+            json.dumps(report, ensure_ascii=False, indent=2) + "\n", "utf-8"
+        )
+        (log_dir / "last_report.json").write_text(
+            json.dumps(report, ensure_ascii=False, indent=2) + "\n", "utf-8"
+        )
+        log.info("同步结束", status=status, code=code)
+        return code
+
+    # ---- 拉取 ----
+    primary = fetch_json(ryp0_url, net, log, cache_dir, "ryp0") if ryp0_url else None
+    if primary is None:
+        report["sources"]["ryp0"] = {"url": ryp0_url, "status": "failed"}
+        log.error("主源不可用，保留上一版 feed，不做任何写入")
+        return finish(EXIT_PRIMARY_FETCH, "failed-primary")
+    report["sources"]["ryp0"] = {"url": ryp0_url, "status": "ok",
+                                 "apps": len(primary.get("apps") or [])}
+
+    secondary = None
+    if not args.skip_secondary and alt_url:
+        secondary = fetch_json(alt_url, net, log, cache_dir, "altgallery")
+        if secondary is None:
+            report["sources"]["altgallery"] = {"url": alt_url, "status": "failed"}
+            report["warnings"].append("副源拉取失败，本次只输出主源")
+            if guards.get("failOnSecondaryFailure"):
+                log.error("副源失败且 failOnSecondaryFailure=true，中止")
+                return finish(EXIT_SCHEMA, "failed-secondary")
+            log.warn("副源拉取失败，降级为仅主源合并")
+        else:
+            report["sources"]["altgallery"] = {
+                "url": alt_url, "status": "ok", "apps": len(secondary.get("apps") or [])
+            }
+
+    # ---- 合并 ----
+    try:
+        feed = build_feed(primary, secondary, merge_cfg, guards, report, log)
+    except SchemaError as exc:
+        log.error("源格式不符合预期", error=str(exc))
+        return finish(EXIT_SCHEMA, "failed-schema")
+    except GuardError as exc:
+        log.error("安全阈值触发，拒绝写入", error=str(exc))
+        return finish(EXIT_GUARD, "failed-guard")
+
+    # ---- 原子写盘 ----
+    try:
+        output.parent.mkdir(parents=True, exist_ok=True)
+        tmp = output.with_suffix(output.suffix + ".tmp")
+        payload = json.dumps(feed, ensure_ascii=False, indent=2) + "\n"
+        tmp.write_text(payload, "utf-8")
+        os.replace(tmp, output)
+        log.info("已写入合并源", path=str(output), bytes=len(payload.encode("utf-8")),
+                 apps=len(feed["apps"]))
+    except OSError as exc:
+        log.error("写入失败", error=str(exc))
+        return finish(EXIT_WRITE, "failed-write")
+
+    # ---- 状态与历史（供 commit 与排查使用）----
+    status = "ok"
+    if report["sources"].get("altgallery", {}).get("status") != "ok":
+        status = "degraded"
+    report["counts"]["sha256"] = hashlib.sha256(output.read_bytes()).hexdigest()
+    snapshot = {
+        "startedAt": report["startedAt"],
+        "finishedAt": report["finishedAt"],
+        "status": status,
+        "counts": report["counts"],
+        "sources": report["sources"],
+        "feedSha256": report["counts"]["sha256"],
+    }
+    try:
+        state_dir.mkdir(parents=True, exist_ok=True)
+        (state_dir / "last_run.json").write_text(
+            json.dumps(snapshot, ensure_ascii=False, indent=2) + "\n", "utf-8"
+        )
+        history_path = state_dir / "history.jsonl"
+        with history_path.open("a", encoding="utf-8") as fh:
+            fh.write(json.dumps(snapshot, ensure_ascii=False, sort_keys=True) + "\n")
+        lines = history_path.read_text("utf-8").splitlines()
+        keep = int(guards.get("historyLines", 200))
+        if len(lines) > keep:
+            history_path.write_text("\n".join(lines[-keep:]) + "\n", "utf-8")
+            log.info("history.jsonl 已裁剪", kept=keep, dropped=len(lines) - keep)
+    except OSError as exc:
+        log.warn("写入 state 失败（不影响 feed 发布）", error=str(exc))
+
+    return finish(EXIT_OK, status)
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv[1:]))

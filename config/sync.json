@@ -1,0 +1,57 @@
+{
+  "$schema": "./sync.schema.json",
+  "output": "feed.json",
+  "logDir": "logs",
+  "stateDir": "state",
+  "sources": {
+    "ryp0": {
+      "url": "https://raw.githubusercontent.com/Sami-Wali/ryP0-repository/main/repo.json",
+      "schema": "ryp0",
+      "required": true
+    },
+    "altgallery": {
+      "url": "https://raw.githubusercontent.com/bebound/AltGallery/refs/heads/master/all-apps.json",
+      "schema": "altstore",
+      "required": false
+    }
+  },
+  "network": {
+    "timeout": 30,
+    "retries": 4,
+    "backoffBase": 2.0,
+    "backoffMax": 30,
+    "userAgent": "appsource-sync/1.0 (+github actions)"
+  },
+  "merge": {
+    "primary": "ryp0",
+    "title": "ryP0 × AltGallery",
+    "subtitle": "ryP0 源与 AltGallery 源的合并镜像",
+    "description": "由 GitHub Actions 自动合并 ryP0 与 AltGallery 两个 AltStore 源，字段结构遵循 ryP0 规范。",
+    "identifier": "com.ry0x.source.merged",
+    "sourceUrl": "__auto__",
+    "iconUrl": "https://raw.githubusercontent.com/Sami-Wali/ryP0-repository/main/icons/ry0_.jpg",
+    "tintColor": "#0A84FF",
+    "website": "https://github.com/Sami-Wali/ryP0",
+    "defaultCategory": "Tools",
+    "importedUpdatePolicy": "static",
+    "importedAppType": "Static",
+    "importedReleaseChannel": "release",
+    "keepScreenshots": false,
+    "dropEmptyVersionApps": true,
+    "carryNewsFrom": ["ryp0"],
+    "preservePrimaryOrder": true,
+    "maxVersionsPerApp": 0,
+    "excludeBundleIds": [],
+    "categoryOverrides": {
+      "com.kdt.livecontainer": "Sideloading",
+      "com.SideStore.SideStore": "Sideloading"
+    }
+  },
+  "guards": {
+    "minAppsAbsolute": 20,
+    "minPrimaryAppRatio": 0.8,
+    "minTotalAppRatio": 0.9,
+    "failOnSecondaryFailure": false,
+    "historyLines": 200
+  }
+}

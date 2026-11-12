@@ -1,0 +1,210 @@
+name: Sync app sources
+
+# 定时（每 6 小时，UTC）+ 手动触发；PR 触发只做校验，不写回
+on:
+  schedule:
+    - cron: "17 */6 * * *"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "只生成与校验，不提交（调试用）"
+        type: boolean
+        default: false
+      strict_validate:
+        description: "把校验警告也视为失败"
+        type: boolean
+        default: false
+      ryp0_url:
+        description: "覆盖 ryP0 源地址（留空用 config/sync.json）"
+        type: string
+        required: false
+      altgallery_url:
+        description: "覆盖 AltGallery 源地址（留空用 config/sync.json）"
+        type: string
+        required: false
+      skip_secondary:
+        description: "只用主源合并（副源故障时应急）"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+# 同一时刻只允许一个同步任务，避免两次提交互相覆盖
+concurrency:
+  group: sync-app-sources
+  cancel-in-progress: false
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  sync:
+    name: 拉取、合并、校验、发布
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: 检出仓库
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          # 定时任务用默认 token 推送即可，无需 PAT
+
+      - name: 准备 Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # 缓存上一份源文件：主源彻底不可用时脚本会退回到缓存，保证源不至于中断
+      - name: 恢复源缓存与状态
+        uses: actions/cache@v4
+        with:
+          path: state
+          key: sources-state-${{ github.run_id }}
+          restore-keys: |
+            sources-state-
+
+      - name: 运行离线测试
+        run: python3 tests/test_merge.py
+
+      - name: 运行合并
+        id: merge
+        env:
+          RYP0_URL: ${{ inputs.ryp0_url }}
+          ALT_URL: ${{ inputs.altgallery_url }}
+          SKIP_SECONDARY: ${{ inputs.skip_secondary }}
+        run: |
+          set -euo pipefail
+          args=(--config config/sync.json --log-dir logs)
+          if [[ -n "${RYP0_URL:-}" ]]; then args+=(--ryp0-url "$RYP0_URL"); fi
+          if [[ -n "${ALT_URL:-}" ]]; then args+=(--altgallery-url "$ALT_URL"); fi
+          if [[ "${SKIP_SECONDARY:-false}" == "true" ]]; then args+=(--skip-secondary); fi
+          set +e
+          python3 scripts/merge_sources.py "${args[@]}"
+          code=$?
+          set -e
+          echo "exit_code=$code" >> "$GITHUB_OUTPUT"
+          case "$code" in
+            0) echo "合并完成" ;;
+            2) echo "::error::主源拉取失败，本次不更新 feed（保留上一版）"; exit 2 ;;
+            3) echo "::error::源格式不符合预期，本次不更新 feed"; exit 3 ;;
+            4) echo "::error::合并结果触发安全阈值（疑似上游异常），本次不更新 feed"; exit 4 ;;
+            5) echo "::error::写入 feed 失败"; exit 5 ;;
+            *) echo "::error::未知错误码 $code"; exit 1 ;;
+          esac
+
+      - name: 校验合并结果
+        if: steps.merge.outputs.exit_code == '0'
+        env:
+          STRICT: ${{ inputs.strict_validate }}
+        run: |
+          set -euo pipefail
+          args=(--feed feed.json --min-apps 20)
+          if [[ "${STRICT:-false}" == "true" ]]; then args+=(--strict); fi
+          python3 scripts/validate_feed.py "${args[@]}"
+
+      - name: 提交并推送
+        id: publish
+        if: steps.merge.outputs.exit_code == '0' && inputs.dry_run != true
+        run: |
+          set -euo pipefail
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add feed.json
+          if [[ -f state/last_run.json ]]; then git add state/last_run.json; fi
+          if [[ -f state/history.jsonl ]]; then git add state/history.jsonl; fi
+
+          if git diff --cached --quiet; then
+            echo "内容无变化，跳过提交"
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          summary=$(python3 - <<'PY'
+          import json, pathlib
+          p = pathlib.Path("logs/last_report.json")
+          r = json.loads(p.read_text("utf-8")) if p.exists() else {}
+          c = r.get("counts", {})
+          print(f"应用 {c.get('totalApps', '?')} 个 / 版本 {c.get('totalVersions', '?')} 个"
+                f"（主源 {c.get('primaryApps', '?')} + 导入 {c.get('importedApps', '?')}，"
+                f"冲突 {c.get('conflicts', 0)}）")
+          PY
+          )
+          git commit -m "chore(sync): 更新合并源 — ${summary}" \
+                     -m "上游: ryP0 + AltGallery | 运行: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+
+          for attempt in 1 2 3; do
+            if git push; then echo "推送成功（第 $attempt 次）"; exit 0; fi
+            echo "推送失败，尝试变基后重试（第 $attempt 次）"
+            git pull --rebase --autostash origin "${GITHUB_REF_NAME}" || true
+            sleep $((attempt * 5))
+          done
+          echo "::error::连续 3 次推送失败"; exit 1
+
+      - name: 归档日志与产物
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sync-artifacts-${{ github.run_id }}
+          path: |
+            logs/
+            state/last_run.json
+            feed.json
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: 写入运行摘要
+        if: always()
+        run: |
+          python3 - <<'PY' >> "$GITHUB_STEP_SUMMARY"
+          import json, pathlib
+          p = pathlib.Path("logs/last_report.json")
+          print("## 源同步结果\n")
+          if not p.exists():
+              print("> 未生成报告，任务在合并前已失败，请查看上方日志。\n")
+              raise SystemExit(0)
+          r = json.loads(p.read_text("utf-8"))
+          c, d = r.get("counts", {}), r.get("dropped", {})
+          icon = {"ok": "✅", "degraded": "⚠️"}.get(r.get("status"), "❌")
+          print(f"{icon} **状态**: `{r.get('status')}`  ")
+          print(f"**开始**: {r.get('startedAt')}  ")
+          print(f"**结束**: {r.get('finishedAt')}\n")
+          print("| 指标 | 数值 |")
+          print("| --- | --- |")
+          for k, label in [("primaryApps", "主源应用"), ("secondaryApps", "副源应用"),
+                           ("matchedApps", "同 ID 合并"), ("importedApps", "新增导入"),
+                           ("totalApps", "输出应用"), ("totalVersions", "输出版本"),
+                           ("addedVersions", "新增版本"), ("conflicts", "冲突条目")]:
+              print(f"| {label} | {c.get(k, '-')} |")
+          print("\n### 上游状态\n")
+          for name, s in (r.get("sources") or {}).items():
+              mark = "🟢" if s.get("status") == "ok" else "🔴"
+              print(f"- {mark} **{name}**: `{s.get('status')}` — {s.get('apps', '-')} 个应用")
+          dropped_empty = d.get("emptyVersionApps") or []
+          if dropped_empty or d.get("duplicateVersions"):
+              print("\n### 清理动作\n")
+              if dropped_empty:
+                  print(f"- 移除无可用版本的应用 {len(dropped_empty)} 个："
+                        + ", ".join(dropped_empty[:10])
+                        + (" …" if len(dropped_empty) > 10 else ""))
+              if d.get("duplicateVersions"):
+                  print(f"- 去除应用内重复版本 {d['duplicateVersions']} 条")
+          vc = (r.get("conflicts") or {}).get("versions") or []
+          if vc:
+              print("\n### 版本冲突（保留 ryP0 记录）\n")
+              print("| 应用 | 版本 | 保留 | 丢弃 |")
+              print("| --- | --- | --- | --- |")
+              for x in vc[:10]:
+                  print(f"| {x['app']} | {x['version']} | `{(x['kept'].get('downloadURL') or '')[:60]}` "
+                        f"| `{(x['dropped'].get('downloadURL') or '')[:60]}` |")
+          mc = (r.get("conflicts") or {}).get("metadata") or []
+          if mc:
+              print(f"\n元数据差异 {len(mc)} 处（均保留 ryP0 值，明细见 artifact 中的 `logs/sync-*.json`）。")
+          if r.get("warnings"):
+              print("\n### 警告\n")
+              for w in r["warnings"]:
+                  print(f"- {w}")
+          PY
