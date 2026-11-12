@@ -1,30 +1,30 @@
 {
-  "startedAt": "2026-11-12T15:52:50Z",
+  "startedAt": "2026-11-12T23:38:55Z",
   "finishedAt": null,
   "status": "ok",
   "counts": {
-    "primaryApps": 178,
+    "primaryApps": 187,
     "secondaryApps": 68,
-    "matchedApps": 35,
-    "importedApps": 33,
-    "totalApps": 198,
-    "addedVersions": 32,
-    "totalVersions": 2344,
-    "conflicts": 76,
-    "sha256": "33c13ad8c2945beb6fb6df27df5f6bbb31b50b2a0cc31c969af4b6ef7fcc6824"
+    "matchedApps": 36,
+    "importedApps": 32,
+    "totalApps": 206,
+    "addedVersions": 33,
+    "totalVersions": 2528,
+    "conflicts": 80,
+    "sha256": "7ffc8586e94881584202609762b426cd27fc25abb6b75f9167af01e5b5cfdfb2"
   },
   "sources": {
     "ryp0": {
       "url": "https://raw.githubusercontent.com/Sami-Wali/ryP0-repository/main/repo.json",
       "status": "ok",
-      "apps": 183
+      "apps": 193
     },
     "altgallery": {
       "url": "https://raw.githubusercontent.com/bebound/AltGallery/refs/heads/master/all-apps.json",
       "status": "ok",
       "apps": 66,
-      "matched": 35,
-      "imported": 31
+      "matched": 36,
+      "imported": 30
     },
     "one": {
       "url": "https://raw.githubusercontent.com/ios151/One-releases/main/altsource.json",
@@ -41,5 +41,5 @@
       "imported": 1
     }
   },
-  "feedSha256": "33c13ad8c2945beb6fb6df27df5f6bbb31b50b2a0cc31c969af4b6ef7fcc6824"
+  "feedSha256": "7ffc8586e94881584202609762b426cd27fc25abb6b75f9167af01e5b5cfdfb2"
 }
