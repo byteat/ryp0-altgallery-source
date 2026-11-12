@@ -116,8 +116,11 @@ jobs:
           if [[ -f state/last_run.json ]]; then git add state/last_run.json; fi
           if [[ -f state/history.jsonl ]]; then git add state/history.jsonl; fi
 
-          if git diff --cached --quiet; then
-            echo "内容无变化，跳过提交"
+          # 只有 feed.json 真的变了才提交：state/ 里的时间戳每次都会变，
+          # 否则每 6 小时都会产生一个仅时间戳变化的空提交
+          if git diff --cached --quiet -- feed.json; then
+            git reset -q
+            echo "feed.json 无变化，跳过提交（本次运行日志见 artifact）"
             echo "changed=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
