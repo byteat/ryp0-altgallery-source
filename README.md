@@ -110,8 +110,6 @@ appsource-sync/
 
 工作流带 `concurrency: sync-app-sources`，同一时刻只跑一个实例，避免两次提交互相覆盖。
 
-实测定时任务确实会跑，但会漂移：2026-11-13 的一次晚 26 分钟，另一次延迟数小时。
-
 ## 异常处置
 
 脚本用退出码区分故障类型，工作流据此决定「是否更新 feed」：
@@ -184,8 +182,6 @@ python3 scripts/merge_sources.py --config config/sync.json --set one=https://exa
 ### 本仓库
 
 代码与文档采用 **MIT License**，见 [`LICENSE`](LICENSE)，版权归 byteat（2026）。许可范围与第三方内容的归属边界写在 [`NOTICE.md`](NOTICE.md) 里。
-
-> `LICENSE` 刻意只保留 MIT 标准正文，没有附加中文说明——GitHub 的许可证识别按标准文本匹配，追加内容会让它识别成 `NOASSERTION`。补充说明一律放在 `NOTICE.md`。
 
 ### 产物性质
 
