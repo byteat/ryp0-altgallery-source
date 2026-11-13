@@ -19,10 +19,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
----
-
-本许可证仅覆盖本仓库的代码与文档（scripts/、config/、tests/、workflows、
-README 等）。feed.json 是对第三方源的元数据聚合产物，其中的应用信息、
-名称、图标、安装包版权归各自作者所有，适用各上游仓库自己的许可条款，
-详见 README 的「许可与合规」一节。

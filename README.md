@@ -95,7 +95,8 @@ appsource-sync/
 ├── scripts/validate_feed.py             # 独立的输出校验器
 ├── tests/test_merge.py                  # 21 组离线回归测试
 ├── feed.json                            # 产物（提交进仓库）
-├── LICENSE                              # MIT
+├── LICENSE                              # MIT（仅标准正文，便于 GitHub 识别）
+├── NOTICE.md                            # 许可范围与上游归属说明
 ├── logs/                                # 每次运行的 .log 与 .json（artifact）
 └── state/                               # last_run.json / history.jsonl / cache/
 ```
@@ -182,7 +183,9 @@ python3 scripts/merge_sources.py --config config/sync.json --set one=https://exa
 
 ### 本仓库
 
-代码与文档采用 **MIT License**，见 [`LICENSE`](LICENSE)，版权归 byteat（2026）。
+代码与文档采用 **MIT License**，见 [`LICENSE`](LICENSE)，版权归 byteat（2026）。许可范围与第三方内容的归属边界写在 [`NOTICE.md`](NOTICE.md) 里。
+
+> `LICENSE` 刻意只保留 MIT 标准正文，没有附加中文说明——GitHub 的许可证识别按标准文本匹配，追加内容会让它识别成 `NOASSERTION`。补充说明一律放在 `NOTICE.md`。
 
 ### 产物性质
 
@@ -203,6 +206,8 @@ python3 scripts/merge_sources.py --config config/sync.json --set one=https://exa
 | `Sami-Wali/ryP0` | 未声明 | 同上 |
 | `ios151/One-releases` | 未声明 | 同上 |
 | `ios151/Insav-releases` | 未声明 | 同上 |
+
+更细的归属划分（哪些文件受 MIT 覆盖、哪些属于第三方内容）见 [`NOTICE.md`](NOTICE.md)。
 
 「未声明」意味着仓库中没有 LICENSE 文件、GitHub 也未识别出许可证，按默认著作权规则属于保留所有权利。本项目对这些源的用法是**订阅级聚合**：读取其公开托管的源 JSON，把应用条目并入我们自己的源，并保留指向上游的下载地址。这不等同于复制、修改或再分发其源代码。
 
