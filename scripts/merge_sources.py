@@ -176,21 +176,28 @@ def is_http_url(value: object) -> bool:
 # --------------------------------------------------------------------------
 # 拉取
 # --------------------------------------------------------------------------
-def fetch_json(url: str, net: dict, log: Log, cache_dir: Path, label: str) -> dict | None:
-    """带指数退避的 GET。失败时尝试读取本地缓存（cache_dir 由 CI 缓存持久化）。"""
+def fetch_json(url: str, net: dict, log: Log, cache_dir: Path, label: str,
+               expect: str = "object", extra_headers: dict | None = None):
+    """带指数退避的 GET。失败时尝试读取本地缓存（cache_dir 由 CI 缓存持久化）。
+
+    expect="object" 用于 AltStore 源，expect="array" 用于 GitHub releases 列表。
+    """
     retries = int(net.get("retries", 4))
     backoff = float(net.get("backoffBase", 2.0))
     backoff_max = float(net.get("backoffMax", 30))
     timeout = float(net.get("timeout", 30))
     ua = str(net.get("userAgent", "appsource-sync/1.0"))
+    headers = {"User-Agent": ua, "Accept": "application/vnd.github+json"
+               if expect == "array" else "application/json",
+               "X-GitHub-Api-Version": "2022-11-28"}
+    if extra_headers:
+        headers.update(extra_headers)
 
     last_err = ""
     for attempt in range(1, retries + 1):
         try:
             log.info("正在拉取源", source=label, attempt=attempt, url=url)
-            req = urllib.request.Request(
-                url, headers={"User-Agent": ua, "Accept": "application/json"}
-            )
+            req = urllib.request.Request(url, headers=headers)
             with urllib.request.urlopen(req, timeout=timeout) as resp:
                 status = getattr(resp, "status", None) or 200
                 body = resp.read()
@@ -199,8 +206,10 @@ def fetch_json(url: str, net: dict, log: Log, cache_dir: Path, label: str) -> di
             if not body.strip():
                 raise ValueError("响应体为空")
             data = json.loads(body.decode("utf-8"))
-            if not isinstance(data, dict):
+            if expect == "object" and not isinstance(data, dict):
                 raise ValueError(f"顶层应为对象，实际为 {type(data).__name__}")
+            if expect == "array" and not isinstance(data, list):
+                raise ValueError(f"顶层应为数组，实际为 {type(data).__name__}")
             cache_dir.mkdir(parents=True, exist_ok=True)
             (cache_dir / f"{label}.json").write_bytes(body)
             log.info("拉取成功", source=label, bytes=len(body))
@@ -231,6 +240,99 @@ def fetch_json(url: str, net: dict, log: Log, cache_dir: Path, label: str) -> di
             log.error("本地缓存不可用", source=label, error=str(exc))
     log.error("拉取彻底失败且无可用缓存", source=label, error=last_err)
     return None
+
+
+# --------------------------------------------------------------------------
+# GitHub Releases → AltStore 源（用于只发 IPA、没有现成源文件的仓库）
+# --------------------------------------------------------------------------
+def releases_to_feed(src: dict, releases: list, log: Log) -> dict:
+    """把仓库的 releases 列表转换成 AltStore 形状的源（只在内存里存在）。
+
+    bundleIdentifier 必须由配置显式提供——它无法从 release 元数据可靠推断，
+    猜错会让用户在设备上装出两个互不相认的同一个 App。
+    """
+    name = clean_str(src.get("name")) or clean_str(src.get("repo")) or "unknown"
+    bid = clean_str(src.get("bundleIdentifier"))
+    if not bid or not BID_RE.match(bid):
+        raise SchemaError(f"github-releases 源 {name} 需要合法的 bundleIdentifier")
+
+    pattern = re.compile(src.get("assetPattern") or r"\.ipa$", re.IGNORECASE)
+    exclude_pre = bool(src.get("excludePrerelease", True))
+    limit = int(src.get("maxVersions") or 0)
+
+    versions: list[dict] = []
+    for rel in releases if isinstance(releases, list) else []:
+        if not isinstance(rel, dict) or rel.get("draft"):
+            continue
+        if exclude_pre and rel.get("prerelease"):
+            continue
+        tag = clean_str(rel.get("tag_name"))
+        if not tag:
+            continue
+        asset = next(
+            (a for a in (rel.get("assets") or [])
+             if isinstance(a, dict) and pattern.search(str(a.get("name", "")))),
+            None,
+        )
+        if not asset:
+            log.info("该 release 没有匹配的安装包，跳过", source=name, tag=tag)
+            continue
+        version = re.sub(r"^[vV](?=\d)", "", tag)
+        date, _ = norm_date(rel.get("published_at") or rel.get("created_at"), log, f"{name}@{tag}")
+        if not date:
+            log.warn("release 时间无法解析，跳过该版本", source=name, tag=tag)
+            continue
+        size = asset.get("size")
+        versions.append({
+            "version": version,
+            "date": date,
+            "downloadURL": clean_str(asset.get("browser_download_url")),
+            "size": int(size) if isinstance(size, (int, float)) and size > 0 else 0,
+            "releaseChannel": "prerelease" if rel.get("prerelease") else "release",
+        })
+
+    versions.sort(key=lambda v: (v["date"], natural_key(v["version"])), reverse=True)
+    if limit > 0:
+        versions = versions[:limit]
+    if not versions:
+        log.error("该仓库没有任何可用的 IPA release", source=name)
+        return {"name": name, "apps": [], "news": []}
+
+    app = {
+        "name": clean_str(src.get("appName")) or name,
+        "bundleIdentifier": bid,
+        "developerName": clean_str(src.get("developerName")) or name,
+        "subtitle": clean_str(src.get("subtitle")),
+        "localizedDescription": clean_str(src.get("localizedDescription")),
+        "category": clean_str(src.get("category")) or "Tools",
+        "versions": versions,
+        "iconURL": clean_str(src.get("iconURL")),
+        "githubURL": f"https://github.com/{src.get('repo')}" if src.get("repo") else "",
+    }
+    if clean_str(src.get("minOSVersion")):
+        for v in app["versions"]:
+            v["minOSVersion"] = clean_str(src.get("minOSVersion"))
+    log.info("从 releases 生成源条目", source=name, app=app["name"],
+             bundleIdentifier=bid, versions=len(versions),
+             latest=versions[0]["version"])
+    return {"name": name, "apps": [app], "news": []}
+
+
+def fetch_releases_source(src: dict, net: dict, log: Log, cache_dir: Path) -> dict | None:
+    repo = clean_str(src.get("repo"))
+    if not repo or "/" not in repo:
+        raise SchemaError(f"源 {src.get('name')} 的 repo 字段应形如 owner/name")
+    per_page = int(src.get("perPage") or 30)
+    token = os.environ.get("GITHUB_TOKEN") or os.environ.get("GH_TOKEN") or ""
+    headers = {"Authorization": f"Bearer {token}"} if token else {}
+    if not token:
+        log.warn("未提供 GITHUB_TOKEN，走未认证额度（每小时 60 次）", source=src.get("name"))
+    url = f"https://api.github.com/repos/{repo}/releases?per_page={per_page}"
+    releases = fetch_json(url, net, log, cache_dir, clean_str(src.get("name")) or repo,
+                          expect="array", extra_headers=headers)
+    if releases is None:
+        return None
+    return releases_to_feed(src, releases, log)
 
 
 # --------------------------------------------------------------------------
@@ -498,8 +600,12 @@ def build_feed(primary: dict, secondaries: list[tuple[str, dict]], cfg: dict,
         raise SchemaError("主源 apps 字段缺失、非数组或为空")
 
     exclude = {norm_bid(x) for x in (cfg.get("excludeBundleIds") or []) if norm_bid(x)}
+    # keep-all: 同 bundleIdentifier 的两条记录都保留（默认）；merge: 合并成一个应用的多个版本
+    keep_all = str(cfg.get("onBundleIdConflict", "keep-all")) == "keep-all"
+    if keep_all:
+        log.info("冲突策略 keep-all：同 bundleIdentifier 的记录全部保留，不做合并")
 
-    # 1) 主源自身去重（上游偶发重复 bundleIdentifier）
+    # 1) 主源逐条纳入（重复 bundleIdentifier 按策略处理）
     apps: list[dict] = []
     by_bid: dict[str, dict] = {}
     alias: dict[str, str] = {}
@@ -517,6 +623,15 @@ def build_feed(primary: dict, secondaries: list[tuple[str, dict]], cfg: dict,
             log.info("按 excludeBundleIds 排除", bundleIdentifier=bid)
             report["dropped"]["excluded"] += 1
             continue
+        if key in by_bid and keep_all:
+            log.info("源内 bundleIdentifier 重复，按 keep-all 保留为独立条目",
+                     bundleIdentifier=bid, name=clean_str(raw.get("name")))
+            report["warnings"].append(f"重复 bundleIdentifier（保留两条）: {bid}")
+            app = dict(raw)
+            app["versions"] = [v for v in (app.get("versions") or []) if isinstance(v, dict)]
+            app["_origin"] = primary_name
+            apps.append(app)
+            continue
         if key in by_bid:
             log.warn("主源内部 bundleIdentifier 重复，合并版本", bundleIdentifier=bid)
             report["warnings"].append(f"主源重复 bundleIdentifier: {bid}")
@@ -528,6 +643,7 @@ def build_feed(primary: dict, secondaries: list[tuple[str, dict]], cfg: dict,
             continue
         app = dict(raw)
         app["versions"] = [v for v in (app.get("versions") or []) if isinstance(v, dict)]
+        app["_origin"] = primary_name
         apps.append(app)
         by_bid[key] = app
         for extra in app.get("bundleIdentifiers") or []:
@@ -571,7 +687,7 @@ def build_feed(primary: dict, secondaries: list[tuple[str, dict]], cfg: dict,
                 report["dropped"]["excluded"] += 1
                 continue
 
-            target_key = key if key in by_bid else alias.get(key)
+            target_key = None if keep_all else (key if key in by_bid else alias.get(key))
             if target_key:
                 target = by_bid[target_key]
                 matched += 1
@@ -603,8 +719,14 @@ def build_feed(primary: dict, secondaries: list[tuple[str, dict]], cfg: dict,
                 if app is None:
                     report["dropped"]["invalidSecondaryApps"] += 1
                     continue
+                if key in by_bid:
+                    src_stats["duplicates"] = src_stats.get("duplicates", 0) + 1
+                    log.info("与已有条目 bundleIdentifier 相同，按 keep-all 另存一条",
+                             app=app.get("name"), bundleIdentifier=bid, source=src_name)
+                app["_origin"] = src_name
                 apps.append(app)
-                by_bid[key] = app
+                if key not in by_bid:
+                    by_bid[key] = app
                 imported += 1
                 src_stats["imported"] += 1
                 imported_keys[key] = src_name
@@ -622,7 +744,7 @@ def build_feed(primary: dict, secondaries: list[tuple[str, dict]], cfg: dict,
     for app in apps:
         bid = clean_str(app.get("bundleIdentifier"))
         name = clean_str(app.get("name"))
-        origin = imported_keys.get(norm_bid(bid), primary_name)
+        origin = app.pop("_origin", primary_name)
         defaults = (
             {"channel": cfg.get("importedReleaseChannel", "release")}
             if origin != primary_name
@@ -740,6 +862,21 @@ def build_feed(primary: dict, secondaries: list[tuple[str, dict]], cfg: dict,
     }
     feed = {k: v for k, v in feed.items() if v not in ("", None) or k in ("subtitle", "description")}
 
+    # 统计重复 bundleIdentifier（keep-all 下这是预期结果，但要如实报告）
+    bid_counter: dict[str, int] = {}
+    for a in apps:
+        k = norm_bid(a.get("bundleIdentifier"))
+        if k:
+            bid_counter[k] = bid_counter.get(k, 0) + 1
+    dup_groups = {k: v for k, v in bid_counter.items() if v > 1}
+    if dup_groups:
+        log.info("输出中存在重复 bundleIdentifier", groups=len(dup_groups),
+                 entries=sum(dup_groups.values()))
+        report["warnings"].append(
+            f"输出含 {len(dup_groups)} 组重复 bundleIdentifier（共 {sum(dup_groups.values())} 条），"
+            "部分客户端可能只显示其中一条"
+        )
+
     report["counts"] = {
         "primaryApps": primary_count,
         "secondaryApps": secondary_apps_total,
@@ -749,6 +886,9 @@ def build_feed(primary: dict, secondaries: list[tuple[str, dict]], cfg: dict,
         "addedVersions": added_versions,
         "totalVersions": sum(len(a.get("versions") or []) for a in apps),
         "conflicts": len(conflicts_meta) + len(conflicts_ver),
+        "duplicateBidGroups": len(dup_groups),
+        "duplicateBidEntries": sum(dup_groups.values()),
+        "conflictPolicy": "keep-all" if keep_all else "merge",
     }
     report["conflicts"] = {
         "metadata": conflicts_meta,
@@ -872,21 +1012,28 @@ def main(argv: list[str]) -> int:
 
     for idx, src in enumerate(source_list):
         name = src.get("name") or f"source{idx}"
+        src_type = src.get("type") or "altstore-json"
         url = src.get("url")
         required = bool(src.get("required")) or idx == 0
 
         if args.only_primary and idx > 0:
             log.info("已指定 --only-primary，跳过该源", source=name)
             continue
-        if not url:
+        if src_type != "github-releases" and not url:
             log.error("源缺少 url，已跳过", source=name)
             report["sources"][name] = {"url": None, "status": "no-url"}
             any_secondary_failed = any_secondary_failed or required
             continue
 
-        fetched = fetch_json(url, net, log, cache_dir, name)
+        if src_type == "github-releases":
+            fetched = fetch_releases_source(src, net, log, cache_dir)
+            shown_url = f"https://github.com/{src.get('repo')}"
+        else:
+            fetched = fetch_json(url, net, log, cache_dir, name)
+            shown_url = url
+
         if fetched is None:
-            report["sources"][name] = {"url": url, "status": "failed"}
+            report["sources"][name] = {"url": shown_url, "status": "failed"}
             if idx == 0 or required:
                 log.error("必要源不可用，保留上一版 feed，不做任何写入", source=name)
                 return finish(EXIT_PRIMARY_FETCH if idx == 0 else EXIT_SCHEMA,
@@ -899,7 +1046,8 @@ def main(argv: list[str]) -> int:
             log.warn("该源拉取失败，降级为其余源合并", source=name)
             continue
 
-        entry = {"url": url, "status": "ok", "apps": len(fetched.get("apps") or [])}
+        entry = {"url": shown_url, "type": src_type, "status": "ok",
+                 "apps": len(fetched.get("apps") or [])}
         report["sources"][name] = entry
         if idx == 0:
             primary = fetched

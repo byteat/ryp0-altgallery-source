@@ -20,6 +20,8 @@ import validate_feed as vf  # noqa: E402
 CFG = json.loads((ROOT / "config" / "sync.json").read_text("utf-8"))
 MERGE_CFG = dict(CFG["merge"])
 MERGE_CFG["sourceUrl"] = "https://example.test/feed.json"
+# 旧用例按"合并"语义编写；keep-all 在 17-19 号用例里单独验证
+MERGE_CFG["onBundleIdConflict"] = "merge"
 GUARDS = {"minAppsAbsolute": 1, "minPrimaryAppRatio": 0, "minTotalAppRatio": 0}
 
 failures: list[str] = []
@@ -285,6 +287,83 @@ a = by_bid(feed, "com.p.one")
 check(len(feed["apps"]) == 1, "同 ID 应用只出现一次")
 check(a and len(a["versions"]) == 3, "三个源的版本合并到同一个应用")
 check(rep["counts"]["matchedApps"] == 2, "两个副源各匹配 1 次")
+
+
+print("17) keep-all：同 bundleIdentifier 的两条记录都保留")
+cfg_keep = dict(MERGE_CFG); cfg_keep["onBundleIdConflict"] = "keep-all"
+rep = new_report()
+feed = ms.build_feed(
+    primary([app("com.p.one", "主源条目", versions=[ver("1.0")])]),
+    [("altgallery", {"name": "AG", "apps": [{
+        "name": "副源条目", "bundleIdentifier": "com.P.ONE", "developerName": "d",
+        "versions": [ver("2.0")],
+    }]})],
+    cfg_keep, GUARDS, rep, ms.Log(),
+)
+check(len(feed["apps"]) == 2, "两条同 ID 记录都保留")
+names = {a["name"] for a in feed["apps"]}
+check(names == {"主源条目", "副源条目"}, f"保留的是两条独立记录: {names}")
+check(rep["counts"]["duplicateBidGroups"] == 1, "报告统计出 1 组重复 ID")
+check(rep["counts"]["conflictPolicy"] == "keep-all", "报告记录了策略")
+
+print("18) merge 策略仍可用（回退开关）")
+cfg_merge = dict(MERGE_CFG); cfg_merge["onBundleIdConflict"] = "merge"
+rep = new_report()
+feed = ms.build_feed(
+    primary([app("com.p.one", versions=[ver("1.0")])]),
+    [("altgallery", {"name": "AG", "apps": [{
+        "name": "A", "bundleIdentifier": "com.p.one", "developerName": "d",
+        "versions": [ver("2.0")],
+    }]})],
+    cfg_merge, GUARDS, rep, ms.Log(),
+)
+check(len(feed["apps"]) == 1, "merge 策略下仍合并为一条")
+check(len(feed["apps"][0]["versions"]) == 2, "两个版本合并到同一应用")
+
+print("19) keep-all：源内重复 ID 也保留")
+rep = new_report()
+feed = ms.build_feed(
+    primary([app("com.p.dup", "A"), app("com.p.dup", "B")]),
+    [], cfg_keep, GUARDS, rep, ms.Log(),
+)
+check(len(feed["apps"]) == 2, "源内重复 ID 保留两条")
+
+print("20) github-releases 适配器")
+src = {
+    "name": "wqguard", "type": "github-releases", "repo": "Kianuni/WQGuard",
+    "bundleIdentifier": "com.wqguard.app", "appName": "WQGuard",
+    "developerName": "Kianuni", "category": "Tools", "minOSVersion": "16.0",
+    "assetPattern": r"\.ipa$", "excludePrerelease": True, "maxVersions": 10,
+}
+releases = [
+    {"tag_name": "v1.2.1", "draft": False, "prerelease": False,
+     "published_at": "2026-11-12T16:49:46Z",
+     "assets": [{"name": "WQGuard_v1.2.1.ipa", "size": 2007635,
+                 "browser_download_url": "https://github.com/Kianuni/WQGuard/releases/download/v1.2.1/WQGuard_v1.2.1.ipa"},
+                {"name": "WQGuard-Brotli-Shield.conf", "size": 1338,
+                 "browser_download_url": "https://x/conf"}]},
+    {"tag_name": "v1.3.0-beta", "draft": False, "prerelease": True,
+     "published_at": "2026-11-20T00:00:00Z",
+     "assets": [{"name": "WQGuard_v1.3.0.ipa", "size": 1, "browser_download_url": "https://x/beta.ipa"}]},
+    {"tag_name": "v1.0.0", "draft": False, "prerelease": False,
+     "published_at": "2026-10-01T00:00:00Z",
+     "assets": [{"name": "notes.txt", "size": 10, "browser_download_url": "https://x/notes"}]},
+]
+gen = ms.releases_to_feed(src, releases, ms.Log())
+gen_app = gen["apps"][0]
+check(gen_app["bundleIdentifier"] == "com.wqguard.app", "bundleIdentifier 来自配置")
+check(len(gen_app["versions"]) == 1, "只取 .ipa 资产与非预发布版本")
+check(gen_app["versions"][0]["version"] == "1.2.1", "去掉 tag 的 v 前缀")
+check(gen_app["versions"][0]["size"] == 2007635, "size 取自资产大小")
+check(gen_app["versions"][0]["minOSVersion"] == "16.0", "minOSVersion 来自配置")
+check(gen_app["versions"][0]["date"] == "2026-11-12T16:49:46Z", "date 规范化")
+
+print("21) github-releases 缺 bundleIdentifier 应报错")
+try:
+    ms.releases_to_feed({"name": "x", "repo": "a/b"}, releases, ms.Log())
+    check(False, "未抛错")
+except ms.SchemaError:
+    check(True, "缺少 bundleIdentifier 抛 SchemaError")
 
 print()
 if failures:

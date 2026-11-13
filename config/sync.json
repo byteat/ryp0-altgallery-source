@@ -27,6 +27,23 @@
       "url": "https://raw.githubusercontent.com/ios151/Insav-releases/main/altsource.json",
       "schema": "altstore",
       "required": false
+    },
+    {
+      "name": "wqguard",
+      "type": "github-releases",
+      "repo": "Kianuni/WQGuard",
+      "bundleIdentifier": "com.wqguard.app",
+      "appName": "WQGuard",
+      "developerName": "Kianuni",
+      "subtitle": "面向 iOS 26.2+/27.x 的只读沙盒越权检测与 IPA 审查工具",
+      "localizedDescription": "WQGuard 是 100% 只读的 iOS 沙盒越权检测、侧载 IPA 审查与固件 CVE 防护工具（Swift，iOS 16+）。",
+      "iconURL": "https://raw.githubusercontent.com/Kianuni/WQGuard/main/WQGuard/Resources/Assets.xcassets/AppIcon.appiconset/AppIcon.png",
+      "category": "Tools",
+      "minOSVersion": "16.0",
+      "assetPattern": "\\.ipa$",
+      "excludePrerelease": true,
+      "maxVersions": 10,
+      "required": false
     }
   ],
   "network": {
@@ -55,8 +72,11 @@
     "importedAppType": "Static",
     "importedReleaseChannel": "release",
     "keepScreenshots": false,
+    "onBundleIdConflict": "keep-all",
     "dropEmptyVersionApps": true,
-    "carryNewsFrom": ["ryp0"],
+    "carryNewsFrom": [
+      "ryp0"
+    ],
     "preservePrimaryOrder": true,
     "maxVersionsPerApp": 0,
     "excludeBundleIds": [],

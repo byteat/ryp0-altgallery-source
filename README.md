@@ -12,6 +12,7 @@
 | 2 | `altgallery` | `https://raw.githubusercontent.com/bebound/AltGallery/refs/heads/master/all-apps.json` | 66 个应用 / 67 个版本 |
 | 3 | `one` | `https://raw.githubusercontent.com/ios151/One-releases/main/altsource.json` | 1 个应用 / 18 个版本 |
 | 4 | `insav` | `https://raw.githubusercontent.com/ios151/Insav-releases/main/altsource.json` | 1 个应用 / 5 个版本 |
+| 5 | `wqguard` | `https://github.com/Kianuni/WQGuard`（无源文件，由 releases 生成） | 1 个应用 / 1 个版本（v1.2.1） |
 
 ### 怎么再加一个源
 
@@ -23,7 +24,19 @@
 
 `name` 会用作日志标识、错误信息里的来源标记和缓存文件名，**不要重名**。`required: true` 表示该源拉取失败时整次同步中止；否则只降级跳过并标记 `degraded`。
 
-**前置条件**：这个地址必须直接返回 AltStore 源 JSON（顶层有 `apps` 数组）。如果对方只发布 GitHub Releases 里的 `.ipa`、没有源文件，不能直接加——需要先有个工具把 releases 转成源 JSON，这一步本项目没有实现。
+两种源类型：
+
+| `type` | 含义 | 必填字段 |
+| --- | --- | --- |
+| 省略或 `altstore-json` | 直接抓取一个 AltStore 源 JSON（顶层有 `apps`） | `url` |
+| `github-releases` | 仓库只发 `.ipa`、没有源文件时，用 GitHub API 读 releases 现场生成条目 | `repo`（`owner/name`）、`bundleIdentifier`、`appName` |
+
+`github-releases` 的注意事项：
+
+- **`bundleIdentifier` 必须手填**，脚本无法从 release 元数据可靠推断。本项目里 `com.wqguard.app` 是从仓库 `project.pbxproj` 的 `PRODUCT_BUNDLE_IDENTIFIER` 读出来的，不是猜的。
+- 只取非 draft、非 prerelease 的 release（`excludePrerelease` 可关），并在资产名里按 `assetPattern`（默认 `\.ipa$`）匹配安装包。
+- 版本号取 tag 并去掉 `v` 前缀，日期取 `published_at`，大小取资产 `size`。
+- 走 GitHub API，CI 里用 `GITHUB_TOKEN`（5000 次/小时）；本地无 token 时是 60 次/小时。
 
 ## 两个源的真实结构差异
 
@@ -47,7 +60,8 @@
 
 | 场景 | 处理方式 |
 | --- | --- |
-| 应用 ID 相同 | 以**配置顺序最靠前**的源为骨架；后续源只补全已有应用的**空字段**（`developerName`/`subtitle`/`localizedDescription`/`iconURL`/`tintColor`） |
+| 应用 ID 相同（`onBundleIdConflict: "keep-all"`，当前默认） | **全部保留为独立条目**，不合并、不丢弃；日志会逐条记录，报告里统计重复组数 |
+| 应用 ID 相同（`onBundleIdConflict: "merge"`） | 以**配置顺序最靠前**的源为骨架；后续源只补全已有应用的**空字段**（`developerName`/`subtitle`/`localizedDescription`/`iconURL`/`tintColor`） |
 | 同字段两边都有值且不同 | **保留排在前面的源的值**，差异写入 `logs/*.json` 的 `conflicts.metadata` |
 | 同版本号但 `downloadURL`/`size` 不同 | **保留排在前面的源**，写入 `conflicts.versions`，附双方地址与来源名 |
 | 版本互补（后续源有前面没有的版本） | 合并进同一应用，按 `date` 倒序排列 |
@@ -70,7 +84,7 @@ appsource-sync/
 ├── config/sync.json                     # 上游地址、合并开关、阈值
 ├── scripts/merge_sources.py             # 拉取 + 规范化 + 合并 + 落盘
 ├── scripts/validate_feed.py             # 独立的输出校验器
-├── tests/test_merge.py                  # 16 组离线回归测试
+├── tests/test_merge.py                  # 21 组离线回归测试
 ├── feed.json                            # 产物（提交进仓库）
 ├── logs/                                # 每次运行的 .log 与 .json（artifact）
 └── state/                               # last_run.json / history.jsonl / cache/
@@ -147,6 +161,7 @@ python3 scripts/validate_feed.py --feed feed.json
 - **`screenshots` 兼容性未验证**：默认丢弃是为了避免结构不一致导致客户端解析失败，本项目没有在真机 AltStore/SideStore 上验证过保留后的表现。
 - **导入应用的分类是推断值**：关键词命中不了就落到 `Tools`，建议在 `config/sync.json` 的 `categoryOverrides` 里固化。
 - **导入应用不带 `status`/`backup`/`automation`**：这些字段依赖 ryP0 自己的自动化流水线，本仓库无法诚实生成，故留空而非伪造。
+- **`keep-all` 会产生重复 bundleIdentifier**：实测当前五个源合并后有 35 组、共 39 条重复。AltStore / SideStore 以 bundleIdentifier 作为应用身份，同一 ID 出现多次时客户端可能只显示其中一条，或让"更新"指向错误的下载地址。本项目未在真机验证过这种源的订阅与更新行为；若出现异常，把 `merge.onBundleIdConflict` 改成 `"merge"` 即回到「合并版本」的旧行为。
 - **部分源没有 `sha256`**：One 与 INSAV 的源不提供校验值，合并后这两个应用的所有版本都缺 `sha256`，校验器会给出警告但不阻断发布。
 - **未对 IPA 下载地址做存活性探测**：每次 HEAD 数百个链接会显著拖慢任务，目前依赖上游 `status` 字段。
 

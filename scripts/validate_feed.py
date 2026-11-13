@@ -46,7 +46,7 @@ class Checker:
         return True
 
 
-def validate(feed: dict, min_apps: int = 1) -> Checker:
+def validate(feed: dict, min_apps: int = 1, allow_dup_ids: bool = False) -> Checker:
     c = Checker()
 
     # ---- 顶层 ----
@@ -98,7 +98,11 @@ def validate(feed: dict, min_apps: int = 1) -> Checker:
                 c.err(f"{where}: bundleIdentifier 含非法字符: {bid}")
             key = bid.lower()
             if key in seen_bids:
-                c.err(f"{where}: bundleIdentifier 重复（另见 {seen_bids[key]}）")
+                msg = f"{where}: bundleIdentifier 重复（另见 {seen_bids[key]}）"
+                if allow_dup_ids:
+                    c.warn(msg + " — 配置为 keep-all，按预期保留")
+                else:
+                    c.err(msg)
             else:
                 seen_bids[key] = where
 
@@ -182,6 +186,8 @@ def main(argv: list[str]) -> int:
     ap.add_argument("--feed", default="feed.json")
     ap.add_argument("--min-apps", type=int, default=1)
     ap.add_argument("--strict", action="store_true", help="把 warning 也视为失败")
+    ap.add_argument("--config", default=None,
+                    help="读取 merge.onBundleIdConflict，keep-all 时允许重复 bundleIdentifier")
     args = ap.parse_args(argv)
 
     path = Path(args.feed)
@@ -191,7 +197,14 @@ def main(argv: list[str]) -> int:
         print(f"FAIL 无法读取 {path}: {exc}", file=sys.stderr)
         return 1
 
-    c = validate(feed, args.min_apps)
+    allow_dup = False
+    if args.config:
+        try:
+            cfg = json.loads(Path(args.config).read_text("utf-8"))
+            allow_dup = str((cfg.get("merge") or {}).get("onBundleIdConflict", "")) == "keep-all"
+        except (OSError, json.JSONDecodeError) as exc:
+            print(f"WARN 无法读取配置 {args.config}: {exc}")
+    c = validate(feed, args.min_apps, allow_dup)
     for w in c.warnings:
         print(f"WARN {w}")
     for e in c.errors:

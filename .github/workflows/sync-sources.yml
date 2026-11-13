@@ -79,6 +79,7 @@ jobs:
           ALT_URL: ${{ inputs.altgallery_url }}
           SET_SOURCES: ${{ inputs.set_sources }}
           SKIP_SECONDARY: ${{ inputs.skip_secondary }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
           args=(--config config/sync.json --log-dir logs)
@@ -113,7 +114,7 @@ jobs:
           STRICT: ${{ inputs.strict_validate }}
         run: |
           set -euo pipefail
-          args=(--feed feed.json --min-apps 20)
+          args=(--feed feed.json --min-apps 20 --config config/sync.json)
           if [[ "${STRICT:-false}" == "true" ]]; then args+=(--strict); fi
           python3 scripts/validate_feed.py "${args[@]}"
 
