@@ -1,33 +1,40 @@
 {
-  "startedAt": "2026-11-13T06:43:26Z",
+  "startedAt": "2026-11-13T08:56:24Z",
   "finishedAt": null,
   "status": "ok",
   "counts": {
-    "primaryApps": 188,
-    "secondaryApps": 68,
-    "matchedApps": 36,
-    "importedApps": 32,
-    "totalApps": 207,
-    "addedVersions": 33,
-    "totalVersions": 2543,
-    "conflicts": 80,
-    "sha256": "9f91618dc41ebc0a11f50634a11d226c53052155220616128cdeef61a146910f"
+    "primaryApps": 195,
+    "secondaryApps": 69,
+    "matchedApps": 0,
+    "importedApps": 69,
+    "totalApps": 251,
+    "addedVersions": 0,
+    "totalVersions": 2597,
+    "conflicts": 0,
+    "duplicateBidGroups": 35,
+    "duplicateBidEntries": 74,
+    "conflictPolicy": "keep-all",
+    "sha256": "20ffa064ab3c0aff5ada18337825c07eca6eb9ffddf98447e896220d17b71170"
   },
   "sources": {
     "ryp0": {
       "url": "https://raw.githubusercontent.com/Sami-Wali/ryP0-repository/main/repo.json",
+      "type": "altstore-json",
       "status": "ok",
-      "apps": 194
+      "apps": 195
     },
     "altgallery": {
       "url": "https://raw.githubusercontent.com/bebound/AltGallery/refs/heads/master/all-apps.json",
+      "type": "altstore-json",
       "status": "ok",
       "apps": 66,
-      "matched": 36,
-      "imported": 30
+      "matched": 0,
+      "imported": 66,
+      "duplicates": 33
     },
     "one": {
       "url": "https://raw.githubusercontent.com/ios151/One-releases/main/altsource.json",
+      "type": "altstore-json",
       "status": "ok",
       "apps": 1,
       "matched": 0,
@@ -35,11 +42,20 @@
     },
     "insav": {
       "url": "https://raw.githubusercontent.com/ios151/Insav-releases/main/altsource.json",
+      "type": "altstore-json",
+      "status": "ok",
+      "apps": 1,
+      "matched": 0,
+      "imported": 1
+    },
+    "wqguard": {
+      "url": "https://github.com/Kianuni/WQGuard",
+      "type": "github-releases",
       "status": "ok",
       "apps": 1,
       "matched": 0,
       "imported": 1
     }
   },
-  "feedSha256": "9f91618dc41ebc0a11f50634a11d226c53052155220616128cdeef61a146910f"
+  "feedSha256": "20ffa064ab3c0aff5ada18337825c07eca6eb9ffddf98447e896220d17b71170"
 }
