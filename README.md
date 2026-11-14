@@ -30,9 +30,20 @@
 
 `version` + `buildVersion` 与 `version` + `downloadURL` + `size` 是两个口径：前者 397 条，后者 13 条。前者把同版本号下不同下载产物计为重复，其中 292 组 `downloadURL` 不同（Apollo 的 GLASS / GLASSICONS、Muffin-EMU 的 fakesigned 等并行产物）。后者只算 `version`、`downloadURL`、`size` 三项全同的记录。
 
-按内容计的 13 组，合并引入的 10 组统一特征为「主源条目 `buildVersion` 有值、追加条目 `buildVersion` 缺失」：WQToolkit `1.0`、AniBaka `5.2.4`、Kazumi for iOS `3.0.5`、mangayomi `0.9.95`、RewindBox `0.0.11`、SideStore `0.7.0-20260911.328+6032424a`、TiebaPure-iOS `1.4.15`、AltStore `2.3.1`、DukeX `1.0.2`、DolphiniOS `5.0.0b6`。上游自带的 3 组：LiveContainer (Stable) `3.8.0`、EnsWilde `EnsWilde3.1.3`、PancakeStore `1.3.1`。
+按内容计的 13 组，合并引入 10 组，统一特征为「同一组内一条 `buildVersion` 有值、一条缺失」，方向不固定：
 
-合并引入的重复最多的一组是 DolphiniOS `5.0.0b6`，主源该版本有两条记录，一条 `buildVersion` 缺失（`downloadURL` 指向 ryP0-repository），一条 `buildVersion` 为 `26`（`downloadURL` 指向 OatmealDome release）。AltGallery 同 ID 版本 `buildVersion` 缺失、`downloadURL` 与 `size` 与主源 `26` 那条一致；`append_secondary_versions` 按 `version` + `buildVersion` + `downloadURL` + `size` 四元组判重，因 `buildVersion` 一条缺失一条为 `26` 而不匹配，该版本被追加。
+| 组内方向 | 数量 | 应用 |
+| --- | --- | --- |
+| 主源有值、追加条目缺失 | 9 | WQToolkit `1.0`、Kazumi for iOS `3.0.5`、mangayomi `0.9.95`、RewindBox `0.0.11`、SideStore `0.7.0-20260911.328+6032424a`、TiebaPure-iOS `1.4.15`、AltStore `2.3.1`、DukeX `1.0.2`、DolphiniOS `5.0.0b6` |
+| 主源缺失、追加条目有值 | 1 | AniBaka `5.2.4`（主源缺失，AltGallery `1101`） |
+
+上游自带的 3 组：LiveContainer (Stable) `3.8.0`、EnsWilde `EnsWilde3.1.3`、PancakeStore `1.3.1`。
+
+10 组中 2 组为 `bundleIdentifiers` 别名匹配命中，副源 `bundleIdentifier` 与主源不同：Kazumi for iOS `3.0.5`（副源 `com.linkpass.kazumi`）、DolphiniOS `5.0.0b6`（副源 `me.oatmealdome.DolphiniOS-njb-patreon-beta`）。其余 8 组为同 `bundleIdentifier` 匹配。
+
+消除这 10 组需按「任一侧 `buildVersion` 缺失即通配，`downloadURL` 与 `size` 相同则跳过」实现；只按「主源有值才匹配」会漏掉 AniBaka。
+
+DolphiniOS `5.0.0b6`：主源该版本有两条记录，一条 `buildVersion` 缺失（`downloadURL` 指向 ryP0-repository），一条 `buildVersion` 为 `26`（`downloadURL` 指向 OatmealDome release）。AltGallery 经别名并入的版本 `buildVersion` 缺失、`downloadURL` 与 `size` 与主源 `26` 那条一致；`append_secondary_versions` 按 `version` + `buildVersion` + `downloadURL` + `size` 四元组判重，因 `buildVersion` 一条缺失一条为 `26` 而不匹配，该版本被追加。
 
 ## 上游源
 
