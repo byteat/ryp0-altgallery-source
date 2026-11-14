@@ -1,9 +1,9 @@
 name: Sync app sources
 
-# 定时（每 6 小时，UTC）+ 手动触发；PR 触发只做校验，不写回
+# 定时（每 2 小时，UTC）+ 手动触发；PR 触发只做校验，不写回
 on:
   schedule:
-    - cron: "17 */6 * * *"
+    - cron: "17 */2 * * *"
   workflow_dispatch:
     inputs:
       dry_run:
@@ -132,7 +132,7 @@ jobs:
           if [[ -f state/history.jsonl ]]; then git add state/history.jsonl; fi
 
           # 只有 feed.json 真的变了才提交：state/ 里的时间戳每次都会变，
-          # 否则每 6 小时都会产生一个仅时间戳变化的空提交
+          # 否则每 2 小时都会产生一个仅时间戳变化的空提交
           if git diff --cached --quiet -- feed.json; then
             git reset -q
             echo "feed.json 无变化，跳过提交（本次运行日志见 artifact）"
