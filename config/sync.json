@@ -72,7 +72,9 @@
     "importedAppType": "Static",
     "importedReleaseChannel": "release",
     "keepScreenshots": false,
-    "onBundleIdConflict": "keep-all",
+    "onBundleIdConflict": "merge",
+    "preservePrimaryVerbatim": true,
+    "strictRyP0Fields": true,
     "dropEmptyVersionApps": true,
     "carryNewsFrom": [
       "ryp0"

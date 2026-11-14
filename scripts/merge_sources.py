@@ -13,6 +13,9 @@
 
 设计约束:
     * 仅使用 Python 标准库，CI 无需 pip install。
+    * 主源（ryP0）条目逐条原样输出，不改写字段、不去重、不删空版本应用；
+      副源中与主源同 bundleIdentifier 的条目只把版本并入主源应用，不新增应用条目。
+    * 新增内容的字段集合取自本次拉取到的主源实际字段，不引入主源未定义的字段。
     * 输出确定性（键顺序固定、稳定排序），便于 git diff 审计。
     * 任何"丢弃/改写/冲突"都会写入日志与报告，不做静默处理。
 """
@@ -20,6 +23,7 @@
 from __future__ import annotations
 
 import argparse
+import copy
 import hashlib
 import json
 import os
@@ -47,7 +51,7 @@ APP_KEY_ORDER = [
 ]
 VERSION_KEY_ORDER = [
     "version", "date", "downloadURL", "size", "buildVersion",
-    "releaseChannel", "minOSVersion", "localizedDescription", "sha256",
+    "releaseChannel", "localizedDescription", "sha256",
     "sourceAppName", "sourceAssetName", "ipaBundleIdentifier",
     "upstreamAssetURL", "sourceArchiveEntry",
 ]
@@ -171,6 +175,85 @@ def is_http_url(value: object) -> bool:
     return isinstance(value, str) and (
         value.startswith("https://") or value.startswith("http://")
     )
+
+
+# --------------------------------------------------------------------------
+# ryP0 字段基准与主源保真
+# --------------------------------------------------------------------------
+def primary_field_sets(primary_apps: list) -> tuple[set[str], set[str]]:
+    """从主源实际出现的字段推导允许的 app / version 字段集合。
+
+    字段表不硬编码：上游 ryP0 增加或停用字段时，新增内容自动跟随。
+    """
+    app_keys: set[str] = set()
+    version_keys: set[str] = set()
+    for app in primary_apps:
+        if not isinstance(app, dict):
+            continue
+        app_keys.update(k for k in app if isinstance(k, str))
+        for ver in app.get("versions") or []:
+            if isinstance(ver, dict):
+                version_keys.update(k for k in ver if isinstance(k, str))
+    return app_keys, version_keys
+
+
+def limit_to_primary_fields(
+    obj: dict, allowed: set[str], log: Log, ctx: str, report: dict | None = None,
+) -> dict:
+    """剔除主源从未使用过的字段，保证新增内容不引入 ryP0 未定义的字段。"""
+    dropped = [k for k in obj if k not in allowed]
+    for key in dropped:
+        log.info("按 ryP0 字段集合剔除未定义字段", ctx=ctx, field=key)
+        if report is not None:
+            report.setdefault("dropped", {}).setdefault("nonRyP0Fields", []).append(
+                {"where": ctx, "field": key}
+            )
+    return {k: v for k, v in obj.items() if k in allowed}
+
+
+def version_full_identity(v: dict) -> tuple[str, str, str, str]:
+    return (
+        str(v.get("version", "")).strip(),
+        str(v.get("buildVersion", "")).strip(),
+        str(v.get("downloadURL", "")).strip(),
+        str(v.get("size", "")).strip(),
+    )
+
+
+def append_secondary_versions(
+    target: dict, incoming: list[dict], log: Log, app_name: str, secondary_name: str,
+) -> tuple[int, int]:
+    """把副源版本追加到主源应用 versions 末尾，主源已有版本的内容与顺序保持不变。
+
+    仅当 version / buildVersion / downloadURL / size 完全一致时视为同一条记录并跳过；
+    其余版本全部保留，包括同版本号但下载地址不同的版本。
+    """
+    current = target.get("versions")
+    if not isinstance(current, list):
+        current = []
+        target["versions"] = current
+    full_index = {version_full_identity(v): v for v in current if isinstance(v, dict)}
+    short_index: dict[tuple[str, str], dict] = {}
+    for v in current:
+        if isinstance(v, dict):
+            short_index.setdefault(version_identity(v), v)
+    added = skipped = 0
+    for v in incoming:
+        full = version_full_identity(v)
+        if full in full_index:
+            skipped += 1
+            log.info("副源版本与主源已有记录完全一致，不重复追加",
+                     app=app_name, version=full[0], source=secondary_name)
+            continue
+        short = version_identity(v)
+        if short in short_index:
+            log.warn("同版本号但下载地址或体积不同，两条版本均保留",
+                     app=app_name, version=short[0], source=secondary_name)
+        current.append(v)
+        full_index[full] = v
+        short_index.setdefault(short, v)
+        added += 1
+    return added, skipped
 
 
 # --------------------------------------------------------------------------
@@ -569,17 +652,26 @@ def merge_versions(
 def merge_metadata(
     primary_app: dict, secondary_app: dict, log: Log,
     primary_name: str = "ryp0", secondary_name: str = "altgallery",
+    apply: bool = True,
 ) -> list[dict]:
-    """补全主源缺失的描述性字段；两边都有且不同则记录冲突、保留主源。"""
+    """记录主副源的字段差异。
+
+    apply=True 时用副源补全主源空字段；apply=False（主源保真）时只记录差异，
+    不改动主源应用的任何字段。
+    """
     conflicts: list[dict] = []
     fillable = ["developerName", "subtitle", "localizedDescription", "iconURL", "tintColor"]
     for field in fillable:
         p = clean_str(primary_app.get(field))
         s = clean_str(secondary_app.get(field))
         if not p and s:
-            primary_app[field] = s
-            log.info("用副源补全缺失字段", app=primary_app.get("name"), field=field,
-                     source=secondary_name)
+            if apply:
+                primary_app[field] = s
+                log.info("用副源补全缺失字段", app=primary_app.get("name"), field=field,
+                         source=secondary_name)
+            else:
+                log.info("主源字段保持原值，不采用副源补全", app=primary_app.get("name"),
+                         field=field, source=secondary_name)
         elif p and s and p != s:
             conflicts.append({
                 "app": primary_app.get("name"),
@@ -587,7 +679,7 @@ def merge_metadata(
                 "field": field,
                 "kept": {"source": primary_name, "value": p[:200]},
                 "dropped": {"source": secondary_name, "value": s[:200]},
-                "resolution": "primary-wins",
+                "resolution": "primary-wins" if apply else "primary-immutable",
             })
     return conflicts
 
@@ -600,10 +692,29 @@ def build_feed(primary: dict, secondaries: list[tuple[str, dict]], cfg: dict,
         raise SchemaError("主源 apps 字段缺失、非数组或为空")
 
     exclude = {norm_bid(x) for x in (cfg.get("excludeBundleIds") or []) if norm_bid(x)}
-    # keep-all: 同 bundleIdentifier 的两条记录都保留（默认）；merge: 合并成一个应用的多个版本
-    keep_all = str(cfg.get("onBundleIdConflict", "keep-all")) == "keep-all"
+    policy = str(cfg.get("onBundleIdConflict", "merge")).strip().lower()
+    keep_all = policy == "keep-all"
+    # 主源保真：主源条目逐条原样输出，不做去重、字段改写、日期归一或空版本剔除。
+    # 副源同 ID 条目只把版本并入已存在的应用，不新增应用条目。
+    verbatim = bool(cfg.get("preservePrimaryVerbatim")) and not keep_all
+    strict_fields = bool(cfg.get("strictRyP0Fields", verbatim))
+    allowed_app_keys: set[str] | None = None
+    allowed_ver_keys: set[str] | None = None
+    if strict_fields:
+        allowed_app_keys, allowed_ver_keys = primary_field_sets(primary_apps)
+    log.info("冲突策略", policy="keep-all" if keep_all else policy,
+             preservePrimaryVerbatim=verbatim, strictRyP0Fields=strict_fields,
+             primaryAppFields=len(allowed_app_keys or ()),
+             primaryVersionFields=len(allowed_ver_keys or ()))
     if keep_all:
         log.info("冲突策略 keep-all：同 bundleIdentifier 的记录全部保留，不做合并")
+
+    primary_bid_counts: dict[str, int] = {}
+    for raw in primary_apps:
+        if isinstance(raw, dict):
+            k = norm_bid(raw.get("bundleIdentifier"))
+            if k:
+                primary_bid_counts[k] = primary_bid_counts.get(k, 0) + 1
 
     # 1) 主源逐条纳入（重复 bundleIdentifier 按策略处理）
     apps: list[dict] = []
@@ -623,16 +734,21 @@ def build_feed(primary: dict, secondaries: list[tuple[str, dict]], cfg: dict,
             log.info("按 excludeBundleIds 排除", bundleIdentifier=bid)
             report["dropped"]["excluded"] += 1
             continue
-        if key in by_bid and keep_all:
-            log.info("源内 bundleIdentifier 重复，按 keep-all 保留为独立条目",
-                     bundleIdentifier=bid, name=clean_str(raw.get("name")))
-            report["warnings"].append(f"重复 bundleIdentifier（保留两条）: {bid}")
-            app = dict(raw)
+        app = copy.deepcopy(raw) if verbatim else dict(raw)
+        if not verbatim:
             app["versions"] = [v for v in (app.get("versions") or []) if isinstance(v, dict)]
-            app["_origin"] = primary_name
-            apps.append(app)
-            continue
+        app["_origin"] = primary_name
+        for extra in app.get("bundleIdentifiers") or []:
+            if isinstance(extra, str) and norm_bid(extra):
+                alias.setdefault(norm_bid(extra), key)
         if key in by_bid:
+            if keep_all or verbatim:
+                log.info("主源内部重复 bundleIdentifier，保留为独立条目",
+                         bundleIdentifier=bid, name=clean_str(raw.get("name")),
+                         policy="keep-all" if keep_all else "preservePrimaryVerbatim")
+                report["warnings"].append(f"主源内部重复 bundleIdentifier（原样保留）: {bid}")
+                apps.append(app)
+                continue
             log.warn("主源内部 bundleIdentifier 重复，合并版本", bundleIdentifier=bid)
             report["warnings"].append(f"主源重复 bundleIdentifier: {bid}")
             existing = by_bid[key]
@@ -641,23 +757,18 @@ def build_feed(primary: dict, secondaries: list[tuple[str, dict]], cfg: dict,
                 if isinstance(v, dict) and version_identity(v) not in seen:
                     existing.setdefault("versions", []).append(v)
             continue
-        app = dict(raw)
-        app["versions"] = [v for v in (app.get("versions") or []) if isinstance(v, dict)]
-        app["_origin"] = primary_name
         apps.append(app)
         by_bid[key] = app
-        for extra in app.get("bundleIdentifiers") or []:
-            if isinstance(extra, str) and norm_bid(extra):
-                alias.setdefault(norm_bid(extra), key)
 
     primary_count = len(apps)
-    log.info("主源应用数", count=primary_count)
+    log.info("主源应用数", count=primary_count, preservePrimaryVerbatim=verbatim)
 
     conflicts_meta: list[dict] = []
     conflicts_ver: list[dict] = []
     imported = 0
     matched = 0
     added_versions = 0
+    skipped_versions = 0
     imported_keys: dict[str, str] = {}
 
     # 2) 按配置顺序依次合并其余源：先出现者优先，后来者只补空缺
@@ -700,16 +811,38 @@ def build_feed(primary: dict, secondaries: list[tuple[str, dict]], cfg: dict,
                         for v in (raw.get("versions") or [])
                     ) if nv
                 ]
-                merged_versions, vconf, added, _dup = merge_versions(
-                    target, {"versions": sec_versions}, log, target.get("name", bid),
-                    primary_name, src_name,
-                )
-                added_versions += added
-                target["versions"] = merged_versions
-                conflicts_meta.extend(
-                    merge_metadata(target, raw, log, primary_name, src_name)
-                )
-                conflicts_ver.extend(vconf)
+                if allowed_ver_keys is not None:
+                    sec_versions = [
+                        limit_to_primary_fields(
+                            nv, allowed_ver_keys, log,
+                            f"{src_name}:{bid}@{nv.get('version', '')}", report,
+                        )
+                        for nv in sec_versions
+                    ]
+                target_is_primary = target.get("_origin") == primary_name
+                if verbatim and target_is_primary:
+                    # 主源应用：只追加副源版本，主源已有版本、字段与顺序一律不动
+                    added, skipped = append_secondary_versions(
+                        target, sec_versions, log, target.get("name", bid), src_name,
+                    )
+                    added_versions += added
+                    skipped_versions += skipped
+                    conflicts_meta.extend(
+                        merge_metadata(target, raw, log, primary_name, src_name, apply=False)
+                    )
+                    log.info("副源版本并入主源应用", app=target.get("name", bid),
+                             source=src_name, added=added, skippedIdentical=skipped)
+                else:
+                    merged_versions, vconf, added, _dup = merge_versions(
+                        target, {"versions": sec_versions}, log, target.get("name", bid),
+                        primary_name, src_name,
+                    )
+                    added_versions += added
+                    target["versions"] = merged_versions
+                    conflicts_meta.extend(
+                        merge_metadata(target, raw, log, primary_name, src_name)
+                    )
+                    conflicts_ver.extend(vconf)
                 if key != target_key:
                     log.info("通过 bundleIdentifiers 别名匹配到已有应用",
                              incoming=bid, matched_to=target.get("bundleIdentifier"),
@@ -719,6 +852,18 @@ def build_feed(primary: dict, secondaries: list[tuple[str, dict]], cfg: dict,
                 if app is None:
                     report["dropped"]["invalidSecondaryApps"] += 1
                     continue
+                # 新增内容的字段集合以主源实际字段为准
+                if allowed_app_keys is not None:
+                    app = limit_to_primary_fields(app, allowed_app_keys, log,
+                                                  f"{src_name}:{bid}", report)
+                    if allowed_ver_keys is not None:
+                        app["versions"] = [
+                            limit_to_primary_fields(
+                                v, allowed_ver_keys, log,
+                                f"{src_name}:{bid}@{v.get('version', '')}", report,
+                            )
+                            for v in app["versions"]
+                        ]
                 if key in by_bid:
                     src_stats["duplicates"] = src_stats.get("duplicates", 0) + 1
                     log.info("与已有条目 bundleIdentifier 相同，按 keep-all 另存一条",
@@ -736,15 +881,21 @@ def build_feed(primary: dict, secondaries: list[tuple[str, dict]], cfg: dict,
                  apps=len(sec_apps), matched=src_stats["matched"],
                  imported=src_stats["imported"])
 
-    # 3) 逐应用规范化（含主源）、去重、排序、截断
+    # 3) 主源条目原样输出；导入条目做规范化、去重、排序、截断
     max_versions = int(cfg.get("maxVersionsPerApp") or 0)
     drop_empty = bool(cfg.get("dropEmptyVersionApps", True))
     final_apps: list[dict] = []
+    immutable_ids: set[int] = set()
     dup_removed = 0
     for app in apps:
+        origin = app.pop("_origin", primary_name)
+        if verbatim and origin == primary_name:
+            # 字段集合、键顺序、已有版本的内容与顺序全部保持不变
+            final_apps.append(app)
+            immutable_ids.add(id(app))
+            continue
         bid = clean_str(app.get("bundleIdentifier"))
         name = clean_str(app.get("name"))
-        origin = app.pop("_origin", primary_name)
         defaults = (
             {"channel": cfg.get("importedReleaseChannel", "release")}
             if origin != primary_name
@@ -785,7 +936,8 @@ def build_feed(primary: dict, secondaries: list[tuple[str, dict]], cfg: dict,
         final_apps.append(ordered(app, APP_KEY_ORDER))
     apps = final_apps
     report["dropped"]["duplicateVersions"] = dup_removed
-    log.info("应用内重复版本去重完成", removed=dup_removed)
+    log.info("导入应用内重复版本去重完成", removed=dup_removed,
+             preservedPrimaryApps=len(immutable_ids))
 
     # 4) 排序：主源顺序优先，导入应用按名称追加
     if not cfg.get("preservePrimaryOrder", True):
@@ -801,8 +953,9 @@ def build_feed(primary: dict, secondaries: list[tuple[str, dict]], cfg: dict,
         if not cat:
             continue
         low = cat.lower()
+        immutable = id(app) in immutable_ids
         if low in canonical:
-            if canonical[low] != cat:
+            if canonical[low] != cat and not immutable:
                 log.info("统一分类大小写", app=app.get("name"), **{"from": cat, "to": canonical[low]})
                 app["category"] = canonical[low]
         else:
@@ -862,19 +1015,31 @@ def build_feed(primary: dict, secondaries: list[tuple[str, dict]], cfg: dict,
     }
     feed = {k: v for k, v in feed.items() if v not in ("", None) or k in ("subtitle", "description")}
 
-    # 统计重复 bundleIdentifier（keep-all 下这是预期结果，但要如实报告）
+    # 统计重复 bundleIdentifier，并区分「主源自带」与「合并新引入」
     bid_counter: dict[str, int] = {}
     for a in apps:
         k = norm_bid(a.get("bundleIdentifier"))
         if k:
             bid_counter[k] = bid_counter.get(k, 0) + 1
     dup_groups = {k: v for k, v in bid_counter.items() if v > 1}
+    new_dup_groups = {k: v for k, v in dup_groups.items()
+                      if primary_bid_counts.get(k, 0) < 2}
+    primary_dup_groups = len(dup_groups) - len(new_dup_groups)
     if dup_groups:
         log.info("输出中存在重复 bundleIdentifier", groups=len(dup_groups),
-                 entries=sum(dup_groups.values()))
+                 entries=sum(dup_groups.values()),
+                 primaryInternalGroups=primary_dup_groups,
+                 newGroups=len(new_dup_groups))
         report["warnings"].append(
             f"输出含 {len(dup_groups)} 组重复 bundleIdentifier（共 {sum(dup_groups.values())} 条），"
-            "部分客户端可能只显示其中一条"
+            f"其中主源自带 {primary_dup_groups} 组、合并新引入 {len(new_dup_groups)} 组"
+        )
+    if new_dup_groups and not keep_all:
+        log.warn("合并后出现主源以外的重复 bundleIdentifier，请检查上游数据",
+                 groups=list(new_dup_groups)[:10])
+        report["warnings"].append(
+            f"合并新引入 {len(new_dup_groups)} 组重复 bundleIdentifier: "
+            + ", ".join(list(new_dup_groups)[:10])
         )
 
     report["counts"] = {
@@ -884,11 +1049,16 @@ def build_feed(primary: dict, secondaries: list[tuple[str, dict]], cfg: dict,
         "importedApps": imported,
         "totalApps": len(apps),
         "addedVersions": added_versions,
+        "skippedIdenticalVersions": skipped_versions,
         "totalVersions": sum(len(a.get("versions") or []) for a in apps),
         "conflicts": len(conflicts_meta) + len(conflicts_ver),
         "duplicateBidGroups": len(dup_groups),
         "duplicateBidEntries": sum(dup_groups.values()),
-        "conflictPolicy": "keep-all" if keep_all else "merge",
+        "primaryDuplicateBidGroups": primary_dup_groups,
+        "newDuplicateBidGroups": len(new_dup_groups),
+        "preservePrimaryVerbatim": verbatim,
+        "strictRyP0Fields": strict_fields,
+        "conflictPolicy": "keep-all" if keep_all else policy,
     }
     report["conflicts"] = {
         "metadata": conflicts_meta,
@@ -973,7 +1143,7 @@ def main(argv: list[str]) -> int:
 
     log = Log()
     started = utcnow()
-    log.info("开始同步", version="1.1.0", startedAt=started, output=str(output),
+    log.info("开始同步", version="1.2.0", startedAt=started, output=str(output),
              sources=[s.get("name") for s in source_list])
 
     report: dict = {
@@ -985,7 +1155,8 @@ def main(argv: list[str]) -> int:
         "conflicts": {"metadata": [], "versions": []},
         "dropped": {"invalidPrimaryApps": 0, "invalidSecondaryApps": 0,
                     "invalidVersions": 0, "duplicateVersions": 0,
-                    "emptyVersionApps": [], "excluded": 0, "secondaryNews": 0},
+                    "emptyVersionApps": [], "excluded": 0, "secondaryNews": 0,
+                    "nonRyP0Fields": []},
         "warnings": [],
         "output": str(output),
     }

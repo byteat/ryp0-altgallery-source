@@ -2,7 +2,8 @@
 """校验合并后的 AltStore 源是否符合 ryP0 的字段与元数据规范。
 
 用法:
-    python3 scripts/validate_feed.py --feed feed.json
+    python3 scripts/validate_feed.py --feed feed.json --config config/sync.json \
+        --baseline state/cache/ryp0.json
 
 退出码:
     0  校验通过
@@ -46,8 +47,26 @@ class Checker:
         return True
 
 
-def validate(feed: dict, min_apps: int = 1, allow_dup_ids: bool = False) -> Checker:
+def validate(feed: dict, min_apps: int = 1, allow_dup_ids: bool = False,
+             primary_keys: set[tuple[str, str]] | None = None,
+             tolerate_primary: bool = False) -> Checker:
+    """校验合并源。
+
+    primary_keys 给出主源原始条目（bundleIdentifier 小写 + name）时，主源自带的
+    重复 ID、重复版本、空版本数组、非 ISO 日期等差异只记警告；副源新增内容仍严格校验。
+    """
     c = Checker()
+
+    def is_primary(app: dict, name: str) -> bool:
+        if not tolerate_primary:
+            return False
+        if primary_keys is None:
+            return True
+        bid = str(app.get("bundleIdentifier", "")).strip().lower()
+        return (bid, name) in primary_keys
+
+    def issue(msg: str, primary: bool) -> None:
+        (c.warn if primary else c.err)(msg)
 
     # ---- 顶层 ----
     for key in ("name", "identifier", "sourceURL", "iconURL", "apps", "categories", "news"):
@@ -77,7 +96,7 @@ def validate(feed: dict, min_apps: int = 1, allow_dup_ids: bool = False) -> Chec
         c.warn("categories 为空数组，部分客户端不会显示分类")
 
     # ---- 应用 ----
-    seen_bids: dict[str, str] = {}
+    seen_bids: dict[str, tuple[str, bool]] = {}
     app_count = 0
     for idx, app in enumerate(feed["apps"]):
         where = f"apps[{idx}]"
@@ -87,6 +106,7 @@ def validate(feed: dict, min_apps: int = 1, allow_dup_ids: bool = False) -> Chec
         app_count += 1
         name = app.get("name") if isinstance(app.get("name"), str) else ""
         where = f"apps[{idx}]({name or '未命名'})"
+        primary = is_primary(app, name)
 
         c.require_str(app, "name", where)
         c.require_str(app, "bundleIdentifier", where)
@@ -98,13 +118,16 @@ def validate(feed: dict, min_apps: int = 1, allow_dup_ids: bool = False) -> Chec
                 c.err(f"{where}: bundleIdentifier 含非法字符: {bid}")
             key = bid.lower()
             if key in seen_bids:
-                msg = f"{where}: bundleIdentifier 重复（另见 {seen_bids[key]}）"
+                earlier, earlier_primary = seen_bids[key]
+                msg = f"{where}: bundleIdentifier 重复（另见 {earlier}）"
                 if allow_dup_ids:
                     c.warn(msg + " — 配置为 keep-all，按预期保留")
+                elif tolerate_primary and primary and earlier_primary:
+                    c.warn(msg + " — 主源自带重复项，按配置原样保留")
                 else:
                     c.err(msg)
             else:
-                seen_bids[key] = where
+                seen_bids[key] = (where, primary)
 
         if "catalogID" in app and not isinstance(app["catalogID"], str):
             c.err(f"{where}: catalogID 必须是字符串")
@@ -116,7 +139,7 @@ def validate(feed: dict, min_apps: int = 1, allow_dup_ids: bool = False) -> Chec
         cat = app.get("category")
         if isinstance(cat, str) and cat:
             if cats and cat not in cats:
-                c.err(f"{where}: category '{cat}' 未出现在顶层 categories 中")
+                issue(f"{where}: category '{cat}' 未出现在顶层 categories 中", primary)
         elif cat is None or cat == "":
             c.warn(f"{where}: 缺少 category（ryP0 上游也存在此情况，客户端可容忍）")
 
@@ -131,7 +154,8 @@ def validate(feed: dict, min_apps: int = 1, allow_dup_ids: bool = False) -> Chec
 
         versions = app.get("versions")
         if not isinstance(versions, list) or not versions:
-            c.err(f"{where}: versions 必须是非空数组")
+            issue(f"{where}: versions 必须是非空数组（主源原样保留时为警告）"
+                  if primary else f"{where}: versions 必须是非空数组", primary)
             continue
 
         seen_versions: set[tuple[str, str]] = set()
@@ -145,25 +169,26 @@ def validate(feed: dict, min_apps: int = 1, allow_dup_ids: bool = False) -> Chec
             c.require_str(ver, "downloadURL", vwhere)
             dl = ver.get("downloadURL")
             if isinstance(dl, str) and not dl.startswith("https://"):
-                c.err(f"{vwhere}: downloadURL 必须是 https 地址")
+                issue(f"{vwhere}: downloadURL 必须是 https 地址", primary)
             date = ver.get("date")
             if not isinstance(date, str) or not ISO_RE.match(date):
-                c.err(f"{vwhere}: date 必须形如 2026-11-10T04:44:50Z，实际 {date!r}")
+                issue(f"{vwhere}: date 必须形如 2026-11-10T04:44:50Z，实际 {date!r}", primary)
             else:
                 try:
                     datetime.strptime(date, "%Y-%m-%dT%H:%M:%SZ")
                 except ValueError:
-                    c.err(f"{vwhere}: date 不是合法日期 {date!r}")
+                    issue(f"{vwhere}: date 不是合法日期 {date!r}", primary)
             size = ver.get("size")
             if not isinstance(size, int) or isinstance(size, bool) or size <= 0:
-                c.err(f"{vwhere}: size 必须是正整数，实际 {size!r}")
+                issue(f"{vwhere}: size 必须是正整数，实际 {size!r}", primary)
             if ver.get("sha256"):
                 has_sha += 1
                 if not re.match(r"^[0-9a-f]{64}$", str(ver.get("sha256"))):
-                    c.err(f"{vwhere}: sha256 格式非法")
+                    issue(f"{vwhere}: sha256 格式非法", primary)
             ident = (str(ver.get("version")), str(ver.get("buildVersion", "")))
             if ident in seen_versions:
-                c.err(f"{vwhere}: 同一应用内版本重复 version={ident[0]} buildVersion={ident[1]}")
+                issue(f"{vwhere}: 同一应用内版本重复 version={ident[0]} "
+                      f"buildVersion={ident[1]}", primary)
             seen_versions.add(ident)
         if has_sha == 0 and len(versions) > 1:
             c.warn(f"{where}: 所有版本均无 sha256（ryP0 上游约 96% 版本带校验值）")
@@ -187,7 +212,9 @@ def main(argv: list[str]) -> int:
     ap.add_argument("--min-apps", type=int, default=1)
     ap.add_argument("--strict", action="store_true", help="把 warning 也视为失败")
     ap.add_argument("--config", default=None,
-                    help="读取 merge.onBundleIdConflict，keep-all 时允许重复 bundleIdentifier")
+                    help="读取 merge.onBundleIdConflict 与 merge.preservePrimaryVerbatim")
+    ap.add_argument("--baseline", default=None,
+                    help="主源原始 JSON，用于识别哪些条目属于主源并容忍其自带格式差异")
     args = ap.parse_args(argv)
 
     path = Path(args.feed)
@@ -198,22 +225,39 @@ def main(argv: list[str]) -> int:
         return 1
 
     allow_dup = False
+    tolerate_primary = False
     if args.config:
         try:
             cfg = json.loads(Path(args.config).read_text("utf-8"))
-            allow_dup = str((cfg.get("merge") or {}).get("onBundleIdConflict", "")) == "keep-all"
+            merge_cfg = cfg.get("merge") or {}
+            allow_dup = str(merge_cfg.get("onBundleIdConflict", "")) == "keep-all"
+            tolerate_primary = bool(merge_cfg.get("preservePrimaryVerbatim")) and not allow_dup
         except (OSError, json.JSONDecodeError) as exc:
             print(f"WARN 无法读取配置 {args.config}: {exc}")
-    c = validate(feed, args.min_apps, allow_dup)
-    for w in c.warnings:
+
+    primary_keys: set[tuple[str, str]] | None = None
+    if args.baseline:
+        try:
+            base = json.loads(Path(args.baseline).read_text("utf-8"))
+            primary_keys = {
+                (str(a.get("bundleIdentifier", "")).strip().lower(), str(a.get("name", "")))
+                for a in (base.get("apps") or []) if isinstance(a, dict)
+            }
+        except (OSError, json.JSONDecodeError) as exc:
+            print(f"WARN 无法读取主源基准 {args.baseline}: {exc}")
+    c = validate(feed, args.min_apps, allow_dup, primary_keys, tolerate_primary)
+    for w in c.warnings[:20]:
         print(f"WARN {w}")
+    if len(c.warnings) > 20:
+        print(f"WARN ... 其余 {len(c.warnings) - 20} 条警告省略")
     for e in c.errors:
         print(f"FAIL {e}", file=sys.stderr)
 
     apps = len(feed.get("apps") or []) if isinstance(feed, dict) else 0
     versions = sum(len(a.get("versions") or []) for a in (feed.get("apps") or [])
                    if isinstance(a, dict))
-    print(f"校验结果: 应用 {apps} 个 / 版本 {versions} 个 / 错误 {len(c.errors)} / 警告 {len(c.warnings)}")
+    print(f"校验结果: 应用 {apps} 个 / 版本 {versions} 个 / 错误 {len(c.errors)} / 警告 {len(c.warnings)}"
+          + (f" / 主源保真（基准 {len(primary_keys or ())} 条）" if tolerate_primary else ""))
 
     if c.errors or (args.strict and c.warnings):
         return 1

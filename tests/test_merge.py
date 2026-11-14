@@ -20,8 +20,13 @@ import validate_feed as vf  # noqa: E402
 CFG = json.loads((ROOT / "config" / "sync.json").read_text("utf-8"))
 MERGE_CFG = dict(CFG["merge"])
 MERGE_CFG["sourceUrl"] = "https://example.test/feed.json"
-# 旧用例按"合并"语义编写；keep-all 在 17-19 号用例里单独验证
+# 与生产配置一致：主源原样保留 + 同 ID 副源只并入版本。
+# 合成主源的字段不完整，字段白名单（strictRyP0Fields）在第 24 组用完整夹具单独验证。
 MERGE_CFG["onBundleIdConflict"] = "merge"
+MERGE_CFG["preservePrimaryVerbatim"] = True
+MERGE_CFG["strictRyP0Fields"] = False
+LEGACY_CFG = dict(MERGE_CFG)
+LEGACY_CFG["preservePrimaryVerbatim"] = False
 GUARDS = {"minAppsAbsolute": 1, "minPrimaryAppRatio": 0, "minTotalAppRatio": 0}
 
 failures: list[str] = []
@@ -42,7 +47,8 @@ def new_report() -> dict:
         "conflicts": {"metadata": [], "versions": []},
         "dropped": {"invalidPrimaryApps": 0, "invalidSecondaryApps": 0,
                     "invalidVersions": 0, "duplicateVersions": 0,
-                    "emptyVersionApps": [], "excluded": 0, "secondaryNews": 0},
+                    "emptyVersionApps": [], "excluded": 0, "secondaryNews": 0,
+                    "nonRyP0Fields": []},
         "warnings": [], "output": "feed.json",
     }
 
@@ -75,7 +81,8 @@ def ver(v: str = "1.0", date: str = "2026-01-01T00:00:00Z", url: str | None = No
 
 
 def run(prim: dict, sec: dict | None, log: ms.Log | None = None,
-        extra: list[tuple[str, dict]] | None = None) -> tuple[dict, dict, ms.Log]:
+        extra: list[tuple[str, dict]] | None = None,
+        cfg: dict | None = None) -> tuple[dict, dict, ms.Log]:
     log = log or ms.Log()
     report = new_report()
     secondaries: list[tuple[str, dict]] = []
@@ -83,7 +90,7 @@ def run(prim: dict, sec: dict | None, log: ms.Log | None = None,
         secondaries.append(("altgallery", sec))
     if extra:
         secondaries.extend(extra)
-    feed = ms.build_feed(prim, secondaries, MERGE_CFG, GUARDS, report, log)
+    feed = ms.build_feed(prim, secondaries, cfg or MERGE_CFG, GUARDS, report, log)
     return feed, report, log
 
 
@@ -116,7 +123,7 @@ check(second and "screenshots" not in second, "非 ryP0 字段 screenshots 默�
 check(second and second["githubURL"] == "https://github.com/o/r", "从 Release 链接反推 githubURL")
 check(rep["counts"]["importedApps"] == 1, "报告记录导入数")
 
-print("2) 同 bundleIdentifier：主源字段保留，缺失字段由副源补全")
+print("2) 同 bundleIdentifier：主源字段不可变，差异只记录不改写")
 feed, rep, _ = run(
     primary([app("com.p.one", "Primary One", subtitle="")]),
     {"name": "AG", "apps": [{
@@ -127,13 +134,15 @@ feed, rep, _ = run(
 )
 a = by_bid(feed, "com.p.one")
 check(len(feed["apps"]) == 1, "bundleIdentifier 大小写不同仍视为同一应用")
-check(a and a["developerName"] == "dev", "已有字段保留主源值（developerName）")
-check(a and a["subtitle"] == "副源副标题", "空字段由副源补全（subtitle）")
+check(a and a["developerName"] == "dev", "主源已有字段保持原值（developerName）")
+check(a and a["subtitle"] == "", "主源空字段不被副源补全（subtitle）")
 check(len(rep["conflicts"]["metadata"]) >= 1, "字段差异记入冲突报告")
 check(any(c["field"] == "developerName" for c in rep["conflicts"]["metadata"]),
       "developerName 差异被单独记录")
+check(all(c["resolution"] == "primary-immutable" for c in rep["conflicts"]["metadata"]),
+      "冲突决议标记为 primary-immutable")
 
-print("3) 版本冲突：同版本不同下载地址，保留主源并记录")
+print("3) 同版本号但下载地址不同：主副源两条版本均保留")
 feed, rep, _ = run(
     primary([app("com.p.one", versions=[ver("1.0", url="https://github.com/o/r/releases/download/1.0/a.ipa")])]),
     {"name": "AG", "apps": [{
@@ -142,10 +151,12 @@ feed, rep, _ = run(
     }]},
 )
 a = by_bid(feed, "com.p.one")
-check(a and a["versions"][0]["downloadURL"].endswith("a.ipa"), "冲突时保留主源 downloadURL")
-check(len(rep["conflicts"]["versions"]) == 1, "版本冲突写入报告")
+check(a and len(a["versions"]) == 2, "同版本号不同地址，两条版本都保留")
+check(a and a["versions"][0]["downloadURL"].endswith("a.ipa"), "主源已有版本顺序不变")
+check(a and a["versions"][1]["downloadURL"].endswith("b.ipa"), "副源版本追加在末尾")
+check(rep["counts"]["addedVersions"] == 1, "报告记录并入版本数")
 
-print("4) 版本互补：副源独有版本合并进主源应用")
+print("4) 版本互补：副源独有版本追加，完全相同的版本跳过")
 feed, rep, _ = run(
     primary([app("com.p.one", versions=[ver("1.0")])]),
     {"name": "AG", "apps": [{
@@ -155,22 +166,30 @@ feed, rep, _ = run(
 )
 a = by_bid(feed, "com.p.one")
 check(a and len(a["versions"]) == 2, "合并后共 2 个版本")
-check(a and a["versions"][0]["version"] == "2.0", "版本按日期倒序，最新在前")
+check(a and a["versions"][0]["version"] == "1.0", "主源版本顺序保持不变")
+check(a and a["versions"][1]["version"] == "2.0", "副源新版本追加在末尾")
 check(rep["counts"]["addedVersions"] == 1, "报告记录新增版本数")
+check(rep["counts"]["skippedIdenticalVersions"] == 1, "完全相同的版本跳过并计数")
 
-print("5) 应用内重复版本（ryP0 上游真实存在）应被去重")
-feed, rep, _ = run(
-    primary([app("com.p.one", versions=[ver("1.0", "2026-01-02"), ver("1.0", "2026-01-01")])]),
-    None,
-)
+print("5) 主源内部重复版本原样保留")
+dup_primary = lambda: primary([app("com.p.one", versions=[
+    ver("1.0", "2026-01-02"), ver("1.0", "2026-01-01")])])
+feed, rep, _ = run(dup_primary(), None)
 a = by_bid(feed, "com.p.one")
-check(a and len(a["versions"]) == 1, "重复版本被去掉")
-check(rep["dropped"]["duplicateVersions"] == 1, "去重数量写入报告")
+check(a and len(a["versions"]) == 2, "主源重复版本不去重")
+check(rep["dropped"]["duplicateVersions"] == 0, "报告不记录主源去重")
+feed2, rep2, _ = run(dup_primary(), None, cfg=LEGACY_CFG)
+check(len(by_bid(feed2, "com.p.one")["versions"]) == 1, "关闭保真后仍按旧规则去重")
+check(rep2["dropped"]["duplicateVersions"] == 1, "旧规则去重数量写入报告")
 
-print("6) 空版本应用（上游真实存在 13 个）默认被移除")
-feed, rep, _ = run(primary([app("com.p.one"), app("com.p.empty", "Empty", versions=[])]), None)
-check(len(feed["apps"]) == 1, "空版本应用被移除")
-check(rep["dropped"]["emptyVersionApps"] == ["Empty"], "移除名单写入报告")
+print("6) 主源空版本应用原样保留")
+empty_primary = lambda: primary([app("com.p.one"), app("com.p.empty", "Empty", versions=[])])
+feed, rep, _ = run(empty_primary(), None)
+check(len(feed["apps"]) == 2, "空版本应用保留")
+check(rep["dropped"]["emptyVersionApps"] == [], "报告不记录移除")
+feed2, rep2, _ = run(empty_primary(), None, cfg=LEGACY_CFG)
+check(len(feed2["apps"]) == 1, "关闭保真后按旧规则移除")
+check(rep2["dropped"]["emptyVersionApps"] == ["Empty"], "旧规则移除名单写入报告")
 
 print("7) 主源格式错误 → SchemaError")
 for bad in ({"apps": "nope"}, {"apps": []}, {}):
@@ -240,7 +259,6 @@ check(len(c.errors) >= 4, f"校验器报出 {len(c.errors)} 处错误")
 ok_feed, _, _ = run(primary([app("com.p.one")]), None)
 check(len(vf.validate(ok_feed, 1).errors) == 0, "合法输出零错误")
 
-
 print("14) 多源合并：第三个源的应用独立导入，分类经 aliases 归一")
 feed, rep, _ = run(
     primary([app("com.p.one", "Primary One")]),
@@ -275,7 +293,7 @@ feed, rep, _ = run(
 insav = by_bid(feed, "com.ios151.insav")
 check(insav is not None and insav.get("nsfw") is True, "源级 nsfw=true 标记到应用")
 
-print("16) 多源冲突：优先级高的源优先，同 ID 不重复")
+print("16) 多源冲突：同 ID 全部并入主源应用")
 feed, rep, _ = run(
     primary([app("com.p.one", versions=[ver("1.0")])]),
     {"name": "AG", "apps": [{"name": "A", "bundleIdentifier": "com.p.one",
@@ -288,8 +306,7 @@ check(len(feed["apps"]) == 1, "同 ID 应用只出现一次")
 check(a and len(a["versions"]) == 3, "三个源的版本合并到同一个应用")
 check(rep["counts"]["matchedApps"] == 2, "两个副源各匹配 1 次")
 
-
-print("17) keep-all：同 bundleIdentifier 的两条记录都保留")
+print("17) keep-all：同 bundleIdentifier 的两条记录都保留（回退开关）")
 cfg_keep = dict(MERGE_CFG); cfg_keep["onBundleIdConflict"] = "keep-all"
 rep = new_report()
 feed = ms.build_feed(
@@ -306,7 +323,7 @@ check(names == {"主源条目", "副源条目"}, f"保留的是两条独立记�
 check(rep["counts"]["duplicateBidGroups"] == 1, "报告统计出 1 组重复 ID")
 check(rep["counts"]["conflictPolicy"] == "keep-all", "报告记录了策略")
 
-print("18) merge 策略仍可用（回退开关）")
+print("18) merge 策略：同 ID 只保留一条应用，版本并入")
 cfg_merge = dict(MERGE_CFG); cfg_merge["onBundleIdConflict"] = "merge"
 rep = new_report()
 feed = ms.build_feed(
@@ -319,6 +336,7 @@ feed = ms.build_feed(
 )
 check(len(feed["apps"]) == 1, "merge 策略下仍合并为一条")
 check(len(feed["apps"][0]["versions"]) == 2, "两个版本合并到同一应用")
+check(rep["counts"]["newDuplicateBidGroups"] == 0, "未引入新的重复 ID 组")
 
 print("19) keep-all：源内重复 ID 也保留")
 rep = new_report()
@@ -364,6 +382,102 @@ try:
     check(False, "未抛错")
 except ms.SchemaError:
     check(True, "缺少 bundleIdentifier 抛 SchemaError")
+
+print("22) 主源条目逐字段、逐键顺序保持一致")
+raw_app = app("com.p.one", "Primary One", versions=[ver("1.0")])
+raw_app["status"] = "ok"
+raw_app["githubProjectCard"] = "https://e/card"
+feed, rep, _ = run(primary([raw_app]), None)
+out = feed["apps"][0]
+check(list(out.keys()) == list(raw_app.keys()), "字段集合与键顺序一致")
+check(out == raw_app, "主源应用逐字段原样保留")
+check("_origin" not in out, "内部来源标记不进入输出")
+check(rep["counts"]["preservePrimaryVerbatim"] is True, "报告记录主源保真开关")
+
+print("23) 生产配置的合并策略取值")
+check(CFG["merge"]["onBundleIdConflict"] == "merge", "配置为 merge")
+check(CFG["merge"]["preservePrimaryVerbatim"] is True, "配置为 preservePrimaryVerbatim")
+check(CFG["merge"]["strictRyP0Fields"] is True, "配置为 strictRyP0Fields")
+
+print("24) 严格字段：新增内容不含主源未定义的字段")
+full_primary_app = {
+    "name": "P", "catalogID": "project-x", "bundleIdentifier": "com.p.one",
+    "developerName": "dev", "localizedDescription": "", "subtitle": "",
+    "category": "Tools", "iconURL": "https://e/i.png", "updatePolicy": "daily",
+    "appType": "Daily Update", "status": "ok", "githubURL": "https://github.com/o/r",
+    "bundleIdentifiers": [], "importSource": "", "automation": {}, "backup": {},
+    "githubProjectCard": "", "tintColor": "#112233", "portDistribution": {},
+    "appPermissions": {},
+    "versions": [ver("1.0", buildVersion="1", releaseChannel="release",
+                     sha256="a" * 64, ipaBundleIdentifier="com.p.one",
+                     localizedDescription="d", sourceAppName="x",
+                     sourceAssetName="y", upstreamAssetURL="https://e/z",
+                     sourceArchiveEntry="e")],
+}
+cfg_strict = dict(MERGE_CFG)
+cfg_strict["strictRyP0Fields"] = True
+cfg_strict["keepScreenshots"] = True
+feed, rep, _ = run(
+    primary([full_primary_app]),
+    {"name": "AG", "nsfw": True, "apps": [{
+        "name": "Imported", "bundleIdentifier": "com.s.two", "developerName": "d",
+        "appPermissions": {"entitlements": ["get-task-allow"], "privacy": {}},
+        "screenshots": ["https://e/s.png"],
+        "versions": [ver("2.0", minOSVersion="16.0")],
+    }]},
+    cfg=cfg_strict,
+)
+imported = by_bid(feed, "com.s.two")
+check(imported is not None, "副源应用被导入")
+check(imported and "nsfw" not in imported, "主源未定义的 nsfw 被剔除")
+check(imported and "screenshots" not in imported, "主源未定义的 screenshots 被剔除")
+check(imported and "catalogID" in imported and "appPermissions" in imported,
+      "主源已定义字段保留")
+check(imported and "minOSVersion" not in imported["versions"][0],
+      "主源版本未定义的 minOSVersion 被剔除")
+check(imported and "releaseChannel" in imported["versions"][0],
+      "主源版本已定义字段保留")
+dropped_fields = {x["field"] for x in rep["dropped"]["nonRyP0Fields"]}
+check({"nsfw", "screenshots", "minOSVersion"} <= dropped_fields,
+      "被剔除字段写入报告")
+check(feed["apps"][0] == full_primary_app, "字段白名单不影响主源条目")
+
+print("25) 同 ID 副源不新增应用条目，主源自带重复组不变")
+feed, rep, _ = run(
+    primary([app("com.p.one", "P", versions=[ver("1.0")]),
+             app("com.p.one", "P2", versions=[ver("1.1")])]),
+    {"name": "AG", "apps": [{
+        "name": "Alt", "bundleIdentifier": "COM.P.ONE", "developerName": "d",
+        "versions": [ver("2.0")],
+    }]},
+)
+check(len(feed["apps"]) == 2, "仍为主源两条，副源不新增条目")
+check(rep["counts"]["newDuplicateBidGroups"] == 0, "未引入新的重复 ID 组")
+check(rep["counts"]["primaryDuplicateBidGroups"] == 1, "主源自带 1 组重复 ID")
+check(any(v["version"] == "2.0" for v in feed["apps"][0]["versions"]),
+      "副源版本并入首条主源应用")
+check(feed["apps"][1]["versions"][0]["version"] == "1.1",
+      "第二条主源应用保持原样")
+
+print("26) 校验器：主源自带差异降为警告，副源新增问题仍为错误")
+prim_apps = [
+    app("com.p.one", "P", versions=[ver("1.0", date="2026-01-01"),
+                                    ver("1.0", date="2026-01-01")]),
+    app("com.p.empty", "Empty", versions=[]),
+]
+feed, _, _ = run(primary(prim_apps), None)
+baseline_keys = {(a["bundleIdentifier"].lower(), a["name"]) for a in prim_apps}
+c = vf.validate(feed, 1, False, baseline_keys, True)
+check(len(c.errors) == 0, "主源自带差异不判错")
+check(len(c.warnings) >= 2, "主源差异记为警告")
+feed["apps"].append({
+    "name": "Imported Bad", "bundleIdentifier": "com.s.bad", "developerName": "d",
+    "category": "Tools",
+    "versions": [{"version": "1", "date": "2026-01-01",
+                  "downloadURL": "https://e/a.ipa", "size": 1}],
+})
+c2 = vf.validate(feed, 1, False, baseline_keys, True)
+check(any("date 必须形如" in e for e in c2.errors), "副源新增内容的非法 date 仍判错")
 
 print()
 if failures:

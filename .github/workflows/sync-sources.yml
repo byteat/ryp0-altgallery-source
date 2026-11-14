@@ -115,6 +115,7 @@ jobs:
         run: |
           set -euo pipefail
           args=(--feed feed.json --min-apps 20 --config config/sync.json)
+          if [[ -f state/cache/ryp0.json ]]; then args+=(--baseline state/cache/ryp0.json); fi
           if [[ "${STRICT:-false}" == "true" ]]; then args+=(--strict); fi
           python3 scripts/validate_feed.py "${args[@]}"
 
@@ -145,8 +146,9 @@ jobs:
           r = json.loads(p.read_text("utf-8")) if p.exists() else {}
           c = r.get("counts", {})
           print(f"应用 {c.get('totalApps', '?')} 个 / 版本 {c.get('totalVersions', '?')} 个"
-                f"（主源 {c.get('primaryApps', '?')} + 导入 {c.get('importedApps', '?')}，"
-                f"冲突 {c.get('conflicts', 0)}）")
+                f"（主源 {c.get('primaryApps', '?')} 原样保留，导入 {c.get('importedApps', '?')}，"
+                f"并入版本 {c.get('addedVersions', 0)}，新引入重复 ID "
+                f"{c.get('newDuplicateBidGroups', 0)} 组）")
           PY
           )
           git commit -m "chore(sync): 更新合并源 — ${summary}" \
@@ -191,10 +193,14 @@ jobs:
           print(f"**结束**: {r.get('finishedAt')}\n")
           print("| 指标 | 数值 |")
           print("| --- | --- |")
-          for k, label in [("primaryApps", "主源应用"), ("secondaryApps", "副源应用"),
-                           ("matchedApps", "同 ID 合并"), ("importedApps", "新增导入"),
+          for k, label in [("primaryApps", "主源应用（原样保留）"), ("secondaryApps", "副源应用"),
+                           ("matchedApps", "同 ID 并入"), ("importedApps", "新增导入"),
                            ("totalApps", "输出应用"), ("totalVersions", "输出版本"),
-                           ("addedVersions", "新增版本"), ("conflicts", "冲突条目")]:
+                           ("addedVersions", "并入版本"),
+                           ("skippedIdenticalVersions", "完全相同而跳过"),
+                           ("newDuplicateBidGroups", "新引入重复 ID 组"),
+                           ("primaryDuplicateBidGroups", "主源自带重复 ID 组"),
+                           ("conflicts", "冲突条目")]:
               print(f"| {label} | {c.get(k, '-')} |")
           print("\n### 上游状态\n")
           for name, s in (r.get("sources") or {}).items():
@@ -211,7 +217,7 @@ jobs:
                   print(f"- 去除应用内重复版本 {d['duplicateVersions']} 条")
           vc = (r.get("conflicts") or {}).get("versions") or []
           if vc:
-              print("\n### 版本冲突（保留 ryP0 记录）\n")
+              print("\n### 导入应用内的版本冲突（保留靠前源记录）\n")
               print("| 应用 | 版本 | 保留 | 丢弃 |")
               print("| --- | --- | --- | --- |")
               for x in vc[:10]:

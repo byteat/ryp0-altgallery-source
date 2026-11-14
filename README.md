@@ -6,10 +6,12 @@
 
 | 项 | 值 |
 | --- | --- |
-| 应用数 | 251 |
-| 版本数 | 2597 |
-| 重复 bundleIdentifier | 35 组，涉及 74 条记录 |
-| 数据时点 | 2026-11-13 |
+| 应用数 | 233 |
+| 版本数 | 3045 |
+| 重复 bundleIdentifier | 6 组，涉及 13 条记录，全部来自主源自身 |
+| 合并新引入的重复 bundleIdentifier | 0 组 |
+| 主源应用 | 200 条，逐字段原样保留 |
+| 数据时点 | 2026-11-14 |
 | 订阅地址 | `https://raw.githubusercontent.com/byteat/ryp0-altgallery-source/main/feed.json` |
 | 镜像地址 | `https://cdn.jsdelivr.net/gh/byteat/ryp0-altgallery-source@main/feed.json` |
 
@@ -19,10 +21,10 @@
 
 | 顺序 | 名称 | 地址 | 快照 | 许可证 |
 | --- | --- | --- | --- | --- |
-| 1 | `ryp0` | `https://raw.githubusercontent.com/Sami-Wali/ryP0-repository/main/repo.json` | 195 个应用 | 未声明 |
-| 2 | `altgallery` | `https://raw.githubusercontent.com/bebound/AltGallery/refs/heads/master/all-apps.json` | 66 个应用 / 67 个版本 | MIT |
+| 1 | `ryp0` | `https://raw.githubusercontent.com/Sami-Wali/ryP0-repository/main/repo.json` | 200 个应用 / 2955 个版本 | 未声明 |
+| 2 | `altgallery` | `https://raw.githubusercontent.com/bebound/AltGallery/refs/heads/master/all-apps.json` | 68 个应用 / 69 个版本 | MIT |
 | 3 | `one` | `https://raw.githubusercontent.com/ios151/One-releases/main/altsource.json` | 1 个应用 / 18 个版本 | 未声明 |
-| 4 | `insav` | `https://raw.githubusercontent.com/ios151/Insav-releases/main/altsource.json` | 1 个应用 / 5 个版本 | 未声明 |
+| 4 | `insav` | `https://raw.githubusercontent.com/ios151/Insav-releases/main/altsource.json` | 1 个应用 / 6 个版本 | 未声明 |
 | 5 | `wqguard` | `https://github.com/Kianuni/WQGuard` | 1 个应用 / 1 个版本（v1.2.1） | MIT |
 
 许可证数据取自 GitHub API 的 `license` 字段。
@@ -42,7 +44,7 @@
 | `assetPattern` | 安装包资产匹配正则，默认 `\.ipa$` |
 | `excludePrerelease` | 是否排除 prerelease，默认 `true` |
 | `maxVersions` | 保留的版本数上限 |
-| `minOSVersion` | 写入每个版本的 `minOSVersion` |
+| `minOSVersion` | 生成版本时写入；`strictRyP0Fields: true` 时从输出剔除 |
 | `perPage` | releases 接口分页数，默认 30 |
 
 版本号取自 tag 并去掉 `v` 前缀，`date` 取自 `published_at`，`size` 取自资产 `size`。
@@ -60,6 +62,19 @@
 | `name` | 日志标识、错误信息中的来源标记、缓存文件名 |
 | `required` | `true` 时该源拉取失败则整次同步中止；默认 `false`，失败时跳过并标记 `degraded` |
 
+## 合并开关
+
+| 配置键 | 当前值 | 作用 |
+| --- | --- | --- |
+| `merge.onBundleIdConflict` | `merge` | 同 ID 副源条目并入已有应用；`keep-all` 时保留为独立应用 |
+| `merge.preservePrimaryVerbatim` | `true` | 主源条目逐字段原样输出 |
+| `merge.strictRyP0Fields` | `true` | 新增内容字段限定为本次主源实际出现过的字段 |
+| `merge.dropEmptyVersionApps` | `true` | 仅作用于导入应用 |
+| `merge.maxVersionsPerApp` | `0` | 仅作用于导入应用 |
+| `merge.carryNewsFrom` | `["ryp0"]` | 只携带主源 news |
+| `merge.categoryAliases` | `entertainment` → `Movies` 等 | 上游分类归一 |
+| `merge.excludeBundleIds` | `[]` | 按 bundleIdentifier 排除 |
+
 ## 字段差异
 
 | 维度 | ryP0 | AltGallery | One / INSAV |
@@ -72,28 +87,29 @@
 | 截图 | 无 | `screenshots`（URL 字符串数组） | 无 |
 | 更新策略 | `updatePolicy`（`daily`/`static`）、`appType`（`Daily Update`/`Static`） | 无 | 无 |
 | 健康检查 | `status`、`backup`、`automation`、`importSource` | 无 | 无 |
-| 公告 | 空数组 | 67 条带 `appID` 的公告 | 空数组 |
+| 公告 | 空数组 | 69 条带 `appID` 的公告 | 空数组 |
 
-ryP0 与 AltGallery 的 bundleIdentifier 重合数为 32。
+ryP0 与 AltGallery 的 bundleIdentifier 重合数为 34。
 
 ## 合并规则
 
 | 场景 | 处理 |
 | --- | --- |
-| `onBundleIdConflict: "keep-all"`（默认） | 同 bundleIdentifier 的条目全部保留，不合并不丢弃；日志逐条记录 |
-| `onBundleIdConflict: "merge"` | 以顺序最靠前的源为骨架，后续源补全空字段 `developerName` / `subtitle` / `localizedDescription` / `iconURL` / `tintColor` |
-| 同字段取值不同 | 采用顺序靠前的源，差异写入 `logs/*.json` 的 `conflicts.metadata` |
-| 同版本号但 `downloadURL` 或 `size` 不同 | 采用顺序靠前的源，写入 `conflicts.versions` |
-| 后续源存在新版本 | 仅 `merge` 模式下并入同一应用，按 `date` 倒序 |
+| `onBundleIdConflict: "merge"`（当前配置） | 副源中与已有应用同 `bundleIdentifier` 的条目不新增应用记录，版本并入该应用 |
+| `preservePrimaryVerbatim: true`（当前配置） | 主源 200 条应用逐字段、逐键顺序原样输出；主源内部的重复应用、重复版本、空版本应用、非 ISO 日期均不改写、不删除 |
+| 副源版本并入主源应用 | 转换后追加到 `versions` 末尾，主源已有版本的内容与顺序不变；`version` / `buildVersion` / `downloadURL` / `size` 完全相同的版本跳过 |
+| 同版本号但 `downloadURL` 或 `size` 不同 | 两条版本均保留，写入警告 |
+| 主源与副源字段取值不同 | 主源应用字段不被补全或改写，差异写入 `logs/*.json` 的 `conflicts.metadata`，标记为 `primary-immutable` |
+| `strictRyP0Fields: true`（当前配置） | 新增内容只允许本次主源实际出现过的 app / version 字段；`nsfw` / `screenshots` / `minOSVersion` 等主源未定义字段被剔除并记录 |
 | 后续源独有应用 | 转为 ryP0 结构：生成 `catalogID`，`updatePolicy=static`，`appType=Static` |
 | 分类取值 | `categoryOverrides`（按 bundleId）→ 上游 `category` 经 `categoryAliases` 映射（`entertainment` → `Movies`）→ 关键词匹配 → `defaultCategory`（`Tools`） |
-| 上游 `nsfw: true` | 写入应用级 `nsfw` |
 | 上游 `appPermissions` | 写入 `entitlements` 与 `privacy` |
-| 应用内重复版本 | 去重，保留日期较新者 |
-| 版本数组为空 | 移除该应用 |
-| `date` 非 ISO 8601 | 归一为 `YYYY-MM-DDTHH:MM:SSZ`；无法归一时移除该版本 |
-| 后续源 `screenshots` | 默认丢弃，`keepScreenshots: true` 时保留 |
+| 应用内重复版本 | 主源应用不去重；导入应用去重 |
+| 版本数组为空 | 主源应用保留；导入应用移除 |
+| `date` 非 ISO 8601 | 主源版本保留原值；导入版本归一为 `YYYY-MM-DDTHH:MM:SSZ`，无法归一时移除该版本 |
+| 后续源 `screenshots` | 默认丢弃；`keepScreenshots: true` 时先保留，再由字段白名单剔除 |
 | 后续源 `news` | 默认丢弃，`carryNewsFrom` 指定保留的源 |
+| `onBundleIdConflict: "keep-all"` | 同 `bundleIdentifier` 的条目全部保留为独立应用（回退开关，当前未启用） |
 
 ## 目录结构
 
@@ -123,7 +139,7 @@ appsource-sync/
 | 输入 | 作用 |
 | --- | --- |
 | `dry_run` | 只生成与校验，不提交 |
-| `strict_validate` | 校验警告也判定失败 |
+| `strict_validate` | 校验警告（含主源自带差异）也判定失败 |
 | `ryp0_url` | 覆盖 `ryp0` 源地址 |
 | `altgallery_url` | 覆盖 `altgallery` 源地址 |
 | `set_sources` | 通用覆盖，`name=url`，多个以逗号分隔 |
@@ -150,6 +166,7 @@ appsource-sync/
 | 网络重试 | 4 次指数退避，起始 2s，上限 30s；重试条件为超时、429、5xx |
 | 缓存 | `state/cache/<源名>.json`，经 Actions cache 持久化 |
 | 写入方式 | 先写 `.tmp` 再 `os.replace` |
+| 校验基准 | `--baseline state/cache/ryp0.json`，用于识别主源条目并容忍其自带格式差异 |
 | 推送重试 | `git push` 失败后 `pull --rebase`，最多 3 次 |
 | 提交条件 | `feed.json` 有变化 |
 
@@ -157,22 +174,23 @@ appsource-sync/
 
 | 位置 | 内容 | 保留期 |
 | --- | --- | --- |
-| Actions 运行摘要 | 应用/版本数、各源状态、清理动作、版本冲突表 | 随 run |
+| Actions 运行摘要 | 应用/版本数、各源状态、并入版本数、主源自带与新引入重复 ID 组数、导入应用清理动作 | 随 run |
 | `logs/sync-<时间戳>.log` | 逐行 UTC 日志 | artifact 30 天 |
 | `logs/sync-<时间戳>.json` | 结构化报告：计数、冲突明细、丢弃清单 | artifact 30 天 |
 | `state/last_run.json` | 最近一次运行快照，含 feed 的 sha256 | 随仓库提交 |
 | `state/history.jsonl` | 每次更新的追加记录，上限 200 行 | 随仓库提交 |
-| git 提交信息 | 应用/版本/冲突数量 | 永久 |
+| git 提交信息 | 应用/版本数、主源保留数、导入数、并入版本数、新引入重复 ID 组数 | 永久 |
 
 ## 本地运行
 
 ```bash
-python3 tests/test_merge.py                    # 21 组回归测试，不需要网络
+python3 tests/test_merge.py                    # 26 组回归测试，不需要网络
 
 python3 scripts/merge_sources.py --config config/sync.json \
     --source-url https://raw.githubusercontent.com/OWNER/REPO/main/feed.json
 
-python3 scripts/validate_feed.py --feed feed.json --config config/sync.json
+python3 scripts/validate_feed.py --feed feed.json --config config/sync.json \
+    --baseline state/cache/ryp0.json
 
 python3 scripts/merge_sources.py --config config/sync.json \
     --set one=https://example.com/apps.json
@@ -198,8 +216,11 @@ GitHub Pages：Settings → Pages → Source 选择 `Deploy from a branch`、分
 | 定时精度 | `schedule` 按 UTC 计算；实测延迟 26 分钟与数小时两种 |
 | 定时停用 | 公开仓库连续 60 天无提交活动时，`schedule` 自动停用 |
 | 分支范围 | `schedule` 仅对默认分支生效 |
-| 重复 ID | `keep-all` 下输出 35 组重复 bundleIdentifier；AltStore / SideStore 以 bundleIdentifier 作为应用身份，同一 ID 多次出现时的客户端行为未验证 |
-| `screenshots` | 保留该字段时的客户端兼容性未验证，默认关闭 |
+| 重复 ID | 输出含 6 组重复 bundleIdentifier（13 条），全部来自主源自身；`merge` 策略不引入新组；客户端对这些主源自带重复项的行为未验证 |
+| 主源自带异常 | 13 个空版本应用、396 条应用内重复版本、4 条非 ISO 日期按配置原样保留；校验器在 `--baseline` 下记为警告 |
+| `strict_validate` | 开启时主源自带的警告也判定失败 |
+| `minOSVersion` / `nsfw` | 主源字段集合未定义，导入内容不含这两个字段 |
+| `screenshots` | 字段白名单开启时剔除，默认关闭 |
 | 分类 | 关键词未匹配时取 `defaultCategory`（`Tools`） |
 | `status` / `backup` / `automation` | 导入应用不含这三个字段 |
 | `sha256` | One、INSAV、WQGuard 不提供校验值，对应版本缺该字段 |
@@ -225,7 +246,7 @@ GitHub Pages：Settings → Pages → Source 选择 `Deploy from a branch`、分
 | `.ipa` 文件 | 不托管、不镜像、不重新签名；`downloadURL` 指向上游 GitHub Release |
 | 图标 | 以 URL 引用上游仓库文件 |
 | 应用名称、简介、截图 | 著作权归各应用作者 |
-| 合并操作 | 字段结构转换、排序、去重 |
+| 合并操作 | 主源条目原样保留；副源条目字段转换、同 ID 版本并入、导入应用去重 |
 
 移除上游条目的方式：删除 `config/sync.json` 中对应 `sources` 元素，或将该应用的 bundleIdentifier 加入 `merge.excludeBundleIds`，下一次运行生效。
 
