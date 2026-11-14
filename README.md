@@ -41,6 +41,8 @@
 
 10 组中 2 组为 `bundleIdentifiers` 别名匹配命中，副源 `bundleIdentifier` 与主源不同：Kazumi for iOS `3.0.5`（副源 `com.linkpass.kazumi`）、DolphiniOS `5.0.0b6`（副源 `me.oatmealdome.DolphiniOS-njb-patreon-beta`）。其余 8 组为同 `bundleIdentifier` 匹配。
 
+10 组追加条目的来源均为 `altgallery`。One 与 INSAV 各 1 个应用（`com.ios151.one`、`com.ios151.insav`），未参与这 10 组。
+
 消除这 10 组需按「任一侧 `buildVersion` 缺失即通配，`downloadURL` 与 `size` 相同则跳过」实现；只按「主源有值才匹配」会漏掉 AniBaka。
 
 DolphiniOS `5.0.0b6`：主源该版本有两条记录，一条 `buildVersion` 缺失（`downloadURL` 指向 ryP0-repository），一条 `buildVersion` 为 `26`（`downloadURL` 指向 OatmealDome release）。AltGallery 经别名并入的版本 `buildVersion` 缺失、`downloadURL` 与 `size` 与主源 `26` 那条一致；`append_secondary_versions` 按 `version` + `buildVersion` + `downloadURL` + `size` 四元组判重，因 `buildVersion` 一条缺失一条为 `26` 而不匹配，该版本被追加。
