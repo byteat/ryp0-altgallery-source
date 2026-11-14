@@ -9,6 +9,8 @@
 | 主 | `https://raw.githubusercontent.com/byteat/ryp0-altgallery-source/main/feed.json` |
 | 镜像 | `https://cdn.jsdelivr.net/gh/byteat/ryp0-altgallery-source@main/feed.json` |
 
+镜像走 jsDelivr 缓存，与主地址不同步。2026-11-14 实测：主地址 233 应用 / 3045 版本，镜像 258 应用 / 2651 版本（对应提交 `adb204b4`）。
+
 ## 数据快照
 
 | 项 | 值 |
@@ -20,8 +22,12 @@
 | 合并新引入的重复 bundleIdentifier | 0 组 |
 | 空版本应用 | 13，全部来自主源 |
 | 非 ISO 8601 日期 | 4，全部来自主源 |
-| 应用内重复版本 | 396，按 `version` + `buildVersion` 计，全部来自主源 |
+| 应用内重复版本 | 397，按 `version` + `buildVersion` 计；主源自带 396 条（292 组），合并引入 1 条 |
+| 重复版本构成 | 293 组中 292 组 `downloadURL` 不同，277 组 `size` 不同，`downloadURL` 与 `size` 全同的 0 组 |
+| 缺 `sha256` 的版本 | 184，主源 129、导入 55 |
 | 快照时间 | 2026-11-14 |
+
+合并引入的 1 条：DolphiniOS `5.0.0b6`。主源该版本有两条记录，一条 `buildVersion` 缺失（`downloadURL` 指向 ryP0-repository），一条 `buildVersion` 为 `26`（`downloadURL` 指向 OatmealDome release）。AltGallery 同 ID 版本 `buildVersion` 缺失、`downloadURL` 与 `size` 与主源 `26` 那条一致；`append_secondary_versions` 按 `version` + `buildVersion` + `downloadURL` + `size` 四元组判重，因 `buildVersion` 一条缺失一条为 `26` 而不匹配，该版本被追加，追加后与主源 `buildVersion` 缺失那条构成重复组（`downloadURL` 不同、`size` 同为 17963367）。
 
 ## 上游源
 
@@ -103,7 +109,7 @@
 | `strictRyP0Fields` 剔除 | `nsfw` / `screenshots` / `minOSVersion` 等主源未定义字段剔除并记录 |
 | 后续源独有应用 | 转 ryP0 结构：生成 `catalogID`，`updatePolicy=static`，`appType=Static` |
 | 分类取值 | `categoryOverrides` → `categoryAliases` → 关键词匹配 → `defaultCategory`（`Tools`） |
-| 上游 `appPermissions` | 写入 `entitlements`、`privacy` |
+| 上游 `appPermissions` | 写入 `appPermissions.entitlements` 与 `appPermissions.privacy`，非扁平字段 |
 | 应用内重复版本 | 主源应用保留，导入应用去重 |
 | 版本数组为空 | 主源应用保留，导入应用移除 |
 | `date` 非 ISO 8601 | 主源版本保留原值；导入版本归一为 `YYYY-MM-DDTHH:MM:SSZ`，无法归一则移除 |
@@ -116,9 +122,9 @@
 | 维度 | ryP0 | AltGallery | One / INSAV |
 | --- | --- | --- | --- |
 | 顶层字段 | `name` `identifier` `iconURL` `sourceURL` `categories` `apps` `news` | `name` `subtitle` `description` `iconURL` `website` `tintColor` `apps` `news` | 同 AltGallery，另有 `nsfw` `featuredApps` |
-| 应用标识 | `bundleIdentifier` + `catalogID`（`project-` + 32 位十六进制） | `bundleIdentifier` | `bundleIdentifier` |
+| 应用标识 | `bundleIdentifier` + `catalogID`（`project-` / `app-` / `source-` + 32 位十六进制，实测三种前缀并存） | `bundleIdentifier` | `bundleIdentifier` |
 | 分类 | `category` + 顶层 `categories` 白名单 | 无 | `entertainment` |
-| 版本字段 | `version` `date` `downloadURL` `size` `buildVersion` `releaseChannel` `sha256` `ipaBundleIdentifier` `upstreamAssetURL` | `version` `date` `downloadURL` `size` `minOSVersion` `localizedDescription` `buildVersion` | `version` `buildVersion` `date` `localizedDescription` `downloadURL` `size` `minOSVersion` |
+| 版本字段 | `version` `date` `downloadURL` `size` `buildVersion` `localizedDescription` `releaseChannel` `sha256` `ipaBundleIdentifier` `upstreamAssetURL` `sourceAppName` `sourceAssetName` `sourceArchiveEntry` | `version` `date` `downloadURL` `size` `minOSVersion` `localizedDescription` `buildVersion` | `version` `buildVersion` `date` `localizedDescription` `downloadURL` `size` `minOSVersion` |
 | 日期格式 | 主流 `2026-11-10T04:44:50Z`，另有 `2026-11-05` 与带时区偏移取值 | `2026-10-16` | `2026-11-04T16:15:28Z` |
 | 截图 | 无 | `screenshots`（URL 数组） | 无 |
 | 更新策略 | `updatePolicy`（`daily`/`static`）、`appType`（`Daily Update`/`Static`） | 无 | 无 |
@@ -194,7 +200,7 @@ python3 scripts/merge_sources.py --config config/sync.json \
     --set one=https://example.com/apps.json
 ```
 
-依赖 Python 3.10+ 标准库。`github-releases` 源读取 GitHub API：未认证 60 次/小时，认证后 5000 次/小时。
+依赖 Python 3.10+ 标准库（源码使用 `X | None` 注解，配 `from __future__ import annotations`；实测 3.9.6 下测试与校验均可运行）。`github-releases` 源读取 GitHub API：未认证 60 次/小时，认证后 5000 次/小时。
 
 ## 部署
 
@@ -227,18 +233,23 @@ appsource-sync/
 
 | 项 | 事实 |
 | --- | --- |
-| 定时精度 | `schedule` 按 UTC 计算，实测延迟 26 分钟至数小时 |
+| 定时精度 | `schedule` 按 UTC 计算，实测延迟 21 分钟至 339 分钟（近 4 次定时运行：21 / 43 / 101 / 339 分钟） |
 | 定时停用 | 公开仓库连续 60 天无提交活动时 `schedule` 自动停用 |
 | 分支范围 | `schedule` 仅对默认分支生效 |
 | 重复 ID | 输出含 6 组重复 bundleIdentifier（13 条），全部来自主源；`merge` 策略不引入新组；客户端行为未验证 |
 | 主源自带异常 | 13 个空版本应用、396 条应用内重复版本、4 条非 ISO 日期原样保留；`--baseline` 下记为警告 |
+| 重复版本性质 | 292 组主源重复中 291 组 `downloadURL` 不同、0 组 `downloadURL` 与 `size` 全同；按四元组去重对主源影响 0 条 |
+| 合并引入重复版本 | 1 条，DolphiniOS `5.0.0b6`，`buildVersion` 缺失与 `26` 判为两个身份 |
+| 空版本应用 | 13 个，均为 `category=Ports`、`portDistribution=source-code`、bid 形如 `source-port-*`，无任何 IPA |
+| `buildVersion` 缺失 | feed 内 145 条版本无该字段；`version_identity` 用 `str(v.get('buildVersion',''))`，显式 `null` 会被当作字符串 `'None'`（当前数据未触发） |
 | `strict_validate` | 开启时主源自带警告亦判定失败 |
 | `minOSVersion` / `nsfw` | 主源字段集合未定义，导入内容不含该两字段 |
-| `screenshots` | 字段白名单开启时剔除，默认关闭 |
-| 分类 | 关键词未匹配时取 `defaultCategory`（`Tools`） |
-| `status` / `backup` / `automation` | 导入应用不含该三字段 |
-| `sha256` | One、INSAV、WQGuard 不提供校验值，对应版本缺该字段 |
-| 下载地址 | 未做存活性探测，取上游 `status` 字段 |
+| `screenshots` | 字段白名单开启时剔除；实测主源与导入应用均无该字段，`keepScreenshots: false` |
+| 分类 | 优先级为 `categoryOverrides` → `categoryAliases` → 关键词推断 → `defaultCategory`（`Tools`） |
+| `status` / `backup` / `automation` | 导入应用不含该三字段（实测 33 个导入应用均为 0 条） |
+| `appPermissions` | 实测位于 `appPermissions.entitlements` 与 `appPermissions.privacy`，非扁平字段。feed 内 8 个应用有该字段：主源 7 个（原样保留，仅 `entitlements`）、导入 1 个（One，含 `privacy`） |
+| `sha256` | 184 条版本缺该字段（主源 129、导入 55）。上游不提供该值时字段缺失，非空字符串 |
+| 下载地址 | 不做存活性探测；主源取上游自带 `status.checkedDownloadURL`，副源无此步骤 |
 
 ## 许可
 
