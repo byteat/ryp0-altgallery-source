@@ -1,17 +1,17 @@
 {
-  "startedAt": "2026-11-14T06:08:54Z",
+  "startedAt": "2026-11-14T15:30:28Z",
   "finishedAt": null,
   "status": "ok",
   "counts": {
-    "primaryApps": 200,
+    "primaryApps": 207,
     "secondaryApps": 71,
-    "matchedApps": 38,
-    "importedApps": 33,
-    "totalApps": 233,
+    "matchedApps": 39,
+    "importedApps": 32,
+    "totalApps": 239,
     "addedVersions": 35,
-    "skippedIdenticalVersions": 3,
-    "totalVersions": 3045,
-    "conflicts": 84,
+    "skippedIdenticalVersions": 4,
+    "totalVersions": 3077,
+    "conflicts": 87,
     "duplicateBidGroups": 6,
     "duplicateBidEntries": 13,
     "primaryDuplicateBidGroups": 6,
@@ -19,22 +19,22 @@
     "preservePrimaryVerbatim": true,
     "strictRyP0Fields": true,
     "conflictPolicy": "merge",
-    "sha256": "5789880174e57e1aa8fbddb3089c4995fae313b056c780cffbfda873a5d5563e"
+    "sha256": "424f8ef8ec8ba174b781116ab2f8ac496cc072fd9996489700ab6f4e7ffcb5be"
   },
   "sources": {
     "ryp0": {
       "url": "https://raw.githubusercontent.com/Sami-Wali/ryP0-repository/main/repo.json",
       "type": "altstore-json",
       "status": "ok",
-      "apps": 200
+      "apps": 207
     },
     "altgallery": {
       "url": "https://raw.githubusercontent.com/bebound/AltGallery/refs/heads/master/all-apps.json",
       "type": "altstore-json",
       "status": "ok",
       "apps": 68,
-      "matched": 37,
-      "imported": 31
+      "matched": 38,
+      "imported": 30
     },
     "one": {
       "url": "https://raw.githubusercontent.com/ios151/One-releases/main/altsource.json",
@@ -61,5 +61,5 @@
       "imported": 0
     }
   },
-  "feedSha256": "5789880174e57e1aa8fbddb3089c4995fae313b056c780cffbfda873a5d5563e"
+  "feedSha256": "424f8ef8ec8ba174b781116ab2f8ac496cc072fd9996489700ab6f4e7ffcb5be"
 }
