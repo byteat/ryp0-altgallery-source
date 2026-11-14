@@ -23,11 +23,16 @@
 | 空版本应用 | 13，全部来自主源 |
 | 非 ISO 8601 日期 | 4，全部来自主源 |
 | 应用内重复版本 | 397，按 `version` + `buildVersion` 计；主源自带 396 条（292 组），合并引入 1 条 |
+| 按内容计的重复版本 | 13 组 / 13 条，按 `version` + `downloadURL` + `size` 计；上游自带 3 组，合并引入 10 组 |
 | 重复版本构成 | 293 组中 292 组 `downloadURL` 不同，277 组 `size` 不同，`downloadURL` 与 `size` 全同的 0 组 |
 | 缺 `sha256` 的版本 | 184，主源 129、导入 55 |
 | 快照时间 | 2026-11-14 |
 
-合并引入的 1 条：DolphiniOS `5.0.0b6`。主源该版本有两条记录，一条 `buildVersion` 缺失（`downloadURL` 指向 ryP0-repository），一条 `buildVersion` 为 `26`（`downloadURL` 指向 OatmealDome release）。AltGallery 同 ID 版本 `buildVersion` 缺失、`downloadURL` 与 `size` 与主源 `26` 那条一致；`append_secondary_versions` 按 `version` + `buildVersion` + `downloadURL` + `size` 四元组判重，因 `buildVersion` 一条缺失一条为 `26` 而不匹配，该版本被追加，追加后与主源 `buildVersion` 缺失那条构成重复组（`downloadURL` 不同、`size` 同为 17963367）。
+`version` + `buildVersion` 与 `version` + `downloadURL` + `size` 是两个口径：前者 397 条，后者 13 条。前者把同版本号下不同下载产物计为重复，其中 292 组 `downloadURL` 不同（Apollo 的 GLASS / GLASSICONS、Muffin-EMU 的 fakesigned 等并行产物）。后者只算 `version`、`downloadURL`、`size` 三项全同的记录。
+
+按内容计的 13 组，合并引入的 10 组统一特征为「主源条目 `buildVersion` 有值、追加条目 `buildVersion` 缺失」：WQToolkit `1.0`、AniBaka `5.2.4`、Kazumi for iOS `3.0.5`、mangayomi `0.9.95`、RewindBox `0.0.11`、SideStore `0.7.0-20260911.328+6032424a`、TiebaPure-iOS `1.4.15`、AltStore `2.3.1`、DukeX `1.0.2`、DolphiniOS `5.0.0b6`。上游自带的 3 组：LiveContainer (Stable) `3.8.0`、EnsWilde `EnsWilde3.1.3`、PancakeStore `1.3.1`。
+
+合并引入的重复最多的一组是 DolphiniOS `5.0.0b6`，主源该版本有两条记录，一条 `buildVersion` 缺失（`downloadURL` 指向 ryP0-repository），一条 `buildVersion` 为 `26`（`downloadURL` 指向 OatmealDome release）。AltGallery 同 ID 版本 `buildVersion` 缺失、`downloadURL` 与 `size` 与主源 `26` 那条一致；`append_secondary_versions` 按 `version` + `buildVersion` + `downloadURL` + `size` 四元组判重，因 `buildVersion` 一条缺失一条为 `26` 而不匹配，该版本被追加。
 
 ## 上游源
 
