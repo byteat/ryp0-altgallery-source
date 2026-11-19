@@ -1,17 +1,17 @@
 {
-  "startedAt": "2026-11-19T10:19:38Z",
+  "startedAt": "2026-11-19T20:34:58Z",
   "finishedAt": null,
   "status": "ok",
   "counts": {
     "primaryApps": 215,
-    "secondaryApps": 75,
-    "matchedApps": 41,
+    "secondaryApps": 78,
+    "matchedApps": 44,
     "importedApps": 34,
     "totalApps": 249,
-    "addedVersions": 38,
+    "addedVersions": 40,
     "skippedIdenticalVersions": 4,
-    "totalVersions": 3285,
-    "conflicts": 95,
+    "totalVersions": 3307,
+    "conflicts": 103,
     "duplicateBidGroups": 7,
     "duplicateBidEntries": 15,
     "primaryDuplicateBidGroups": 7,
@@ -19,7 +19,7 @@
     "preservePrimaryVerbatim": true,
     "strictRyP0Fields": true,
     "conflictPolicy": "merge",
-    "sha256": "0e0cbdc65b9fc1d1d973ea3759e5e34897096bbb679262d2c5a9e514e003758d"
+    "sha256": "919fb037179d4ef2fbc7b214c2b0922ee95d8ad23ed4b752be90a8381bcb599f"
   },
   "sources": {
     "ryp0": {
@@ -32,8 +32,8 @@
       "url": "https://raw.githubusercontent.com/bebound/AltGallery/refs/heads/master/all-apps.json",
       "type": "altstore-json",
       "status": "ok",
-      "apps": 72,
-      "matched": 40,
+      "apps": 75,
+      "matched": 43,
       "imported": 32
     },
     "one": {
@@ -61,5 +61,5 @@
       "imported": 0
     }
   },
-  "feedSha256": "0e0cbdc65b9fc1d1d973ea3759e5e34897096bbb679262d2c5a9e514e003758d"
+  "feedSha256": "919fb037179d4ef2fbc7b214c2b0922ee95d8ad23ed4b752be90a8381bcb599f"
 }
