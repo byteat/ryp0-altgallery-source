@@ -1,5 +1,5 @@
 {
-  "startedAt": "2026-11-19T00:21:52Z",
+  "startedAt": "2026-11-19T10:19:38Z",
   "finishedAt": null,
   "status": "ok",
   "counts": {
@@ -8,9 +8,9 @@
     "matchedApps": 41,
     "importedApps": 34,
     "totalApps": 249,
-    "addedVersions": 37,
+    "addedVersions": 38,
     "skippedIdenticalVersions": 4,
-    "totalVersions": 3277,
+    "totalVersions": 3285,
     "conflicts": 95,
     "duplicateBidGroups": 7,
     "duplicateBidEntries": 15,
@@ -19,7 +19,7 @@
     "preservePrimaryVerbatim": true,
     "strictRyP0Fields": true,
     "conflictPolicy": "merge",
-    "sha256": "07c2b319be646b221c15d9da6ed5b949cf884b57986fd98bd301ca3d315f583e"
+    "sha256": "0e0cbdc65b9fc1d1d973ea3759e5e34897096bbb679262d2c5a9e514e003758d"
   },
   "sources": {
     "ryp0": {
@@ -61,5 +61,5 @@
       "imported": 0
     }
   },
-  "feedSha256": "07c2b319be646b221c15d9da6ed5b949cf884b57986fd98bd301ca3d315f583e"
+  "feedSha256": "0e0cbdc65b9fc1d1d973ea3759e5e34897096bbb679262d2c5a9e514e003758d"
 }
