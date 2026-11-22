@@ -1,5 +1,5 @@
 {
-  "startedAt": "2026-11-22T17:48:48Z",
+  "startedAt": "2026-11-22T23:36:14Z",
   "finishedAt": null,
   "status": "ok",
   "counts": {
@@ -10,7 +10,7 @@
     "totalApps": 264,
     "addedVersions": 43,
     "skippedIdenticalVersions": 5,
-    "totalVersions": 3389,
+    "totalVersions": 3395,
     "conflicts": 106,
     "duplicateBidGroups": 6,
     "duplicateBidEntries": 13,
@@ -19,7 +19,7 @@
     "preservePrimaryVerbatim": true,
     "strictRyP0Fields": true,
     "conflictPolicy": "merge",
-    "sha256": "9389a794c5018e7bb6b572d3d23b7099e715018a683ba3768366d20dbc659c88"
+    "sha256": "3e306a1acc8689ae60d26cae6ef77dd04e5d0544db34115bf4db44a39814319c"
   },
   "sources": {
     "ryp0": {
@@ -61,5 +61,5 @@
       "imported": 0
     }
   },
-  "feedSha256": "9389a794c5018e7bb6b572d3d23b7099e715018a683ba3768366d20dbc659c88"
+  "feedSha256": "3e306a1acc8689ae60d26cae6ef77dd04e5d0544db34115bf4db44a39814319c"
 }
