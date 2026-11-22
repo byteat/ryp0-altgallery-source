@@ -1,16 +1,16 @@
 {
-  "startedAt": "2026-11-22T02:13:11Z",
+  "startedAt": "2026-11-22T09:47:14Z",
   "finishedAt": null,
   "status": "ok",
   "counts": {
-    "primaryApps": 226,
+    "primaryApps": 227,
     "secondaryApps": 83,
     "matchedApps": 46,
     "importedApps": 37,
-    "totalApps": 263,
-    "addedVersions": 44,
-    "skippedIdenticalVersions": 4,
-    "totalVersions": 3375,
+    "totalApps": 264,
+    "addedVersions": 43,
+    "skippedIdenticalVersions": 5,
+    "totalVersions": 3382,
     "conflicts": 106,
     "duplicateBidGroups": 6,
     "duplicateBidEntries": 13,
@@ -19,14 +19,14 @@
     "preservePrimaryVerbatim": true,
     "strictRyP0Fields": true,
     "conflictPolicy": "merge",
-    "sha256": "abfc8bd8af11c617a14b99161e0255096b99d9794ee1529345ed47690c3cf024"
+    "sha256": "202446651b931598b9aeec90eecdad3cca01f85c0fa2f13b442c3e934cd04d4c"
   },
   "sources": {
     "ryp0": {
       "url": "https://raw.githubusercontent.com/Sami-Wali/ryP0-repository/main/repo.json",
       "type": "altstore-json",
       "status": "ok",
-      "apps": 226
+      "apps": 227
     },
     "altgallery": {
       "url": "https://raw.githubusercontent.com/bebound/AltGallery/refs/heads/master/all-apps.json",
@@ -61,5 +61,5 @@
       "imported": 0
     }
   },
-  "feedSha256": "abfc8bd8af11c617a14b99161e0255096b99d9794ee1529345ed47690c3cf024"
+  "feedSha256": "202446651b931598b9aeec90eecdad3cca01f85c0fa2f13b442c3e934cd04d4c"
 }
