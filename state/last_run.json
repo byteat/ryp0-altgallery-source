@@ -1,17 +1,17 @@
 {
-  "startedAt": "2026-11-24T04:47:42Z",
+  "startedAt": "2026-11-24T17:42:22Z",
   "finishedAt": null,
   "status": "ok",
   "counts": {
     "primaryApps": 227,
-    "secondaryApps": 84,
-    "matchedApps": 46,
-    "importedApps": 38,
-    "totalApps": 265,
-    "addedVersions": 43,
+    "secondaryApps": 93,
+    "matchedApps": 49,
+    "importedApps": 44,
+    "totalApps": 271,
+    "addedVersions": 45,
     "skippedIdenticalVersions": 5,
-    "totalVersions": 3409,
-    "conflicts": 106,
+    "totalVersions": 3421,
+    "conflicts": 117,
     "duplicateBidGroups": 6,
     "duplicateBidEntries": 13,
     "primaryDuplicateBidGroups": 6,
@@ -19,7 +19,7 @@
     "preservePrimaryVerbatim": true,
     "strictRyP0Fields": true,
     "conflictPolicy": "merge",
-    "sha256": "96e3a723143315ca664f006cc7805340b8ca9e6cc45a433babbe28ea34eaecbb"
+    "sha256": "b188b2c00070408518e3abeea6b8ccff9c16ef94f44ff14c494ea9f21dd560d6"
   },
   "sources": {
     "ryp0": {
@@ -32,9 +32,9 @@
       "url": "https://raw.githubusercontent.com/bebound/AltGallery/refs/heads/master/all-apps.json",
       "type": "altstore-json",
       "status": "ok",
-      "apps": 81,
-      "matched": 45,
-      "imported": 36
+      "apps": 90,
+      "matched": 48,
+      "imported": 42
     },
     "one": {
       "url": "https://raw.githubusercontent.com/ios151/One-releases/main/altsource.json",
@@ -61,5 +61,5 @@
       "imported": 0
     }
   },
-  "feedSha256": "96e3a723143315ca664f006cc7805340b8ca9e6cc45a433babbe28ea34eaecbb"
+  "feedSha256": "b188b2c00070408518e3abeea6b8ccff9c16ef94f44ff14c494ea9f21dd560d6"
 }
