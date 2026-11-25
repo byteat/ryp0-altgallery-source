@@ -1,13 +1,13 @@
 {
-  "startedAt": "2026-11-24T17:42:22Z",
+  "startedAt": "2026-11-25T02:26:47Z",
   "finishedAt": null,
   "status": "ok",
   "counts": {
     "primaryApps": 227,
-    "secondaryApps": 93,
+    "secondaryApps": 92,
     "matchedApps": 49,
-    "importedApps": 44,
-    "totalApps": 271,
+    "importedApps": 43,
+    "totalApps": 270,
     "addedVersions": 45,
     "skippedIdenticalVersions": 5,
     "totalVersions": 3421,
@@ -19,7 +19,7 @@
     "preservePrimaryVerbatim": true,
     "strictRyP0Fields": true,
     "conflictPolicy": "merge",
-    "sha256": "b188b2c00070408518e3abeea6b8ccff9c16ef94f44ff14c494ea9f21dd560d6"
+    "sha256": "d5bf0c6938f8a2e74186969d6d9b19a1ec8b027664e59e89fc28e3dbc5a3d50e"
   },
   "sources": {
     "ryp0": {
@@ -32,9 +32,9 @@
       "url": "https://raw.githubusercontent.com/bebound/AltGallery/refs/heads/master/all-apps.json",
       "type": "altstore-json",
       "status": "ok",
-      "apps": 90,
+      "apps": 89,
       "matched": 48,
-      "imported": 42
+      "imported": 41
     },
     "one": {
       "url": "https://raw.githubusercontent.com/ios151/One-releases/main/altsource.json",
@@ -61,5 +61,5 @@
       "imported": 0
     }
   },
-  "feedSha256": "b188b2c00070408518e3abeea6b8ccff9c16ef94f44ff14c494ea9f21dd560d6"
+  "feedSha256": "d5bf0c6938f8a2e74186969d6d9b19a1ec8b027664e59e89fc28e3dbc5a3d50e"
 }
