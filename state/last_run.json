@@ -1,16 +1,16 @@
 {
-  "startedAt": "2026-11-26T10:52:21Z",
+  "startedAt": "2026-11-26T11:22:33Z",
   "finishedAt": null,
   "status": "ok",
   "counts": {
     "primaryApps": 232,
-    "secondaryApps": 107,
+    "secondaryApps": 108,
     "matchedApps": 54,
-    "importedApps": 53,
-    "totalApps": 285,
+    "importedApps": 54,
+    "totalApps": 286,
     "addedVersions": 50,
     "skippedIdenticalVersions": 5,
-    "totalVersions": 3466,
+    "totalVersions": 3469,
     "conflicts": 128,
     "duplicateBidGroups": 6,
     "duplicateBidEntries": 13,
@@ -19,7 +19,7 @@
     "preservePrimaryVerbatim": true,
     "strictRyP0Fields": true,
     "conflictPolicy": "merge",
-    "sha256": "f05cf140a1440c0675c126dbd5a08978e0363e238614cc0eda523eda82c764bc"
+    "sha256": "42630af72467b0df3f59380edb70816a037faaf90a1c39538f52b0dccecdbf5b"
   },
   "sources": {
     "ryp0": {
@@ -59,7 +59,15 @@
       "apps": 1,
       "matched": 1,
       "imported": 0
+    },
+    "reloc": {
+      "url": "https://github.com/Reukix/Reloc",
+      "type": "github-releases",
+      "status": "ok",
+      "apps": 1,
+      "matched": 0,
+      "imported": 1
     }
   },
-  "feedSha256": "f05cf140a1440c0675c126dbd5a08978e0363e238614cc0eda523eda82c764bc"
+  "feedSha256": "42630af72467b0df3f59380edb70816a037faaf90a1c39538f52b0dccecdbf5b"
 }

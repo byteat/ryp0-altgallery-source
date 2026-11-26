@@ -331,6 +331,19 @@
       "category": "Tools",
       "versions": [
         {
+          "version": "2.8.6",
+          "date": "2026-11-26T11:00:31Z",
+          "downloadURL": "https://github.com/pxx917144686/APP/releases/download/2.8.6/APP_2.8.6.ipa",
+          "upstreamAssetURL": "https://github.com/pxx917144686/APP/releases/download/2.8.6/APP_2.8.6.ipa",
+          "size": 54047706,
+          "sha256": "606154572eda92aaf37974e01913217900f8c67e8765dc45f46c2248cf70144a",
+          "ipaBundleIdentifier": "com.pxx917144686.App",
+          "sourceAssetName": "APP_2.8.6.ipa",
+          "releaseChannel": "release",
+          "buildVersion": "5",
+          "sourceAppName": "APP"
+        },
+        {
           "version": "2.8.5",
           "date": "2026-11-26T10:12:06Z",
           "downloadURL": "https://github.com/pxx917144686/APP/releases/download/2.8.5/APP_2.8.5.ipa",
@@ -491,8 +504,8 @@
       "appType": "Daily Update",
       "status": {
         "state": "healthy",
-        "checkedAt": "2026-11-26T10:14:35Z",
-        "checkedDownloadURL": "https://github.com/pxx917144686/APP/releases/download/2.8.5/APP_2.8.5.ipa",
+        "checkedAt": "2026-11-26T11:05:34Z",
+        "checkedDownloadURL": "https://github.com/pxx917144686/APP/releases/download/2.8.6/APP_2.8.6.ipa",
         "message": "Updated after package verification"
       },
       "importSource": {
@@ -1249,13 +1262,26 @@
       "name": "CyPort",
       "status": {
         "state": "healthy",
-        "checkedDownloadURL": "https://github.com/Thijs2004/CyPort/releases/download/v1.6/CyPort-1.6-2.3.1%2B2.5-unsigned.ipa",
-        "checkedAt": "2026-11-26T09:20:30Z",
-        "message": "Download is available"
+        "checkedAt": "2026-11-26T10:59:42Z",
+        "checkedDownloadURL": "https://github.com/Thijs2004/CyPort/releases/download/v1.6.1/CyPort-1.6.1-2.3.1%2B2.5-unsigned.ipa",
+        "message": "Updated after package verification"
       },
       "subtitle": "GitHub project request: Thijs2004/CyPort.",
       "updatePolicy": "daily",
       "versions": [
+        {
+          "version": "v1.6.1",
+          "date": "2026-11-26T10:56:29Z",
+          "downloadURL": "https://github.com/Thijs2004/CyPort/releases/download/v1.6.1/CyPort-1.6.1-2.3.1%2B2.5-unsigned.ipa",
+          "upstreamAssetURL": "https://github.com/Thijs2004/CyPort/releases/download/v1.6.1/CyPort-1.6.1-2.3.1%2B2.5-unsigned.ipa",
+          "size": 127899186,
+          "sha256": "bf7cb0a7e959ad1e16c7ea7715099430155bc96b4a862358e715be02aa74fa1c",
+          "ipaBundleIdentifier": "com.example.cyport",
+          "sourceAssetName": "CyPort-1.6.1-2.3.1+2.5-unsigned.ipa",
+          "releaseChannel": "release",
+          "buildVersion": "5814786",
+          "sourceAppName": "CyPort"
+        },
         {
           "version": "v1.6",
           "date": "2026-11-25T11:33:04Z",
@@ -53092,6 +53118,29 @@
       "appType": "Static",
       "githubURL": "https://github.com/ios151/Insav-releases",
       "tintColor": "#E11D48"
+    },
+    {
+      "name": "Reloc",
+      "catalogID": "project-bcd5d2ea79237111debc21bbacca483c",
+      "bundleIdentifier": "dev.reloc.ios",
+      "developerName": "Reukix",
+      "localizedDescription": "Reloc 通过本机回环连接 com.apple.carkit.service，完成 iAP2 / MFi-v3 / NMEA-0183 外设定位注入，使系统以标准外设 GPS 身份接收实时坐标。支持定格定位、GCJ-02 纠偏、后台保活与本机配对。",
+      "subtitle": "面向 iOS 的外设级定位模拟工具",
+      "category": "Tools",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "date": "2026-11-25T18:52:38Z",
+          "downloadURL": "https://github.com/Reukix/Reloc/releases/download/v1.0.0/Reloc.ipa",
+          "size": 4500835,
+          "releaseChannel": "release",
+          "ipaBundleIdentifier": "dev.reloc.ios"
+        }
+      ],
+      "iconURL": "https://raw.githubusercontent.com/Reukix/Reloc/main/docs/icon.png",
+      "updatePolicy": "static",
+      "appType": "Static",
+      "githubURL": "https://github.com/Reukix/Reloc"
     }
   ],
   "news": []
