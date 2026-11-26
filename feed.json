@@ -50,8 +50,8 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/Sami-Wali/ryP0-repository/releases/download/mobile-imports/com.chrissotraidis.openttdpad-d8f2e3622e542ceb5f697e710de3300fc0369dc8aed6440ca60c5318e3b47831.ipa",
-        "checkedAt": "2026-11-25T23:20:59Z",
-        "message": "Imported and mirrored after IPA validation"
+        "checkedAt": "2026-11-26T09:20:30Z",
+        "message": "Download is available"
       },
       "importSource": {
         "method": "github",
@@ -100,8 +100,8 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/chrissotraidis/etpad/releases/download/v0.1.0/ETPad-unsigned.ipa",
-        "checkedAt": "2026-11-25T23:18:42Z",
-        "message": "Imported from verified upstream source"
+        "checkedAt": "2026-11-26T09:20:30Z",
+        "message": "Download is available"
       },
       "importSource": {
         "method": "github",
@@ -150,8 +150,8 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/chrissotraidis/padmint/releases/download/v0.6.10/PadMint-ios-unsigned.ipa",
-        "checkedAt": "2026-11-25T23:16:42Z",
-        "message": "Imported from verified upstream source"
+        "checkedAt": "2026-11-26T09:20:30Z",
+        "message": "Download is available"
       },
       "importSource": {
         "method": "github",
@@ -209,8 +209,8 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/optimalabsistem/NusaNX/releases/download/v0.1.1-beta/NusaNX.0.1.1.Beta.ipa",
-        "checkedAt": "2026-11-25T22:28:37Z",
-        "message": "Imported from verified upstream source"
+        "checkedAt": "2026-11-26T09:20:30Z",
+        "message": "Download is available"
       },
       "importSource": {
         "method": "github",
@@ -259,7 +259,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/Sami-Wali/ryP0-repository/releases/download/mobile-imports/org.jmillz269.neroli-35cc3c5d4b773f4e329e5ae471644b1f225036212dbfea620ea64f383d339bd4.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "importSource": {
@@ -303,7 +303,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://ipa.cypwn.xyz/ipas/CapCut_12.0_Cracked.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "importSource": {
@@ -330,6 +330,45 @@
       "subtitle": "GitHub project request: pxx917144686/APP.",
       "category": "Tools",
       "versions": [
+        {
+          "version": "2.8.5",
+          "date": "2026-11-26T10:12:06Z",
+          "downloadURL": "https://github.com/pxx917144686/APP/releases/download/2.8.5/APP_2.8.5.ipa",
+          "upstreamAssetURL": "https://github.com/pxx917144686/APP/releases/download/2.8.5/APP_2.8.5.ipa",
+          "size": 53996372,
+          "sha256": "351d6cc90da94de4c60e39b842e66b2a94646732c046e9b2141a09e0ef7ccacd",
+          "ipaBundleIdentifier": "com.pxx917144686.App",
+          "sourceAssetName": "APP_2.8.5.ipa",
+          "releaseChannel": "release",
+          "buildVersion": "5",
+          "sourceAppName": "APP"
+        },
+        {
+          "version": "2.8.3",
+          "date": "2026-11-26T09:20:55Z",
+          "downloadURL": "https://github.com/pxx917144686/APP/releases/download/2.8.3/APP_2.8.3.ipa",
+          "upstreamAssetURL": "https://github.com/pxx917144686/APP/releases/download/2.8.3/APP_2.8.3.ipa",
+          "size": 53966258,
+          "sha256": "d1f4687ce951db9f0c45bfb431bdbbeb636a902933e57d8ca22943b38c58bd2a",
+          "ipaBundleIdentifier": "com.pxx917144686.App",
+          "sourceAssetName": "APP_2.8.3.ipa",
+          "releaseChannel": "release",
+          "buildVersion": "5",
+          "sourceAppName": "APP"
+        },
+        {
+          "version": "2.8.4",
+          "date": "2026-11-26T09:16:25Z",
+          "downloadURL": "https://github.com/pxx917144686/APP/releases/download/2.8.4/APP_2.8.4.ipa",
+          "upstreamAssetURL": "https://github.com/pxx917144686/APP/releases/download/2.8.4/APP_2.8.4.ipa",
+          "size": 53990244,
+          "sha256": "2d22d0b608387e27c2c8c5eac0607763e2a1f14267705f8e0988d8bedc37b574",
+          "ipaBundleIdentifier": "com.pxx917144686.App",
+          "sourceAssetName": "APP_2.8.4.ipa",
+          "releaseChannel": "release",
+          "buildVersion": "5",
+          "sourceAppName": "APP"
+        },
         {
           "version": "2.8.2",
           "date": "2026-11-25T20:09:56Z",
@@ -452,9 +491,9 @@
       "appType": "Daily Update",
       "status": {
         "state": "healthy",
-        "checkedDownloadURL": "https://github.com/pxx917144686/APP/releases/download/2.8.2/APP_2.8.2.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
-        "message": "Download is available"
+        "checkedAt": "2026-11-26T10:14:35Z",
+        "checkedDownloadURL": "https://github.com/pxx917144686/APP/releases/download/2.8.5/APP_2.8.5.ipa",
+        "message": "Updated after package verification"
       },
       "importSource": {
         "method": "github",
@@ -506,7 +545,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/frs0n/GestaltEdit/releases/download/v2.3.1/GestaltEdit-v2.3.1-unsigned.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "importSource": {
@@ -569,7 +608,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/DjangoCustard225/Vesper/releases/download/v0.5.4/Vesper.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "importSource": {
@@ -631,7 +670,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/verback2308/Opaline/releases/download/1.12.0/Opaline_1.12.0.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "importSource": {
@@ -680,7 +719,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/sasobhabha/Gester/releases/download/v1/Gester-2.4.1.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "importSource": {
@@ -730,7 +769,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/ryanbr/noop/releases/download/testing-latest/NOOP-ios-unsigned-v12.1.0.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "importSource": {
@@ -806,7 +845,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/ITZproVenom/Gamestream/releases/download/latest-ios/GameStream-unsigned.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "importSource": {
@@ -859,7 +898,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/34306/ForceDuoApp/releases/download/1.2/ForceDuo-unsigned.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "importSource": {
@@ -974,7 +1013,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/henrywizzrd/zyx/releases/download/v1.1.2/Zyx-unsigned.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "importSource": {
@@ -1023,7 +1062,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/openAnimeFlow/AnimeFlow/releases/download/v2.7.0/AnimeFlow-ios-2.7.0.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "AnimeFlow 是一个跨平台动漫视频播放应用，支持 Android、iOS、Windows、macOS 与 Linux。内置多数据源与自定义 XPath 爬虫配置，支持基于 Anime4K 的实时视频 4K 超分辨率，对接 Bangumi 同步收藏与追番数据，并支持多平台弹幕源与丰富的弹幕设置。",
@@ -1085,7 +1124,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/LinkPass888/CarCanvas/releases/download/v2.1.2/CarCanvas-v2.1.2-unsigned.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "Replace CarPlay wallpapers with your own photos, with original-cache backup and restore. Powered by worse_query.",
@@ -1211,7 +1250,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/Thijs2004/CyPort/releases/download/v1.6/CyPort-1.6-2.3.1%2B2.5-unsigned.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "GitHub project request: Thijs2004/CyPort.",
@@ -1361,7 +1400,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/MikeMikerson/sts2-ios-launcher-public/releases/download/v1.3.0/STS2Mobile-1.3.0.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "GitHub project request: MikeMikerson/sts2-ios-launcher-public.",
@@ -1471,7 +1510,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/MaxFRdev/MaxPS4/releases/download/v0.5.2-beta/MaxPS4-FEXCore-SideStore.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "updatePolicy": "daily",
@@ -1568,8 +1607,8 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/cartouche-app/Cartouche/releases/download/v0.16.1/Cartouche-0.16.1.ipa",
-        "checkedAt": "2026-11-25T21:25:59Z",
-        "message": "Updated by private automation"
+        "checkedAt": "2026-11-26T09:20:30Z",
+        "message": "Download is available"
       },
       "subtitle": "",
       "updatePolicy": "daily",
@@ -2095,7 +2134,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/Niimahz/Anker_build/releases/download/v1.0.0/Anker-v1.0.0-unsigned.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "",
@@ -2166,7 +2205,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/pookjw/HermesEnabler/releases/download/1.6.3/HermesEnabler.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "updatePolicy": "daily",
@@ -2415,7 +2454,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/grechucia/gwent-reimagined/releases/download/v1.0.1/GwentReimagined-1.0.1-iOS.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "GitHub project request: grechucia/gwent-reimagined.",
@@ -2487,7 +2526,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/Lakr233/Asspp/releases/download/4.2.2/Asspp.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "GitHub project request: Lakr233/Asspp.",
@@ -2659,7 +2698,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/oneamendez/crate-ios/releases/download/v0.1.5/crate-unsigned.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "GitHub project request: oneamendez/crate-ios.",
@@ -2780,7 +2819,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/DevZer0D4Y/UT2004-iOS/releases/download/v0.1.0-7/UT2004-iOS-0.1.0-7.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "",
@@ -2836,7 +2875,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/DevZer0D4Y/BeatSaber-iOS/releases/download/v1.0.0/BeatSaber.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "",
@@ -2892,7 +2931,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/DevZer0D4Y/MinecraftStoryMode-iOS/releases/download/v0.1.0/MCSM-iOS.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "",
@@ -2951,7 +2990,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/CesarGarza55/NXHorizon/releases/download/v1.0.3/NXHorizon-unsigned.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "",
@@ -3049,7 +3088,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/oledz-i/Hinoki/releases/download/v1.6.2/Hinoki-1.6.2.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "",
@@ -3290,7 +3329,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/pwnapplehat/TetherlessiOS/releases/download/v1.2.5/Tetherless-1.2.5-Legacy.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "GitHub project request: pwnapplehat/TetherlessiOS.",
@@ -3545,7 +3584,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/huami1314/GestaltX/releases/download/v1.1.1/GestaltX_1.1.1.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "GitHub project request: huamidev/GestaltX.",
@@ -3740,7 +3779,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/hubzzzgr/SideStore-tvOS/releases/download/v0.7.0-tvos.0702/SideTVstore-unsigned.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "",
@@ -3796,7 +3835,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/hubzzzgr/TVContainer/releases/download/1.0/TVContainer.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "",
@@ -3854,7 +3893,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/sytsu/Caterpillar/releases/download/v1.1/Caterpillar.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "updatePolicy": "daily",
@@ -3925,7 +3964,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/ARMSX2/ARMSX3/releases/download/ios-0.0.4/ARMSX3-0.0.4.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "",
@@ -4303,7 +4342,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/enmity-mod/tweak/releases/download/v2.2.6/Enmity.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "GitHub project request: enmity-mod/tweak.",
@@ -4479,7 +4518,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/Apollo-Reborn/Apollo-Reborn/releases/download/v1.15.11_4.1.0/Apollo-Reborn-4.1.0-GLASS-NOEXTENSIONS.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "Please let us choose the GLASS version of Apollo reborn when an update drops. Kind regards",
@@ -6000,7 +6039,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/Yebot32/xenra/releases/download/v0.5.0/xenra-ios-0.5.0.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "GitHub project request: Yebot32/xenra.",
@@ -6059,7 +6098,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/frs0n/placard/releases/download/v2.0.3/placard-v2.0.3-unsigned.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "PosterBoard Wallpapers for iOS 26 - 27",
@@ -6378,7 +6417,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/pwnapplehat/EscapeOS/releases/download/v0.3.2/EscapeOS-0.3.2.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "On-device app-data browser, backup and restore for sideloaded iOS. No jailbreak. No Keychain.",
@@ -6589,7 +6628,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/ChrisMack32/Locus/releases/download/v1.0.3/Locus-1.0.3.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "Free open-source iPhone location teleport (MIT)",
@@ -6674,7 +6713,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/TwilitRealm/dusklight/releases/download/v2.0.3/Dusklight-v2.0.3-ios-arm64.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "Dusklight brings a classic adventure to PC and mobile platforms with a variety of fixes and improvements.",
@@ -6895,7 +6934,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/MakrSas/Monolith/releases/download/v0.3.0-beta.1/Monolith.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "Emulate macOS on iOS and iPadOS",
@@ -6951,7 +6990,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/MchinaMd57764/WQToolkit/releases/download/v1.0/WQToolkit-unsigned.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "GitHub project request: MchinaMd57764/WQToolkit.",
@@ -7019,7 +7058,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/hseons/WQManager/releases/download/v0.5.0/WQManager-0.5-build1-unsigned.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "iOS 26 app data manager, backup & cache cleaner built with Objective-C",
@@ -7207,7 +7246,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/MuffinEMU/Muffin-EMU/releases/download/v11.8/MuffinEMU-fakesigned.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "",
@@ -11464,7 +11503,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/jailbreakdotparty/Erosion/releases/download/0.3.1/Erosion_v0.3.1.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "updatePolicy": "daily",
@@ -11582,7 +11621,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/ichitaso/Regitela/releases/download/v1.0.7/Regitela_1.0.7.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "updatePolicy": "daily",
@@ -11731,7 +11770,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/imxieyi/Kernarium/releases/download/andarium-1.1/Andarium-1.1-16.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "GitHub project request: imxieyi/Kernarium.",
@@ -11815,7 +11854,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/Sami-Wali/ryP0/releases/download/2.3.2/ryP0-2.3.2.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "New Theme and more",
@@ -11926,7 +11965,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/mengangs/ipadn/releases/download/v2.3.5/iPadn-2.3.5-unsigned.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "",
@@ -12500,7 +12539,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/kolbicz/WQFiles/releases/download/v0.9.20/WQFiles.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "updatePolicy": "daily",
@@ -12999,7 +13038,7 @@
       "status": {
         "state": "broken",
         "checkedDownloadURL": "https://github.com/ztby/terminal_worse/releases/download/v1.0/Terminal.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Terminal.ipa: Download returned HTTP 404"
       },
       "subtitle": "",
@@ -13053,7 +13092,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/AniBakaBaka/AniBaka/releases/download/5.2.5%2B261113/baka-5.2.5%2B261113-ios-unsigned.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "AniBaka 是一个基于 Flutter 的跨平台番剧聚合与媒体播放客户端，支持多番剧源、弹幕、字幕、离线缓存与本地媒体库，并提供动漫实时超分辨率画质增强。",
@@ -13122,7 +13161,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/iamjhe08/VidGrab/releases/download/1.3.6c/VidGrab-1.3.6c.tipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "GitHub project request: iamjhe08/VidGrab.",
@@ -13454,7 +13493,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/impin2rex/Laya/releases/download/v1.9.6/Laya-1.9.6-ios.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "GitHub project request: impin2rex/Laya.",
@@ -13591,7 +13630,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/leonardob8777-bit/Eagle/releases/download/v1.0.7/Eagle-1.0.7-102.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "GitHub project request: leonardob8777-bit/Eagle.",
@@ -13872,7 +13911,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/minh-ton/reynard-browser/releases/download/0.22.1/Reynard-Jailbroken.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "GitHub project request: minh-ton/reynard-browser.",
@@ -15033,7 +15072,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/Ayan4k/Ram-Checker/releases/download/Stable/RamChecker.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "Tool to check your ram",
@@ -15093,7 +15132,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/LinkPass888/Kazumi-Swift/releases/download/v3.1.3/Kazumi_ios_v3.1.3_no_sign.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "原生 SwiftUI 实现Kazumi，支持Anskip自动跳过片头片尾，支持番剧更新提醒，原版有的都有，没有的也有。",
@@ -15438,12 +15477,12 @@
           "version": "2.3.0"
         },
         {
-          "version": "2.4.6",
-          "date": "2026-11-22T05:42:23Z",
-          "downloadURL": "https://github.com/Predidit/Kazumi/releases/download/2.4.6/Kazumi_ios_2.4.6_no_sign.ipa",
-          "size": 30369553,
+          "version": "2.4.7",
+          "date": "2026-11-26T05:31:42Z",
+          "downloadURL": "https://github.com/Predidit/Kazumi/releases/download/2.4.7/Kazumi_ios_2.4.7_no_sign.ipa",
+          "size": 30376353,
           "releaseChannel": "release",
-          "localizedDescription": "- 修复 Bangumi 同步无法使用的问题",
+          "localizedDescription": "- 修复 Linux 平台偶发的崩溃问题 (@Predidit)\r\n- 修复 windows 平台偶发的崩溃问题 (#2876) (@Predidit)\r\n- 修复部分规则来源下载只能下载到首个片段的问题 (#2886) (@wanxinlei1)\r\n- 修复桌面平台调整窗体大小时图片闪烁的问题 (@LiggMax)\r\n- 优化 windows/Linux 平台超分辨率性能 (@Predidit)",
           "ipaBundleIdentifier": "com.example.kazumi"
         },
         {
@@ -15495,7 +15534,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/tylerkaska112/Porthole/releases/download/v1.4.1/Porthole-1.4.1-983.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "",
@@ -15660,7 +15699,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/LLCOOLT/paper-cut/releases/download/v0.5.1/papercut-0.5.1-eu-ios-unsigned.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "",
@@ -15967,7 +16006,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://pub-25644d4114404c50baab5bb1fb002079.r2.dev/apps/org.openjk.ios.sp/release-44d9e98a7451d9ce960d92c8c1ce95c0214e789722938f010401486cfe4b37f9.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "",
@@ -16065,7 +16104,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/Sami-Wali/ryP0-repository/releases/download/live-github-backups/weekly-f0109aa8f391f797d5156a0a-4f55a4c7842740c0f1240dfc8655141dd1404859b9db85169c0e1c592fe9eeaf.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "",
@@ -16291,7 +16330,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/flyngmt/Nookery/releases/download/v1.0.0/Nookery-v1.0.0-ios-arm64.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "",
@@ -16347,7 +16386,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/SubhanHabib/OpenRAC-iOS/releases/download/v0.1.1/OpenRAC_rac1-ntsc_0.1.1_ios.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "",
@@ -16417,7 +16456,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/arjuk95-dot/FNV-iOS-Shim/releases/download/ios-build-20/FNV-iOS-build20-calltrace-comparison-unsigned.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "",
@@ -16530,7 +16569,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/WiseManChris/MHGURecomp-iOS/releases/download/v1.0.0-ios/MHGURecomp.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "",
@@ -16589,7 +16628,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/Leviidev/Henge/releases/download/0.3/Henge.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "",
@@ -16883,7 +16922,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/hrydgard/ppsspp/releases/download/v1.20.4/PPSSPP-iOS-v1.20.4.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "",
@@ -17007,7 +17046,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/OMetaVR/DiOShonored/releases/download/v0.1.0-beta.2/DiOShonored-shell.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "",
@@ -17192,7 +17231,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/NexSideloading/iRAM-Plus/releases/download/v1.3.1/iRAM-Plus.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "",
@@ -17632,7 +17671,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/mirazbakis/AltLoad/releases/download/v1.8.1/AltLoad.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "",
@@ -17954,7 +17993,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/open-ani/animeko/releases/download/v6.4.1/ani-6.4.1.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "Animeko 是一个 Kotlin/Compose Multiplatform 打造的一站式弹幕追番平台，集找番、追番、看番于一体，支持 Bangumi 云同步观看记录、多视频数据源聚合（含 BitTorrent、Jellyfin、Emby）、离线缓存与弹幕云过滤。",
@@ -18012,7 +18051,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/breeze-project-org/Breeze/releases/download/v3.1.0/Breeze-iOS-v3.1.0.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "GitHub project request: deretame/Breeze.",
@@ -18704,7 +18743,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/kodjodevf/mangayomi/releases/download/v0.9.97/Mangayomi-v0.9.97-ios.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "GitHub project request: kodjodevf/mangayomi.",
@@ -19436,7 +19475,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://archive.org/download/super-mario-64_202409/SuperMario64_60FPS_1.2.1.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "super mario 64 on ios with 60fps!",
@@ -19491,7 +19530,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/Leviidev/Utsuro/releases/download/0.1.0/Utsuro.tipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "",
@@ -19589,7 +19628,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/Sami-Wali/ryP0-repository/releases/download/nightly/project-4a1a129c09874263ac2e03acc0269a61-76d37591586f6c468e5b626f5cdafa137259ff76-d7b07f2a1f2c.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "",
@@ -21678,7 +21717,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/oledz-i/Hinoki/releases/download/v1.6.2/Hinoki-1.6.2.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "",
@@ -21923,7 +21962,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/varunsalian/debrify/releases/download/v0.11.3-alpha.1/debrify-v0.11.3-alpha.1-tvos-unsigned.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "Add source for direct download please, is like Stremio",
@@ -23318,7 +23357,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/rooootdev/lara/releases/download/nightly/lara.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "updatePolicy": "daily",
@@ -23416,7 +23455,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/hugeBlack/GetMoreRam/releases/download/nightly/GetMoreRam.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "",
@@ -23503,7 +23542,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/Kelly-Inc/horizon-ios/releases/download/ios-build-109.1/Horizon-iOS-0.1.65-build109.1-unsigned.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "updatePolicy": "daily",
@@ -24108,7 +24147,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/stossy11/MeloCafe/releases/download/1.1/MeloCafe.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "",
@@ -24177,7 +24216,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/yashjain8824/better-xcloud/releases/download/v0.24.2/BetterXCloud_iOS.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "",
@@ -24236,7 +24275,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/shplash/ModShelf/releases/download/v1.1.3/ModShelf-v1.1.3.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "GitHub project request: shplash/ModShelf.",
@@ -24347,7 +24386,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/grayankit/Dartotsu-Downloader/releases/download/dc621c1/Dartotsu-iOS-main.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "GitHub project request: grayankit/Dartotsu-Downloader.",
@@ -26760,7 +26799,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://unc0ver.dev/downloads/8.1.0/fc07a4f8b3417ef92ebe10440c2fa5a645d0453f/unc0ver_Release_8.1.0.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "unc0ver is a jailbreak tool by Pwn20wnd for iOS 11.0 to 14.8. It installs Cydia so you can add tweaks, and its RootFS Restore turns your device back to stock. It works on iOS 11.0 to 14.8 only, and each version supports the iOS versions of its time, so newer isn't always what a device needs: every version here lists what it added. All of them are here, back to v2.0.0, downloaded straight from unc0ver.dev and unc0ver's GitHub releases.",
@@ -26924,7 +26963,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://repo.getzeus.app/assets/apps/zcontainer/zContainer-1.3-11.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "zContainer runs as many apps as you like inside one app, so a free Apple Account's 3 slots stop being a limit. It looks and works like your Home Screen, with pages, a dock, search and its own Settings. Install it from Zeus and it comes with Zeus's certificate, ready to sign the apps you add. Apps in zContainer can't send notifications or use extensions, and they share files. zContainer is built on LiveContainer and is free software under the AGPL. Source: https://github.com/getzeusapp/LiveContainer/tree/zcontainer",
@@ -27012,7 +27051,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://repo.getzeus.app/assets/apps/zeus/Zeus-3.3-22.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "Zeus signs apps with your Apple Account and installs them on this iPhone, then keeps them going: a countdown shows when each one runs out, and Refresh All renews every app, and Zeus itself, in one go.",
@@ -27194,7 +27233,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://ipogo.app/download/ipogo-4.7.6.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "iPoGo is Pokémon GO with a full set of extra tools built in. Teleport anywhere in the world, walk routes on their own or with an on-screen joystick, browse nearby and global lists of Pokémon, raids, and quests, preview IVs right on the encounter screen, and land excellent curveballs every time. VIP adds Auto Catch and Spin, Release on Catch, a one-tap bag cleaner, and blocking every Pokémon that isn't shiny. This is iPoGo 4.4.2, built on Pokémon GO 0.433.0.",
@@ -27262,7 +27301,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://codeberg.org/ltchipotle/LemoNX.Binaries/releases/download/2.6-jitless/MeloNX-20261029-2253-lemonx-integ2-picker.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "Nintendo Switch emulation for iPhone and iPad. Requires JIT and your own game dumps, keys, and firmware.",
@@ -27326,7 +27365,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/mcpebd/ipa-wo-hynis-jutsu/releases/download/v26.60/Minecraft-Hynis%2BHyniSwizzleFPS-26.60.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "updatePolicy": "daily",
@@ -27436,7 +27475,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/DevZer0D4Y/P4G-iOS/releases/download/build2_1/Persona4Golden-iOS-0.1.1.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "",
@@ -27521,7 +27560,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/nathanialf/ico-pc/releases/download/v0.11.16/ico-pc-v0.11.16-ios-unsigned.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "",
@@ -28488,7 +28527,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/77emul/77U-BETA/releases/download/v0.1.0-beta.3/77U-iOS-iPadOS-0.1.0-1056.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "",
@@ -28573,7 +28612,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/kuscholar/iDeck/releases/download/v0.1.3-alpha.6/iDeck-0.1.3-alpha.6-build145.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "",
@@ -28702,7 +28741,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/iSVG4/Bai/releases/download/Release/Bai.tipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "Only TrollStore",
@@ -28761,7 +28800,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/Sami-Wali/ryP0-repository/releases/download/nightly/project-89132ca96fefd86ded3d81da828fffa6-65c7f75de0638ed3cf6eafccbede356e024644c3-eed51337ae78.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "",
@@ -28988,7 +29027,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/mxhm11cr/LinuxRunner/releases/download/v1.1.2/LinuxRunner-1.1.2-build910.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "",
@@ -29108,7 +29147,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/huzaifahshahid71-ops/Strata/releases/download/v4.0.0/Strata-4.0%2BSideStore.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "",
@@ -29212,7 +29251,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/DevZer0D4Y/Skate2-iOS/releases/download/v1.0.0/Skate2-iOS.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "",
@@ -29268,7 +29307,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/DevZer0D4Y/SonicGenerations-iOS/releases/download/v1.0.0/Sonic-Generations-iOS.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "",
@@ -29327,7 +29366,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/roothide/Dopamine-roothide/releases/download/30/Dopamine-roothide-3.0.13-30.tipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "GitHub project request: roothide/Dopamine-roothide.",
@@ -29780,7 +29819,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/lpfoj/lsx4/releases/download/ios-jit-128.9934/LSX4-JIT-128.9934.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "",
@@ -30037,7 +30076,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/DevZer0D4Y/SonicFreeRiders-iOS/releases/download/v1.0.0/SonicFreeRiders-iOS-1.0.0.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "",
@@ -30096,7 +30135,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/TarbleFR/RewindBox/releases/download/0.0.11/RewindBox-0.0.11.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "",
@@ -30304,7 +30343,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/DevZer0D4Y/MarathonRecompilediOS/releases/download/ios-2026-10-16-c/Sonic06-iOS.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "",
@@ -30464,7 +30503,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/DevZer0D4Y/ProjectReignition-iOS/releases/download/1.0.9/ProjectReignition-iOS.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "",
@@ -30520,7 +30559,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/DevZer0D4Y/TheChoicerVoicer-iOS/releases/download/1.0.0/TheChoicerVoicer-iOS.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "",
@@ -30576,7 +30615,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/DevZer0D4Y/UT3-iOS/releases/download/v0.1.0/UT3-iOS.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "",
@@ -30634,7 +30673,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/mikevillarroel/layers/releases/download/v1.0.5/Layers-1.0.5.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "updatePolicy": "daily",
@@ -30757,7 +30796,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/mikevillarroel/tendiemaker/releases/download/v1.0.11/TendieMaker-1.0.11.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "updatePolicy": "daily",
@@ -30906,7 +30945,7 @@
       "status": {
         "state": "broken",
         "checkedDownloadURL": "https://github.com/mikevillarroel/buildbox-ios/releases/download/v2.1.8-build179-personal-crosspromo/BuildBox-179-personal-crosspromo-20261119-003559.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "BuildBox-179-personal-crosspromo-20261119-003559.ipa: Download returned HTTP 404"
       },
       "updatePolicy": "daily",
@@ -31179,7 +31218,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/thebcd69/bcd-games/releases/download/v0.1.721/BCD.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "He’s",
@@ -31526,7 +31565,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/huzaifahshahid71-ops/hollow-games-ios-builder/releases/download/phone-v1.1.0-rc.1/Hollow-Builder-1.1.0-RC1-Unsigned.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "",
@@ -31638,7 +31677,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/bggRGjQaUbCoE/PiliPlus/releases/download/2.2.1/PiliPlus_ios_2.2.1%2B5655.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "",
@@ -33788,7 +33827,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/CHANG-JUI-LIN/Yuedu-reader/releases/download/v1.0.4-2/YueduReader.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "GitHub project request: CHANG-JUI-LIN/Yuedu-reader.",
@@ -33855,7 +33894,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/TouchFriend/BiliBiliMApp/releases/download/3.2.0/BiliBiliMApp_8.89.0.v3.2.0.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "GitHub project request: TouchFriend/BiliBiliMApp.",
@@ -33979,7 +34018,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/DevZer0D4Y/ReCoD4/releases/download/R6-beta.1/COD4iOS-1.0.4-build13-performance_stats_enabled-unsigned.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "",
@@ -34168,7 +34207,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/itzzace/ytkace/releases/download/v1.1.9/YTKACE_1.1.9_YouTube_21.47.6.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "GitHub project request: itzzace/ytkace.",
@@ -34663,7 +34702,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/coflyn/Mori/releases/download/v4.6.1/Mori-v4.6.1-iOS-Unsigned.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "GitHub project request: coflyn/Mori.",
@@ -34904,7 +34943,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/Sami-Wali/ryP0-repository/releases/download/nightly/app-09d8f1ab279d40c38882e11adad1af01-65478f0f1dc4c469ec0d0035d46b4861197110c1-337e066ef4e6.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "GitHub project request: YiHoooong/AirliftSilence-iOS.",
@@ -35160,7 +35199,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/celia-sh/Hana/releases/download/v1.1.0/Hana-iOS-1.1.0-45-unsigned.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "使用 SwiftUI 构建的 Hanime1 客户端，面向 iOS、iPadOS 与 macOS。",
@@ -35214,7 +35253,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/bep1s69/nfsmw-ios/releases/download/v0.6.2/NFSMW.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "This is the static recompilation port for NFSMW 2005 I’m actively working on and maintaining on GitHub",
@@ -35362,7 +35401,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/Sami-Wali/ryP0-repository/releases/download/nightly/app-615d86a9e61e488c9803deb087829c90-c4797387ca9a81f31fdcdd2723ec1050ca35fdb3-c4e03c185919.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "",
@@ -35629,7 +35668,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/Taylen-chud/Amethyst-iOS/releases/download/1.2.0/Amethyst-1.2.0.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "updatePolicy": "daily",
@@ -35717,7 +35756,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/Gsjsjzhznsz/Prisma-Minecraft-iOS-Launcher/releases/download/v6.5.5/com.prisma-devs.prisma-6.5.5-ios.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "",
@@ -35797,7 +35836,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/Sami-Wali/ryP0-repository/releases/download/imports/org.angelauramc.amethyst-f98c4133c72d39e06ceac42b57cc4477c52105fc-9e934826b921.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "",
@@ -35872,7 +35911,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/Sami-Wali/ryP0-repository/releases/download/nightly/app-5d25dc266a154f1e9274170b8280263a-9f0b082ddce2d912322b04910b8a8dd964bf45a8-c271bf5e4dc0.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "updatePolicy": "daily",
@@ -36299,7 +36338,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/NeoFreeBird/app/releases/download/v7.3.1/NeoFreeBird-sideloaded-X_7.3.1_12.39.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "updatePolicy": "daily",
@@ -36435,7 +36474,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/NeoFreeBird/app/releases/download/v7.3.1/NeoFreeBird-sideloaded-Twitter_7.3.1_12.39.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "updatePolicy": "daily",
@@ -36559,7 +36598,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/LiveContainer/LiveContainer/releases/download/nightly/LiveContainer%2BSideStore.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "updatePolicy": "daily",
@@ -36941,7 +36980,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/LiveContainer/LiveContainer/releases/download/nightly/LiveContainer.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "updatePolicy": "daily",
@@ -37357,7 +37396,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/suversal/WrapPin/releases/download/v1.0.18/WrapPin-Standard-1.0.18-build61-unsigned.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "GitHub project request: suversal/WrapPin.",
@@ -37438,7 +37477,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/zzanehip/The-OldOS-Project/releases/download/2.0_8/OldOS.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "OldOS is a testament to the days of yesteryear, showcasing what iOS once was ten years ago. The ethos of the app is to merge the technologies of today with a pixel-perfect recreation of the user experience of the past. The vast majority of apps in OldOS are fully functional — meaning they seamlessly integrate with the data on your phone to deliver a live, emulator-esque experience. What does this mean? Well, you can play your music in iPod, get directions in Maps, surf the web in Safari, view the current weather in Weather, and much more. By the same token, no shortcuts were taken in fully fleshing out the operating system. You can change your background, adjust settings, search apps, et cetera. There are a few apps still not ready for primetime but don't worry, they're coming soon. With OldOS, you no longer need to worry about securing a legacy iPhone to experience nostalgia — it's available on your daily driver. Part of the goal with OldOS is to enable anyone to understand how iOS works and demonstrate just how powerful SwiftUI truly is. For that reason, the entire app is open-sourced — enabling developers to learn about, modify, and add to the app. I thought building this over my last six or so months in high school and sharing it with the world would be a fun and productive endeavor.",
@@ -37573,7 +37612,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/RyanYuuki/AnymeX/releases/download/v3.2.1/AnymeX-iOS-v3.2.1.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "GitHub project request: RyanYuuki/AnymeX.",
@@ -37748,7 +37787,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/125hz/Tsubomi/releases/download/0.47.0/Tsubomi.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "Vita emulator with jit",
@@ -37805,7 +37844,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/wsvn53/scrcpy-mobile/releases/download/v4.6.0/Scrcpy-Remote-v4.6.0.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "GitHub project request: wsvn53/scrcpy-mobile.",
@@ -37872,7 +37911,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/EduAlexxis/ByeTunes/releases/download/v2.6/ByeTunes.v2.6.-.Version.fix.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "GitHub project request: EduAlexxis/ByeTunes.",
@@ -37939,7 +37978,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/chrissotraidis/bluewake/releases/download/v0.12.0/BlueWake-v0.12.0-ios-unsigned.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "The Legend of Zelda: The Wind Waker iOS port",
@@ -38117,7 +38156,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/kolbicz/Cyanide/releases/download/v1.40.0/Cyanide-1.40.0.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "GitHub project request: kolbicz/Cyanide.",
@@ -38680,7 +38719,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/infinityf4p/TiebaPure-iOS/releases/download/v1.4.15/TiebaPure-v1.4.15-unsigned.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "GitHub project request: infinityf4p/TiebaPure-iOS.",
@@ -38900,7 +38939,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/daimiaopeng/coolapk-desktop/releases/download/v1.35.0/coolapk-v1.35.0-ios-arm64-unsigned.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "GitHub project request: daimiaopeng/coolapk-desktop.",
@@ -39782,7 +39821,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/DevZer0D4Y/NativePorts/releases/download/v0.4.6/UMK3-0.4.2-unsigned.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "",
@@ -39909,7 +39948,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/DevZer0D4Y/NativePorts/releases/download/v0.4.6/THPS2-0.4.3-unsigned.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "",
@@ -40036,7 +40075,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/DevZer0D4Y/NativePorts/releases/download/v0.4.6/SlamJam96-0.4.2-unsigned.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "",
@@ -40163,7 +40202,7 @@
       "status": {
         "state": "broken",
         "checkedDownloadURL": "https://github.com/EspressU/EspressU-Emu/releases/download/v1.5/EspressU-1.5.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "EspressU-1.5.ipa: Download returned HTTP 404"
       },
       "subtitle": "",
@@ -40339,7 +40378,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/DevZer0D4Y/NativePorts/releases/download/v0.4.6/SSF2T-0.4.2-unsigned.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "",
@@ -40465,7 +40504,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/DevZer0D4Y/MegaMan64Recompiled-Mobile/releases/download/v0.9.1-mobile.1/MegaMan64-iOS-v0.9.1-mobile.1.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "GitHub project request: DevZer0D4Y/MegaMan64Recompiled-Mobile.",
@@ -40530,7 +40569,7 @@
       "status": {
         "state": "broken",
         "checkedDownloadURL": "https://github.com/onlyknt/pziOS/releases/download/pziOS/pziOS-0.9.0-beta.5-b42.21.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "pziOS-0.9.0-beta.4-b42.21.ipa: Download returned HTTP 404"
       },
       "subtitle": "GitHub project request: onlyknt/pziOS.",
@@ -40621,7 +40660,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/ResistanceTo/MiniWatts/releases/download/v1.7.0/MiniWatts-unsigned.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "GitHub project request: ResistanceTo/MiniWatts.",
@@ -40929,14 +40968,26 @@
       "localizedDescription": "GitHub project request: Predidit/Kazumi.",
       "name": "Kazumi",
       "status": {
-        "state": "update-error",
-        "checkedDownloadURL": "https://github.com/Predidit/Kazumi/releases/download/2.4.6/Kazumi_ios_2.4.6_no_sign.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
-        "message": "Private updater: GitHub release upload returned HTTP 422."
+        "state": "healthy",
+        "checkedDownloadURL": "https://github.com/Predidit/Kazumi/releases/download/2.4.7/Kazumi_ios_2.4.7_no_sign.ipa",
+        "checkedAt": "2026-11-26T09:20:30Z",
+        "message": "Download is available"
       },
       "subtitle": "GitHub project request: Predidit/Kazumi.",
       "updatePolicy": "daily",
       "versions": [
+        {
+          "version": "2.4.7",
+          "date": "2026-11-26T05:31:42Z",
+          "downloadURL": "https://github.com/Predidit/Kazumi/releases/download/2.4.7/Kazumi_ios_2.4.7_no_sign.ipa",
+          "upstreamAssetURL": "https://github.com/Predidit/Kazumi/releases/download/2.4.7/Kazumi_ios_2.4.7_no_sign.ipa",
+          "size": 30376353,
+          "sha256": "148fae14e0a90a853b4a1a60da6a75aaeaf30b729103528d53edd711c5786f36",
+          "ipaBundleIdentifier": "com.example.kazumi",
+          "sourceAssetName": "Kazumi_ios_2.4.7_no_sign.ipa",
+          "releaseChannel": "release",
+          "buildVersion": "20407"
+        },
         {
           "version": "2.4.6",
           "date": "2026-11-22T05:42:23Z",
@@ -41836,7 +41887,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/Balackburn/Apollo/releases/download/v1.15.11_4.1.0/Apollo-Reborn-4.1.0.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "Apollo is an app for Reddit built for customizability, smoothness, gestures, and taking advantage of everything iOS has to offer. Apollo is a beautiful Reddit app built for fast navigation with an incredibly powerful set of features. Thanks to features like the Jump Bar, fully customizable gestures, and a super-charged Media Viewer, browsing Reddit has never been this amazing. It's created specifically with iOS design guidelines in mind, so it fits right at home on your device, and with input from thousands of Redditors helping sculpt and perfect it over several years before launching: • Jump Bar, for super-fast hopping between subreddits • Super-charged Media Viewer for an amazing experience viewing images, GIFs, videos, albums, and more from a variety of sources. • Tabbed interface for easy navigating • Incredibly powerful Markdown composer for writing comments and posts • Full inline Imgur uploading, both images and albums • Large or compact posts depending on your preference • Dark mode (can be automatic) • Fully customizable gestures • Safari View Controller for browsing articles and links • Inline previews of media in comments • 3D Touch support • Beautifully organized Inbox • Filtering and blocking • Face ID / Touch ID / Passcode lock • Moderator features • Tons of settings to tweak • GIF scrubbing to go backward and forward in time • Multiple accounts • Powerful search • Full Markdown rendering • Unobtrusive Volume Indicator As well as much, much more and it's constantly evolving. If you have anything you'd specifically like to see, come to the ApolloApp subreddit and we'd love to hear it! Apollo is an unofficial app, and side effects may include an incredible browsing experience.",
@@ -41916,7 +41967,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/Sami-Wali/ryP0-repository/releases/download/nightly/app-aidoku-aidoku-c3112316-95d1468d599a154f03d6a1dd06bf839d3ff3f7bd-7e9e832b37d6.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "Manga reading app",
@@ -42229,7 +42280,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/shplash/IPAID/releases/download/v2.0/IPAID-2.0.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "GitHub project request: shplash/IPAID.",
@@ -42318,7 +42369,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/seanhowarthdev/Roam-Control/releases/download/v0.9.9/RoamControl-0.9.9-Build105.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "GitHub project request: seanhowarthdev/Roam-Control.",
@@ -42392,7 +42443,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/DevZer0D4Y/SegaSuperstarsTennis-iOS/releases/download/1.0.0/SEGA-Superstars-Tennis-iOS.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "",
@@ -42443,7 +42494,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/chrissotraidis/kartpad/releases/download/v0.8.12/KartPad-v0.8.12-ios-for-padmint.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "GitHub project request: chrissotraidis/kartpad.",
@@ -42591,7 +42642,7 @@
       "status": {
         "state": "update-error",
         "checkedDownloadURL": "https://ipa.cypwn.xyz/ipas/CloverPit-1.4.8.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Private updater: No repository app matched the configured selector with a usable IPA version."
       },
       "subtitle": "A rogue-lite slot machine nightmare",
@@ -42640,7 +42691,7 @@
       "status": {
         "state": "update-error",
         "checkedDownloadURL": "https://ipa.cypwn.xyz/ipas/Vesc_Tool_6.06.2.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Private updater: No repository app matched the configured selector with a usable IPA version."
       },
       "subtitle": "Configure your VESC Ecosystem",
@@ -42691,7 +42742,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/g8row/PhotosBackup/releases/download/0.3.8/PhotosBackup.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "Backs up photos to Google Photos without counting against your Google storage using the Google pixel 1 unlimited storage api",
@@ -42931,7 +42982,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/creeper4004/The-Simpsons-Hit-and-Run-iOS/releases/download/v0.2/Simpsons-Hit-and-Run-iOS-0.2.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "",
@@ -43003,7 +43054,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/Leviidev/Podium/releases/download/0.1.0/Podium_v0.1.0.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "",
@@ -43054,7 +43105,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/LinkPass888/AirBeep/releases/download/v2.5.2/airbeep-v2.5.2-unsigned.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "https://github.com/LinkPass888/AirBeep/releases",
@@ -43420,7 +43471,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/DevZer0D4Y/NBAHangtime-iOS/releases/download/v0.4.4/NBA-Hangtime-iOS.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "updatePolicy": "daily",
@@ -43512,7 +43563,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/crypticplank/flappybird/releases/download/4.3/org.brandonplank.flappybird.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "This Flappy Bird is a revival of the original Flappy Bird by Dong Nguyen. There are a many new features to enhance gameplay as well! • Tap to flap • Avoid the hitting the pipes • Flap for infinity!",
@@ -43582,7 +43633,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/Manic-EMU/ManicEMU/releases/download/v2.0.2/ManicEMU.v2.0.2.SideloadJIT.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "",
@@ -43653,7 +43704,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/Sami-Wali/ryP0-repository/releases/download/imports/com.clickgamer.AngryBirds-1.0-cdea1290dcaa.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "updatePolicy": "static",
@@ -43689,7 +43740,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://archive.org/download/deer_hunter_2014_2.2.0_ios_5.1/Deer_Hunter_2014_2.2.0_ios_5.1.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "updatePolicy": "static",
@@ -43736,7 +43787,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/KoreanSeats1/Theft4/releases/download/v0.3.2/Theft4-0.3.2-144-ios-arm64.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "updatePolicy": "daily",
@@ -43879,7 +43930,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/DevZer0D4Y/TheSimpsonsGame-iOS/releases/download/v0.2.4/TheSimpsonsGame-v0.2.4.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "",
@@ -43938,7 +43989,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/XITRIX/iTorrent/releases/download/v2.2.0-1/iTorrent.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "iTorrent officially in the AltStore! It is an ordinary torrent client for iOS with Files app support and much more. What can this app do: • Download in the background • Live Activity and Dynamic Island progress bar • Downloading on external drives • Sequential download (use VLC to watch films while loading) • Add torrent files from Share menu (Safari and other apps) • Add magnet links directly from Safari • Store files in Files app • File sharing directly from app • Download torrent by url • Download torrent by magnet • Show progress in Dynamic Island • Send notification on torrent downloaded • Web/WebDav Server • Select files download priority • Change UI to dark theme • Color personalization • RSS Feed • ???",
@@ -44106,7 +44157,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/altstoreio/AltStore/releases/download/v2.3/AltStore_Classic_Notarized_2_3.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "",
@@ -44177,7 +44228,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/Nouvborne/Ketamine/releases/download/1.2.1/Ketamine-1.2.1.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "updatePolicy": "daily",
@@ -44250,7 +44301,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/andrewnakas/skate3-ios-setup/releases/download/v2.7.1/skate3.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "A static recompilation of Skate 3 for iOS, rendering through Vulkan on MoltenVK. Runs at a locked 60fps on an iPhone 13 mini (A15): median frame 16.7ms, 95th percentile 16.8-17.8ms. YOU MUST SUPPLY THE GAME. This app contains no game content and will not start without it. AFTER INSTALLING: 1. Connect your iPhone to a computer and open Finder > your iPhone > Files > Skate 3 (on Windows, iTunes > File Sharing). 2. Drop in a 'game' folder containing your own disc files. That is about 6GB, so allow a few minutes. 3. Add Title Update 3, the free update EA published on Xbox Live - it is not on the disc and the game will not run without it. The app can download it for you: choose \"Install the title update\" and then Download. If you would rather supply it yourself, copy the package into the same Skate 3 folder and it is found automatically. The setup screens walk you through steps 2 and 3. On-screen touch controls appear when no controller is attached; MFi and Bluetooth controllers are picked up automatically. Press Start + Select together for a performance menu that shows your frame rate and what is limiting it. Requires iOS 16.0 or later.",
@@ -44421,7 +44472,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/MyNameIsArko/FactorioPad/releases/download/v2.3.0/FactorioPad-template.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "",
@@ -44638,7 +44689,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/LeoManrique/sm64coopdx-ios/releases/download/v151.1.0/sm64coopdx.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "updatePolicy": "daily",
@@ -44859,7 +44910,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/chrissotraidis/meleepad/releases/download/v0.3.1/MeleePad-v0.3.1-ios-unsigned.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "",
@@ -45007,7 +45058,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/playportdev/playport/releases/download/v0.5.0/Playport-0.5.0.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "",
@@ -45147,7 +45198,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/Sami-Wali/ryP0-repository/releases/download/nightly/org-emexlabs-nyxian-c609773b-9236c22f146a0f63bb597e629573e151ae4d4df7-1a9a666b9fee.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "",
@@ -45310,7 +45361,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://pub-25644d4114404c50baab5bb1fb002079.r2.dev/apps/com-nadotv-nadotv-014a4e4a/current.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "updatePolicy": "daily",
@@ -45352,7 +45403,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://pub-25644d4114404c50baab5bb1fb002079.r2.dev/apps/com-animecloud-rm-aae34788/current.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "Anime Arabic Sub",
@@ -45396,7 +45447,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/claration/Feather/releases/download/v2.9.0/Feather.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "Feather is a free on-device iOS application manager/installer built with UIKit for quality.",
@@ -45565,7 +45616,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/camhoc/Madeira/releases/download/0.2.101-og/Madeira.Nightly.0.2.101.og.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "",
@@ -46723,7 +46774,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/DevZer0D4Y/MCX360-EDITION/releases/download/R2/MCX360Edition.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "updatePolicy": "daily",
@@ -46795,7 +46846,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/DevZer0D4Y/UnleashedRecompilediOS/releases/download/v1.1.0/SonicUnleashed_iOS_v1.1.0.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "updatePolicy": "daily",
@@ -46868,7 +46919,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/Mak5er/AirCard-iOS/releases/download/v1.3.2/AirCard-iOS.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "updatePolicy": "daily",
@@ -46961,7 +47012,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/xmiguel911x/PSX3IOS/releases/download/v0.2.7-beta/PSX3IOS-beta.0.2.7-unsigned.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "",
@@ -47068,7 +47119,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/XITRIX/RPCS3-iOS-Releases/releases/download/v0.10.1/RPCS3-VisionOS.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "",
@@ -47138,7 +47189,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/MaftyManicEMU/DukeX/releases/download/v1.0.2/DukeX.v1.0.2.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "",
@@ -47277,7 +47328,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/NuvioMedia/NuvioMobile/releases/download/1.1.0-beta.3/nuvio-1.1.0-beta.3-full-release.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "",
@@ -47668,7 +47719,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/Leviidev/Husk/releases/download/3.4/Husk.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "",
@@ -48024,7 +48075,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/Sami-Wali/ryP0-repository/releases/download/nightly/software-iridium-b8778bc6-ecb4a63ea25d7b0f66715ef7a7cb1afd62a10d87-d1e9c02cfdc9.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "",
@@ -48402,7 +48453,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/StikDebug/StikPair/releases/download/v1.2.0/StikPair.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "A simple SwiftUI iOS app that creates a pairing file on-device, using iOS 27+ wireless pairing. Note: Requires iOS 27+.",
@@ -48461,7 +48512,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/StikDebug/StikDebug/releases/download/3.2.2/StikDebug-3.2.2.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "An on-device debugger and developer toolbox for iOS versions 17.4+ powered by idevice. Note: Requires LocalDevVPN, cannot be natively used inside LiveContainer to enable JIT for the same LiveContainer.",
@@ -48553,7 +48604,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/Leviidev/AetherPS4/releases/download/v1.0.1_release/AetherPS4-iOS.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "PS4 Emulator",
@@ -48593,7 +48644,7 @@
       "status": {
         "state": "broken",
         "checkedDownloadURL": "https://starforgejo.dev/projects/MeloNX/releases/download/2.7/MeloNX.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download did not return an IPA/TIPA package"
       },
       "tintColor": "#f8566f",
@@ -48664,7 +48715,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/Sami-Wali/ryP0-repository/releases/download/nightly/dolphinios.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "tintColor": "#007AFF",
@@ -48893,7 +48944,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/Sami-Wali/ryP0-repository/releases/download/nightly/ipsx2.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "tintColor": "#1B1280",
@@ -48944,7 +48995,7 @@
       "status": {
         "state": "update-error",
         "checkedDownloadURL": "https://github.com/Sami-Wali/ryP0-repository/releases/download/nightly/xenios-release-v2.3.3-build-11940-de943a84026d.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Private updater: GitHub release upload returned HTTP 422."
       },
       "tintColor": "#FF5733",
@@ -49230,7 +49281,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/LiveContainer/LiveContainer/releases/download/3.8.0/LiveContainer.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "",
@@ -49362,7 +49413,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://pub-25644d4114404c50baab5bb1fb002079.r2.dev/apps/minecraft/current.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "tintColor": "#4B8B3B",
@@ -49415,7 +49466,7 @@
       "status": {
         "state": "update-error",
         "checkedDownloadURL": "https://github.com/Sami-Wali/ryP0-repository/releases/download/nightly/sideinstaller-v2.1.0-5b69089fa88d.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Private updater: GitHub release upload returned HTTP 422."
       },
       "tintColor": "#FF2D55",
@@ -49916,7 +49967,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/YangJiiii/EnsWilde/releases/download/EnsWilde3.1.3/EnsWilde.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "tintColor": "#FF9900",
@@ -50018,7 +50069,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/YangJiiii/3105/releases/download/v2.0/3105-2.0-build8-20260914-125906-unsigned.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "tintColor": "#007AFF",
@@ -50129,7 +50180,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/jailbreakdotparty/PancakeStore/releases/download/1.3.1/PancakeStore_v1.3.1.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "tintColor": "#E2B974",
@@ -50251,7 +50302,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/ARMSX2/ARMSX2/releases/download/iOSv2.6.0/ARMSX2-iOS-2.6.0.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "tintColor": "#1B1280",
@@ -50387,12 +50438,12 @@
           "version": "2.6.0.1"
         },
         {
-          "version": "2.6.1",
-          "date": "2026-11-25T19:03:43Z",
-          "downloadURL": "https://github.com/ARMSX2/ARMSX2/releases/download/iOSv2.6.1/ARMSX2-iOS-2.6.1.ipa",
-          "size": 41420239,
+          "version": "2.6.1-nightly.20261125.2101",
+          "date": "2026-11-25T21:31:21Z",
+          "downloadURL": "https://github.com/ARMSX2/ARMSX2/releases/download/nightly-20261125/ARMSX2-nightly-20261125-d4fe08faeb-iOS-arm64.ipa",
+          "size": 41389234,
           "releaseChannel": "release",
-          "localizedDescription": "Everything below is compared with 2.6.0.\n\n## New\n\n**Report a Problem.** (@J1coding: #1032) Settings has a new Diagnostics page and the pause menu has a Report a Problem row. They bundle recent logs, settings, crash files, a photo and the paused frame into one report, with sensitive details redacted. After a crash, a freeze or a failed start, the next launch asks once whether you want to send one.\n\n**Automatic Performance Tuning.** (@bmdhacks) A new switch in the emulator settings tries lower resolution, blending accuracy and other options on its own when a game runs slow. It keeps what helps and tells you on screen. It can also lower the emulated CPU clock when the device can't keep up. It is off by default.\n\n**Rebuilt pad layout editor.** (@J1coding: #1065) The old editor is gone, and every entry point now opens the new one: Settings > Virtual Pad > Edit Layout, the pause menu, Per-Game Settings > Pad and the library's game menu. It works with a controller and VoiceOver. You can move, resize and fade pad pieces from 10 percent to full opacity, including the whole D-pad or face button cluster as one piece.\n\n**Floating sticks and L3/R3 in layouts.** (@J1coding: #1065) Each stick can float or stay put, overriding the global Dynamic Thumbsticks setting, and can have its own touch zone. L3 and R3 buttons can be shown, placed and sized like Select and Start. They start hidden, so your existing layouts play as before.\n\n**iPhone Duo support.** (@J1coding) The pause card and in-game panels now lay themselves out around the hinge and fold. Folding or unfolding with the pause card open keeps the item your controller had selected instead of jumping back to Resume. The on-screen pad is refit to the shorter portrait screens, OrbitKeys sizes its keys by window size so the inner screen no longer gets phone-sized keys, and the library, pad editor and menus no longer flip between portrait and landscape when the on-screen keyboard shrinks the window.\n\n## Controls and menus\n\n**Held keys keep moving.** (@J1coding: #1060) Holding an arrow key on a keyboard now keeps moving through menus the way a held D-pad does. In the Use Controller Navigation? alert, Return and space press the highlighted button.\n\n**Haptic Feedback follows the setting.** (@J1coding: #907, #1040, #1053) Turning it off in the middle of a game now stops the phone rumble at the next rumble change, instead of at the next game. The switch now also covers the iPhone game rumble, which ignored it before.\n\n**Hidden pad stays hidden.** (@J1coding: #1002) A virtual pad you hid stays hidden after you open and close the menu.\n\n**Speed shortcut keeps its place.** (@J1coding: #909, #1002) After a trip to the menu, the speed shortcut keeps stepping from the speed the game is really running at.\n\n**Game Library fixes.** (@J1coding: #1002) Renamed games stay in their sorted place when you favorite or unfavorite them. A long press on a card no longer sometimes boots the game after a rotation. The library also decides portrait or landscape in one place, so card settings, layout and the launch animation agree.\n\n**Right-to-left and VoiceOver.** (@J1coding) In languages such as Arabic, the controller focus ring is no longer drawn mirrored away from the control it belongs to. There are also small VoiceOver and layout fixes on every device.\n\n**Version opens About.** (@J1coding: #1002) The Version row in the Settings list now opens the About page, the same way Licenses and Help open their pages.\n\n## Speed\n\n**New VU1 compiler, on by default.** (@bmdhacks) A new whole-program compiler for the PS2's vector unit 1 now runs on top of the existing one. It builds its code on a background thread and falls back to the old compiler when it has to. Compiled code is saved per game and kept in memory, so slow storage no longer stalls save state loads or quitting, and games that move their routines around in memory no longer make it compile the same routine over and over. Turning the compiler off clears the code it saved.\n\n**Faster vector unit code.** (@bmdhacks: #795, #827, #835) Many small improvements to the recompiled vector unit code and its sync with the main CPU do the same work with fewer instructions. Jump tables for vector unit code now only use memory for the parts a game actually fills in.\n\n**Faster game code.** (@bmdhacks, @pstef, @jaypume: #827, #918) Loads and stores in recompiled game code take fewer CPU instructions. Multiplies and divides by constants, multiply-add steps and pairs of shifts compile to fewer instructions, and the main CPU does less work on event checks and system calls. Code for the console's I/O processor is compiled more efficiently too. New code also compiles with fewer stalls.\n\n**Less work per draw.** (@bmdhacks, @sunshineinabox) The graphics thread spends less time on palettes and texture lookups, draws reuse the setup of recent similar draws, triangle strips and sprite pairs are processed in bulk, and repeated copy draws are skipped once they have been recorded. Burnout 3, Baldur's Gate: Dark Alliance, MotoGP, Sly 3 and Spider-Man 3 all benefit.\n\n**Fewer GPU waits.** (@bmdhacks, @sunshineinabox) Games that read the screen back to the CPU, such as Metal Gear Solid 3, SOCOM II and The Punisher, wait less. Several reads now share one trip to the GPU and results are written back a block at a time. Elemental Gelade's depth buffer move stays on the GPU, and draws that hold back alpha bits read their target less often.\n\n**Faster software renderer.** (@bmdhacks) It copies sprites into 16-bit and 32-bit frames straight from memory, which helps sprite-heavy games such as Spider-Man 3 and Stuntman. It also builds only the colour and fog table entries each row needs.\n\n**Faster sound.** (@bmdhacks, @sunshineinabox) Time stretching and surround expansion run on their own thread, and the sound chip mixer does less work for every voice and sample, using the CPU's vector instructions for interpolation and reverb. Stopping a sound stream no longer waits for queued audio.\n\n**Faster movies and texture packs.** (@sunshineinabox) In-game video decoding is quicker, and texture packs decode faster: BC7 textures use vector instructions and JPEG textures decode straight to RGBA.\n\n**Bigger image upload buffers.** (@sunshineinabox) Large image uploads used to fill a 9 MB buffer and make the CPU wait on the graphics. The buffers are now 32 MB on devices with 2 GB of RAM or more, and they keep their size when you load a save state.\n\n## Graphics and Metal\n\n**Apple GPU depth fix for the second alpha pass.** (@TellowKrinkle: #1058) On Apple GPUs, a depth workaround was only half applied to draws that need a second alpha pass, which broke those draws instead of fixing them. It is now applied fully, which brings back the ingredient icons on Mana Khemia 2's synthesis cards.\n\n**Second alpha pass runs its alpha test.** (@J1coding) On iOS, that second pass could write internal values into the picture instead of running its destination alpha test. It now runs the test, as the Vulkan, DX12 and OpenGL renderers already did.\n\n**Lower resolution scales are exact.** (@bmdhacks) Below 1x, every game image buffer now gets an exact scaled size. Draws are no longer slightly mis-scaled when the scaled size was not a whole number of pixels.\n\n**Screen edges trimmed when upscaling.** (@bmdhacks) At 2x or higher, one native pixel is trimmed from every edge of the picture to hide stray garbage along the border.\n\n**Texture pack fixes.** (@bmdhacks) Replacement textures that finish loading late no longer linger in memory, and reloading or cancelling packs no longer collides with the loader. Pack textures whose alpha is slightly off the opaque value are treated as opaque when a game alpha-tests for it, which fixes speckles in River King. The pack browser now loads its list only from the ps2ktxpak catalog.\n\n## Games\n\n**Another Century's Episode 3.** (@bmdhacks: #896) It no longer freezes a few seconds into play with a DECI2 Panic error when using the recompiler.\n\n**Stuntman and Driv3r.** (@bmdhacks) Every version now uses Full floating point clamping in its game settings, which fixes the AI drivers leaving their routes.\n\n**Tales of Destiny.** (@bmdhacks) The sky in the opening flight now gets the right fog value. A built-in game fix sets the VU1 clamp mode to Extra for it.\n\n**Game patches updated.** (@J1coding: #1058) The bundled patches now come straight from the latest PCSX2 patches release, published 2026-11-09, with 4,719 patch files.\n\n## Saves, settings and system\n\n**Save states with threaded VU1.** (@bmdhacks: #835) Loading a save state while VU1 runs on its own thread (MTVU) no longer swaps VU1's memory back to what it held before the load.\n\n**Memory card fixes.** (@bmdhacks) A game no longer reports a good save as damaged when its save loading runs ahead of the memory card service. On folder memory cards, several cases where saves could be lost, written to the wrong file or read back blank are fixed, including save files the device would not open for writing. Saving also skips pointless rewrites when nothing has changed.\n\n**JIT starts on more devices.** (@J1coding: #1004) A12 to A14 devices on iOS 26 no longer need to wait for the StikDebug handshake. On Dopamine 2.1 and later, the app asks to be marked as debugged at launch. The app also runs a tiny test routine from JIT memory before relying on it, so a device that can't run its own generated code is caught early instead of crashing in the first game block. Settings shows JIT Off while the interpreter is running, instead of JIT Access Detected.\n\n**Clearer BIOS errors.** (@bmdhacks) A BIOS file that cannot be read, is empty or is not a PS2 BIOS now says so, instead of the generic request for a BIOS. A PlayStation 1 BIOS, such as one copied from a PS3, is named as one and skipped by the BIOS search.\n\n**Enable Cheats stays in sync.** (@J1coding: #1053) Turning on a cheat, importing a cheat file or merging cheat lists now flips the Enable Cheats toggle right away. Before, it stayed off until the next launch.\n\n**Remove Disc Link works again.** (@J1coding: #907) The disc link panel can clear a linked disc again. Before, a linked disc could be changed but never removed.\n\n**Startup and reconnect fixes.** (@J1coding: #1060) Several problems when the app's scene reconnects while a game is running are fixed, including a lost game picture and a boot request that could start the game twice. Startup also reads and writes the settings file more safely, so a settings change can no longer be overwritten by an old copy.\n\n**Launch and DNS crashes.** (@J1coding: #792, #1060) The app now opens on the iPad 6th generation, which crashed at launch on iPadOS 17.7. It is now built for the A10 chip, which also covers the iPad 7th generation. Swiping away an Internal DNS host no longer crashes the app when that row's text field was still selected, and deleted hosts no longer leave an empty entry behind.\n\n## Accuracy\n\n**CPU timing follows a real console.** (@bmdhacks) The emulated CPU now charges time using a model of how the real console issues pairs of instructions, checked against timings measured on a real SCPH-30001 console. Divides, square roots, integer math, register moves, loads and stores now cost what they cost on hardware.\n\n**Rare vector unit cases match the console.** (@bmdhacks: #835) VU1 now behaves like the real thing in branches in delay slots, in code that runs or loads past the end of its memory, after two writes to the same register, and in a read that must wait for a load. An instruction that writes no fields no longer changes registers on the recompiler, and VU0 programs that reach VU1's registers stay correct when saved code is reused.\n\n**Software renderer and image uploads.** (@bmdhacks) The software renderer treats extreme texture coordinate values the way the console does, based on measurements from an SCPH-30001. 4-bit image uploads with an odd width or an odd starting position now land where the console puts them.\n\n## Fixes\n\n**Rare crashes.** (@bmdhacks, @sunshineinabox, @Jessewb786) Fixed rare out-of-range memory reads and writes in USB microphone setup, in-game video decoding and texture pack loading, a buffer wrap bug in multithreaded VU mode, and a crash when a new game started with MTVU on. A game reading an empty VIF1 queue no longer aborts a release build and gets zeroes instead, as on the console. When a game jumps to a bad address, the recompilers now stop with an accurate error.\n\n**Software renderer glitches.** (@bmdhacks) It no longer refills a texture while a queued draw still reads it, which could produce wrong pixels in Call of Duty 2. It also no longer splits a draw across workers when its frame and depth buffers share memory pages.\n\n**Graphics memory leak.** (@bmdhacks) Resetting the graphics draw buffers now frees the old ones, which fixes a leak of about 2.2 MiB on every reset. Very large vertex buffers also fail with a clear error instead of wrapping around.\n\n**Audio fixes.** (@bmdhacks) A rare timing problem between the emulation and audio threads is fixed, and a stray leftover value no longer leaks into the audio of games that put the sound chip in bypass mode.\n\n**Under the hood.** (@J1coding, @TJnotJT) Much of the app code was split into smaller files. Metal reads vertex colour in a newer way, and the file pickers use the current iOS API instead of a deprecated one.\n\n## Thanks\n\nThanks to everyone who contributed to this release: @bmdhacks, @J1coding, @sunshineinabox, @jpolo1224, @pstef, @SPD13, @Jessewb786, @FadedAtlas and @jaypume\n\nFrom upstream PCSX2: @TellowKrinkle\n\nThanks as well to every tester who sent a video, a log or a \"this is broken\".\n\n**Full changelog:** https://github.com/ARMSX2/ARMSX2/compare/iOSv2.6.0...iOSv2.6.1",
+          "localizedDescription": "Automated nightly build for community testing (unsigned).\n\nEvery download is named `ARMSX2-nightly-DATE-COMMIT-PLATFORM`, so builds\nfrom different nights stay distinguishable after you have downloaded them.\n\n- macOS arm64: macOS-arm64.tar.xz\n- Linux arm64: Linux-arm64.AppImage, for 4K, 16K and 64K page kernels alike\n- Windows arm64: Windows-arm64.zip\n- RetroArch on Linux arm64: Linux-arm64-libretro-core.tar.zst\n- Bare-display kmsdrm handhelds: Linux-arm64-SDL-handheld.tar.zst (Rocknix and Batocera run compositors, so use the Qt AppImage there instead)\n- Android: Android-arm64.apk (installs as ARMSX2 Nightly, alongside the stable app)\n- iOS: iOS-arm64.ipa, unsigned, sideload it (installs as ARMSX2 Nightly, alongside the stable app)\n\nComing from an old nightly? Nightlies are now a separate app, ARMSX2 Nightly, next to stable.\n\n- Android: stable cannot install over an old nightly. Back up your saves and memory cards, uninstall the old nightly, then install the stable APK.\n- iOS: your old nightly is the ARMSX2 iOS app and still has your saves. Copy them into ARMSX2 Nightly with the Files app.\n\n## What's new\n- COP2: a VU0 sync runs VU0 to the EE's clock, never past it\n- iOS: bump to 2.6.1\n- Android: compile the GS shaders and the GameDB into the core\n- Embedded resources: the compiled-in copy wins over the resources folder\n- iOS: L3 and R3 buttons in the pad layout\n- iOS: move the D-pad and face buttons as one in the pad editor\n- iOS: drop the old pad layout editor\n- iOS: floating sticks in the pad layout\n- iOS: touch pad editor with drop cards, controller and VoiceOver\n- iOS: per-class pad layouts with opacity and a book slot\n- Android: offer our Turnip pack on the Adreno 8xx parts its device table lists\n- Adreno 8xx on Turnip takes the declared feedback loop with the per-draw barriers\n\nFull changelog: https://github.com/ARMSX2/ARMSX2/compare/nightly-20261124...d4fe08faebcb977da891b20477a3f8b7eb9ee531",
           "ipaBundleIdentifier": "com.armsx2.stable"
         }
       ]
@@ -50432,7 +50483,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/Sami-Wali/ryP0-repository/releases/download/nightly/armsx2-nightly-Nightly-2026.11.20-73c26362521f.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "tintColor": "#1B1280",
@@ -50713,7 +50764,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/Baconium/JESSI/releases/download/1.1.2/JESSI.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "tintColor": "#4A90E2",
@@ -50884,7 +50935,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://github.com/Sami-Wali/ryP0-repository/releases/download/nightly/mond-development-9ad223103e7f.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "tintColor": "#000000",
@@ -51053,7 +51104,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://repo.ballermc.com/tubevault/YouTube_v21.38.2_YTPlus_v5.2.2_cracked%5Btg%40tubevault%5D.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "Cracked by Zarzel (shinewake), updated by BallerMC to 21.36.6",
@@ -51121,7 +51172,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://repo.ballermc.com/tubevault/MaxMusic_2.4.1_9.45.2.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "Mod by Mark02-2012",
@@ -51233,7 +51284,7 @@
       "status": {
         "state": "healthy",
         "checkedDownloadURL": "https://pub-25644d4114404c50baab5bb1fb002079.r2.dev/apps/com-frontierdesign-videostar-e776c460/current.ipa",
-        "checkedAt": "2026-11-25T21:18:27Z",
+        "checkedAt": "2026-11-26T09:20:30Z",
         "message": "Download is available"
       },
       "subtitle": "Video Editor",
@@ -52060,9 +52111,9 @@
           "version": "2.0.4",
           "date": "2026-11-25T17:55:21Z",
           "downloadURL": "https://github.com/jxxghp/MoviePilot-App/releases/download/v2.0.4/MoviePilot-2.0.4-ios-unsigned.ipa",
-          "size": 50997557,
+          "size": 50983579,
           "releaseChannel": "release",
-          "localizedDescription": "MoviePilot 现已全面提供 **iOS / iPadOS**、**Android** 与 **HarmonyOS NEXT** 三端全原生客户端（统一版本 **`2.0.4`**），基于 Rust 共享业务内核直连 MoviePilot V3 后端，带来一致的核心功能闭环与地道原生界面体验。\n\n### 本版本核心亮点\n\n- **媒体服务器优先直连播放与跨端实时进度同步**：\n  - 支持客户端探测并优先直连媒体服务器（LAN / WAN 媒体流直通），当不具备直连条件或探测超时时自动平滑回退至 MoviePilot 后台代理流，显著降低中转服务器带宽压力。\n  - 新增媒体服务器账号绑定与三端实时播放进度同步（起播、定时心跳、暂停、拖拽与停止上报），多端无缝续播。\n- **三端多内核播放引擎升级**：\n  - 在「设置 → 播放偏好」中提供播放引擎、解码模式、缓冲策略、夜间人声增强、字幕缩放与外部播放器模板等可持久化配置，并在播放器内支持多内核热切换（iOS 支持 AVPlayer / MPV / VLCKit，Android 支持 Media3 / MPV，HarmonyOS NEXT 支持原生 AVPlayer 与增强路由）。\n  - 本地与存储音频全面支持基于 HTTP Range 票据的边加载边播放与锁屏播控体验，同时优化 SMB 存储流式下载兼容性。\n  - 三端音乐播放全面支持读取音频文件内嵌封面与内嵌歌词（支持 FLAC `VORBIS_COMMENT`/`PICTURE`、ID3v2.2~2.4 `APIC`/`USLT`/`SYLT`/`TXXX`、MP4/M4A `covr`/`©lyr` 及 Ogg Vorbis/Opus），兼容同步 LRC 与无时间轴纯文本歌词，并联动动态取色、迷你播控条与系统锁屏封面。\n- **三端原生弹幕系统**：\n  - 视频播放器内置原生弹幕渲染层，支持后端弹幕配置、剧集匹配与手动切换、开关控制、字号/透明度/速度/显示区域/时间偏移调节以及画中画自动避让，并对旧版后端提供友好升级提示。\n- **Vue 联邦插件本地预热运行时与全量原生能力桥接**：\n  - 推出零前端端口依赖的本地预热联邦运行时（`mp-plugin://shell/`），通过热池复用、实例隔离磁盘缓存、零令牌原生代发 API 与四层透明视觉融合大幅提升插件首开速度与视觉一致性，并保留兼容网页容器一键回退开关。\n  - 全面向 Vue 联邦插件开放移动端本地原生能力（录音、流式音频播放与锁屏播控、相机拍照、相册/文件读写、剪贴板、震动、屏幕常亮、原生 Toast/确认框与标题栏动作桥接），优化移动端竖屏响应式布局。\n- **稳定性与网络认证专项修复**：\n  - 全面修复并关闭本期全部 GitHub Issues（`#51`、`#53`–`#62`）：新增 Cloudflare Access OAuth 认证与同源凭据透传（含弹幕与插件音频链路）、支持音频内嵌封面与歌词解析、优化资源搜索下载弹窗与 Android 本地目录浏览、改进 iOS APNs 推送设置体验、强化播放内核稳定性与旧版后端向后兼容。\n\n### 安装包说明\n\n| 平台 | 版本 | 产物文件 | 适用设备与安装说明 |\n| :--- | :--- | :--- | :--- |\n| **iOS / iPadOS** | `2.0.4` | `MoviePilot-2.0.4-ios-unsigned.ipa` | 需要 **iOS 16+**（小组件需 iOS 17+），下载后使用个人或企业证书重签安装（重签小组件请保持一致的 App Groups）。 |\n| **Android（推荐）** | `2.0.4` | `MoviePilot-2.0.4-android-arm64-v8a.apk` | 适用于绝大多数现代 64 位 ARM 手机与平板（**Android 10 / API 29+**），体积更小，可直接安装。 |\n| **Android（通用）** | `2.0.4` | `MoviePilot-2.0.4-android-universal.apk` | 同时包含 `arm64-v8a`、`armeabi-v7a` 与 `x86_64` 架构，兼容 32 位旧设备、电视盒子与桌面模拟器。 |\n| **HarmonyOS NEXT** | `2.0.4` | `MoviePilot-2.0.4-harmony-unsigned.hap` | 适用于 **HarmonyOS NEXT（API 12+）**，供开发者使用 DevEco Studio / 签名工具配置证书后安装至真机或模拟器。 |\n\nRelease 同时提供统一校验文件 `SHA256SUMS`。\n\n构建源码：[5370e06a0667e5f7e8ff100732b5c5e5eda5ed42](https://github.com/jxxghp/MoviePilot-App/commit/5370e06a0667e5f7e8ff100732b5c5e5eda5ed42)。",
+          "localizedDescription": "MoviePilot 现已全面提供 **iOS / iPadOS**、**Android** 与 **HarmonyOS NEXT** 三端全原生客户端（统一版本 **`2.0.4`**），基于 Rust 共享业务内核直连 MoviePilot V3 后端，带来一致的核心功能闭环与地道原生界面体验。\n\n### 本版本核心亮点\n\n- **媒体服务器优先直连播放与跨端实时进度同步**：\n  - 支持客户端探测并优先直连媒体服务器（LAN / WAN 媒体流直通），当不具备直连条件或探测超时时自动平滑回退至 MoviePilot 后台代理流，显著降低中转服务器带宽压力。\n  - 新增媒体服务器账号绑定与三端实时播放进度同步（起播、定时心跳、暂停、拖拽与停止上报），多端无缝续播。\n- **三端多内核播放引擎升级**：\n  - 在「设置 → 播放偏好」中提供播放引擎、解码模式、缓冲策略、夜间人声增强、字幕缩放与外部播放器模板等可持久化配置，并在播放器内支持多内核热切换（iOS 支持 AVPlayer / MPV / VLCKit，Android 支持 Media3 / MPV，HarmonyOS NEXT 支持原生 AVPlayer 与增强路由）。\n  - 本地与存储音频全面支持基于 HTTP Range 票据的边加载边播放与锁屏播控体验，同时优化 SMB 存储流式下载兼容性。\n  - 三端音乐播放全面支持读取音频文件内嵌封面与内嵌歌词（支持 FLAC `VORBIS_COMMENT`/`PICTURE`、ID3v2.2~2.4 `APIC`/`USLT`/`SYLT`/`TXXX`、MP4/M4A `covr`/`©lyr` 及 Ogg Vorbis/Opus），兼容同步 LRC 与无时间轴纯文本歌词，并联动动态取色、迷你播控条与系统锁屏封面。\n- **三端原生弹幕系统**：\n  - 视频播放器内置原生弹幕渲染层，支持后端弹幕配置、剧集匹配与手动切换、开关控制、字号/透明度/速度/显示区域/时间偏移调节以及画中画自动避让，并对旧版后端提供友好升级提示。\n- **Vue 联邦插件本地预热运行时与全量原生能力桥接**：\n  - 推出零前端端口依赖的本地预热联邦运行时（`mp-plugin://shell/`），通过热池复用、实例隔离磁盘缓存、零令牌原生代发 API 与四层透明视觉融合大幅提升插件首开速度与视觉一致性，并保留兼容网页容器一键回退开关。\n  - 全面向 Vue 联邦插件开放移动端本地原生能力（录音、流式音频播放与锁屏播控、相机拍照、相册/文件读写、剪贴板、震动、屏幕常亮、原生 Toast/确认框与标题栏动作桥接），优化移动端竖屏响应式布局。\n- **稳定性与网络认证专项修复**：\n  - 全面修复并关闭本期全部 GitHub Issues（`#51`、`#53`–`#62`）：新增 Cloudflare Access OAuth 认证与同源凭据透传（含弹幕与插件音频链路）、支持音频内嵌封面与歌词解析、优化资源搜索下载弹窗与 Android 本地目录浏览、改进 iOS APNs 推送设置体验、强化播放内核稳定性与旧版后端向后兼容。\n\n### 安装包说明\n\n| 平台 | 版本 | 产物文件 | 适用设备与安装说明 |\n| :--- | :--- | :--- | :--- |\n| **iOS / iPadOS** | `2.0.4` | `MoviePilot-2.0.4-ios-unsigned.ipa` | 需要 **iOS 16+**（小组件需 iOS 17+），下载后使用个人或企业证书重签安装（重签小组件请保持一致的 App Groups）。 |\n| **Android（推荐）** | `2.0.4` | `MoviePilot-2.0.4-android-arm64-v8a.apk` | 适用于绝大多数现代 64 位 ARM 手机与平板（**Android 10 / API 29+**），体积更小，可直接安装。 |\n| **Android（通用）** | `2.0.4` | `MoviePilot-2.0.4-android-universal.apk` | 同时包含 `arm64-v8a`、`armeabi-v7a` 与 `x86_64` 架构，兼容 32 位旧设备、电视盒子与桌面模拟器。 |\n| **HarmonyOS NEXT** | `2.0.4` | `MoviePilot-2.0.4-harmony-unsigned.hap` | 适用于 **HarmonyOS NEXT（API 12+）**，供开发者使用 DevEco Studio / 签名工具配置证书后安装至真机或模拟器。 |\n\nRelease 同时提供统一校验文件 `SHA256SUMS`。\n\n构建源码：[5d01666945bd725436e9eae559c1fea264984b80](https://github.com/jxxghp/MoviePilot-App/commit/5d01666945bd725436e9eae559c1fea264984b80)。",
           "ipaBundleIdentifier": "org.moviepilot.app"
         }
       ],
@@ -52132,12 +52183,12 @@
       "category": "Tools",
       "versions": [
         {
-          "version": "1.0.10",
-          "date": "2026-11-24T04:34:33Z",
-          "downloadURL": "https://github.com/nekohasekai/open-screen-sharing/releases/download/v1.0.10/OpenScreenSharing.ipa",
-          "size": 11765704,
+          "version": "1.0.11",
+          "date": "2026-11-26T04:39:39Z",
+          "downloadURL": "https://github.com/nekohasekai/open-screen-sharing/releases/download/v1.0.11/OpenScreenSharing.ipa",
+          "size": 11813792,
           "releaseChannel": "release",
-          "localizedDescription": "* Replace floating toolbar handle with assistive ball\n* Fixes and improvements",
+          "localizedDescription": "* Stash idle assistive ball into screen edge\n* Fixes and improvements",
           "ipaBundleIdentifier": "io.nekohasekai.screensharing"
         }
       ],
@@ -52273,6 +52324,31 @@
       "tintColor": "#50B0F0"
     },
     {
+      "name": "RepoPocket",
+      "catalogID": "project-07aebdd74fa0e2abfb92f887b8936963",
+      "bundleIdentifier": "com.wm0104.RepoPocket",
+      "developerName": "wm0104",
+      "localizedDescription": "借助 Codex 辅助开发的 iOS 简易 GitHub 工具：浏览仓库与代码、编辑提交、管理发行版与 Actions，并支持本地 Git 操作。",
+      "subtitle": "在 iPhone、iPad 上浏览 GitHub 与管理 Git 项目",
+      "category": "Tools",
+      "versions": [
+        {
+          "version": "1.2.8",
+          "date": "2026-11-25T07:40:38Z",
+          "downloadURL": "https://github.com/wm0104/RepoPocket/releases/download/v1.2.8/RepoPocket.ipa",
+          "size": 13507558,
+          "releaseChannel": "release",
+          "localizedDescription": "完善 1.2.8 分支与工作流操作\n\n修复分支同步、草稿发布、上传和工作流多选，优化本地 Git、编辑器与 IPA 校验。",
+          "ipaBundleIdentifier": "com.wm0104.RepoPocket"
+        }
+      ],
+      "iconURL": "https://raw.githubusercontent.com/bebound/AltGallery/refs/heads/master/apps/RepoPocket/icon.webp",
+      "updatePolicy": "static",
+      "appType": "Static",
+      "githubURL": "https://github.com/wm0104/RepoPocket",
+      "tintColor": "#1080F0"
+    },
+    {
       "name": "Rich4Renew",
       "catalogID": "project-b4ef67501bf2af6efd7e6803a509da32",
       "bundleIdentifier": "pro.areu.rich4",
@@ -52332,12 +52408,12 @@
       "category": "Sideloading",
       "versions": [
         {
-          "version": "4.1.0",
-          "date": "2026-11-18T16:37:57Z",
-          "downloadURL": "https://github.com/faroukbmiled/RyukSign/releases/download/v4.1.0/RyukSign.ipa",
-          "size": 22041701,
+          "version": "4.2.0",
+          "date": "2026-11-25T22:41:34Z",
+          "downloadURL": "https://github.com/faroukbmiled/RyukSign/releases/download/v4.2.0/RyukSign.ipa",
+          "size": 22247678,
           "releaseChannel": "release",
-          "localizedDescription": "## What's new in 4.1.0\n\n### New\n\n- Added Update All to Sources updates with search, a source picker for each app, and a choice to add, sign, or sign and install\n- Added long press actions to grouped updates, including Ignore Updates\n- Added a Versions to Delete option to Automatic Cleanup to also remove same or newer copies after installing\n- Added your Library's identifiers for the same app to the Identifier editor when signing\n\n### Improvements\n\n- Improved updates to keep the bundle identifier of your installed or signed copy, so they replace it instead of installing a second app\n\n### Fixes\n\n- Fixed apps missing their provisioning profile after signing and Remove Provisioning not working\n- Fixed large apps timing out or showing Failed while still installing\n- Fixed installs getting stuck halfway\n- Fixed tiny apps showing Failed after installing\n- Fixed the wrong app icon showing in Sources updates after another app finished updating\n- Fixed a black screen when using View in Sources from an update's source list\n\n\n## Install\n\n- Download **RyukSign.ipa** from the assets below and sign it, or\n- Add the RyukSign source to get updates in the app: `https://raw.githubusercontent.com/faroukbmiled/RyukSign/main/app-repo.json`\n\n**Full changelog:** https://github.com/faroukbmiled/RyukSign/compare/v4.0.0...v4.1.0\n\n<sub>Built 2026-11-18 from [`fc365a3`](https://github.com/faroukbmiled/RyukSign/commit/fc365a31fb0981681a4d9a03ceabf344f53191ed)</sub>",
+          "localizedDescription": "## What's new in 4.2.0\n\n### New\n\n- Added on-device pairing on iOS 27, no computer needed for a pairing file\n- Added certificate reordering with Move to Top, used everywhere you pick a certificate\n- Added certificate search\n- Added Japanese translation by @kinboy56\n\n### Improvements\n\n- Improved installs to show progress while the app is sent to iOS\n\n### Fixes\n\n- Fixed installs failing after the SSL certificate renews\n- Fixed installs staying stuck halfway when iOS hides install progress\n- Fixed untranslated text in the Tweak Manager\n\n\n## Install\n\n- Download **RyukSign.ipa** from the assets below and sign it, or\n- Add the RyukSign source to get updates in the app: `https://raw.githubusercontent.com/faroukbmiled/RyukSign/main/app-repo.json`\n\n**Full changelog:** https://github.com/faroukbmiled/RyukSign/compare/v4.1.0...v4.2.0\n\n<sub>Built 2026-11-25 from [`49ccb30`](https://github.com/faroukbmiled/RyukSign/commit/49ccb3040ad6cf9753a420a8619f33faa186ca31)</sub>",
           "ipaBundleIdentifier": "ryuk2.anoxclan.com"
         }
       ],
@@ -52412,7 +52488,7 @@
           "downloadURL": "https://github.com/akinal5765-byte/Silverphase/releases/download/v1.1.1/Silverphase-1.1.1-iOS-unsigned.ipa",
           "size": 92284015,
           "releaseChannel": "release",
-          "localizedDescription": "> **当前两端下载：** [macOS 1.0.1](https://github.com/akinal5765-byte/Silverphase/releases/tag/v1.0.1) · [iOS 1.1.1](https://github.com/akinal5765-byte/Silverphase/releases/tag/v1.1.1)\n\n新增 **CineStill 800T**，已接入 iOS 与 macOS 的共享胶片目录。\n\n- 采用上游的无防光晕背层回反射模型，提供红色光晕和 **0–8 EV 高光余量**控制。\n- 新增按通用提示词生成的包装风格封面；两端卡片短名称统一为 **800T**，列表保留完整名称 **CineStill 800T**。\n- 复用 Vision3 500T 的原始乳剂数据与印相校准，保留 Hanze Qiu、Andrea Volpato 的来源记录及 GPL / CC BY-SA 声明。\n\n两端独立编号：**macOS 1.0.1（2）**、**iOS 1.1.1（3）**。\n\n[PR #2](https://github.com/akinal5765-byte/Silverphase/pull/2) 已合并。安装包来自提交 `0e0d354c6d4813ec7cdbf6a004a3c3c3fde9525a`，其源码树与合并后的 `main` 一致。包内附构建来源与开源声明，公开包不包含个人照片、私有材料或签名凭据。\n\n## 下载与安装\n\n下载 **`Silverphase-1.1.1-iOS-unsigned.ipa`**，适用于 **arm64、iOS / iPadOS 18 及以上**。\n\n这是**未签名 IPA**，需要自行完成设备签名和描述文件配置；请保留 `Silverphase-iOS-RequiredEntitlements.plist` 中的 Increased Memory Limit 能力。包内不提供证书、私钥或设备描述文件。安装方法见附件 `INSTALL.md`；校验值见 `SHA256SUMS.txt`，构建与来源信息见 `ios-build.json`。\n\n## 验证范围\n\n800T 的模拟器专项检查通过，公共 Release 构建与打包通过。完整移动端冒烟检查在后续读取原图细节时因内存不足中止，因此仍属部分覆盖。\n\n签名开发版本已单独覆盖安装到 Duo，保留照片库和编辑记录；安装后未启动应用或操作验证。此版本不新增真机触控、相册权限、内存能力或全分辨率导出的验收结论。\n\n[详细验证记录](https://github.com/akinal5765-byte/Silverphase/blob/0e0d354c6d4813ec7cdbf6a004a3c3c3fde9525a/performance/VALIDATION-CINESTILL-2026-11-02.md)。",
+          "localizedDescription": "## English\n\n**Historical iOS / iPadOS 1.1.1 (build 3).** Adds CineStill 800T to the shared catalog, including red halation with 0–8 EV highlight headroom and a new illustrated cover. It reuses the Vision3 500T emulsion data and print calibration with upstream attribution.\n\nThe arm64 IPA in Assets is **unsigned**, requires iOS/iPadOS 18 or later, and needs user-managed signing and provisioning. See `INSTALL.md`, `SHA256SUMS.txt` and the included entitlement file. The 800T simulator checks and public packaging passed; the full mobile smoke check later stopped at a memory limit, and the installed Duo development build was not exercised. [Validation record](https://github.com/akinal5765-byte/Silverphase/blob/0e0d354c6d4813ec7cdbf6a004a3c3c3fde9525a/performance/VALIDATION-CINESTILL-2026-11-02.md)\n\n---\n\n## 简体中文\n\n> **当前两端下载：** [macOS 1.0.1](https://github.com/akinal5765-byte/Silverphase/releases/tag/v1.0.1) · [iOS 1.1.1](https://github.com/akinal5765-byte/Silverphase/releases/tag/v1.1.1)\n\n新增 **CineStill 800T**，已接入 iOS 与 macOS 的共享胶片目录。\n\n- 采用上游的无防光晕背层回反射模型，提供红色光晕和 **0–8 EV 高光余量**控制。\n- 新增按通用提示词生成的包装风格封面；两端卡片短名称统一为 **800T**，列表保留完整名称 **CineStill 800T**。\n- 复用 Vision3 500T 的原始乳剂数据与印相校准，保留 Hanze Qiu、Andrea Volpato 的来源记录及 GPL / CC BY-SA 声明。\n\n两端独立编号：**macOS 1.0.1（2）**、**iOS 1.1.1（3）**。\n\n[PR #2](https://github.com/akinal5765-byte/Silverphase/pull/2) 已合并。安装包来自提交 `0e0d354c6d4813ec7cdbf6a004a3c3c3fde9525a`，其源码树与合并后的 `main` 一致。包内附构建来源与开源声明，公开包不包含个人照片、私有材料或签名凭据。\n\n## 下载与安装\n\n下载 **`Silverphase-1.1.1-iOS-unsigned.ipa`**，适用于 **arm64、iOS / iPadOS 18 及以上**。\n\n这是**未签名 IPA**，需要自行完成设备签名和描述文件配置；请保留 `Silverphase-iOS-RequiredEntitlements.plist` 中的 Increased Memory Limit 能力。包内不提供证书、私钥或设备描述文件。安装方法见附件 `INSTALL.md`；校验值见 `SHA256SUMS.txt`，构建与来源信息见 `ios-build.json`。\n\n## 验证范围\n\n800T 的模拟器专项检查通过，公共 Release 构建与打包通过。完整移动端冒烟检查在后续读取原图细节时因内存不足中止，因此仍属部分覆盖。\n\n签名开发版本已单独覆盖安装到 Duo，保留照片库和编辑记录；安装后未启动应用或操作验证。此版本不新增真机触控、相册权限、内存能力或全分辨率导出的验收结论。\n\n[详细验证记录](https://github.com/akinal5765-byte/Silverphase/blob/0e0d354c6d4813ec7cdbf6a004a3c3c3fde9525a/performance/VALIDATION-CINESTILL-2026-11-02.md)。",
           "ipaBundleIdentifier": "com.silverphase.editor"
         }
       ],
