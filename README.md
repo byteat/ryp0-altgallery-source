@@ -58,6 +58,7 @@ DolphiniOS `5.0.0b6`：主源该版本有两条记录，一条 `buildVersion` �
 | 3 | `one` | `https://raw.githubusercontent.com/ios151/One-releases/main/altsource.json` | 1 应用 / 18 版本 | 未声明 |
 | 4 | `insav` | `https://raw.githubusercontent.com/ios151/Insav-releases/main/altsource.json` | 1 应用 / 6 版本 | 未声明 |
 | 5 | `wqguard` | `https://github.com/Kianuni/WQGuard` | 1 应用 / 1 版本（v1.2.1） | MIT |
+| 6 | `reloc` | `https://github.com/Reukix/Reloc` | 1 应用 / 1 版本（v1.0.0） | AGPL-3.0 |
 
 许可证取自 GitHub API `license` 字段。
 

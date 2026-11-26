@@ -44,6 +44,23 @@
       "excludePrerelease": true,
       "maxVersions": 10,
       "required": false
+    },
+    {
+      "name": "reloc",
+      "type": "github-releases",
+      "repo": "Reukix/Reloc",
+      "bundleIdentifier": "dev.reloc.ios",
+      "appName": "Reloc",
+      "developerName": "Reukix",
+      "subtitle": "面向 iOS 的外设级定位模拟工具",
+      "localizedDescription": "Reloc 通过本机回环连接 com.apple.carkit.service，完成 iAP2 / MFi-v3 / NMEA-0183 外设定位注入，使系统以标准外设 GPS 身份接收实时坐标。支持定格定位、GCJ-02 纠偏、后台保活与本机配对。",
+      "iconURL": "https://raw.githubusercontent.com/Reukix/Reloc/main/docs/icon.png",
+      "category": "Tools",
+      "minOSVersion": "17.0",
+      "assetPattern": "\\.ipa$",
+      "excludePrerelease": true,
+      "maxVersions": 10,
+      "required": false
     }
   ],
   "network": {
